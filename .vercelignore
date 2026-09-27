@@ -1,0 +1,8 @@
+# Ignore Python tools and development scripts
+scripts/
+serve.py
+pyrightconfig.json
+*.py
+*.xls
+start_mobile.bat
+cloudflared*
