@@ -9,6 +9,20 @@
       }
     },
     {
+      "src": "/favicon.ico",
+      "headers": {
+        "Content-Type": "image/x-icon",
+        "Cache-Control": "public, max-age=86400"
+      }
+    },
+    {
+      "src": "/favicon.svg",
+      "headers": {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "public, max-age=86400"
+      }
+    },
+    {
       "src": "/sw.js",
       "headers": {
         "Cache-Control": "no-cache, no-store, must-revalidate",

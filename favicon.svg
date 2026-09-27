@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Deep Obsidian / Navy Background -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e172a" />
+      <stop offset="45%" stop-color="#0a101f" />
+      <stop offset="100%" stop-color="#03060c" />
+    </linearGradient>
+
+    <!-- Electric Cyan Glowing Border -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.95" />
+      <stop offset="40%" stop-color="#0284c7" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#1e40af" stop-opacity="0.25" />
+    </linearGradient>
+
+    <!-- Master Electric Cyan / Blue Gradient for Monogram -->
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="25%" stop-color="#00e5ff" />
+      <stop offset="65%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+
+    <!-- Cap Top Highlight -->
+    <linearGradient id="capTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#7dd3fc" />
+      <stop offset="70%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <!-- Subtle Ambient Glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.18" />
+      <stop offset="50%" stop-color="#0284c7" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <clipPath id="squircleClip">
+      <rect x="16" y="16" width="480" height="480" rx="116" ry="116" />
+    </clipPath>
+  </defs>
+
+  <!-- Squircle Base Canvas with Sharp Edge Clip -->
+  <g clip-path="url(#squircleClip)">
+    <rect x="16" y="16" width="480" height="480" fill="url(#bgGrad)" />
+    <!-- Ambient Radial Light -->
+    <rect x="16" y="16" width="480" height="480" fill="url(#centerGlow)" />
+    <circle cx="256" cy="460" r="180" fill="#1e40af" opacity="0.15" />
+
+    <!-- 1. ACADEMIC MORTARBOARD (Bold, Solid Geometry for Instant Clarity) -->
+    <!-- Cap Rhombus Top Plate -->
+    <polygon points="256,66 414,134 256,202 98,134" fill="url(#capTopGrad)" />
+    <!-- Cap Under Skullcap Arc Band -->
+    <path d="M 158 158 L 158 184 C 158 218 354 218 354 184 L 354 158 Z" fill="url(#brandGrad)" opacity="0.95" />
+    <!-- Cap Center Button -->
+    <circle cx="256" cy="134" r="8" fill="#ffffff" opacity="0.9" />
+    <!-- Tassel Ribbon & Fringes -->
+    <path d="M 256 134 Q 380 120 414 146 Q 434 176 428 206" fill="none" stroke="#00f5ff" stroke-width="7" stroke-linecap="round" />
+    <rect x="420" y="206" width="16" height="24" rx="4" fill="#00f5ff" />
+
+    <!-- 2. THE BOLD "J" MONOGRAM (Balanced, Confident, Modern) -->
+    <path d="
+      M 206 236
+      H 356
+      V 290
+      H 326
+      V 342
+      C 326 392 292 428 244 428
+      C 196 428 162 392 162 342
+      H 226
+      C 226 364 234 374 244 374
+      C 256 374 266 364 266 342
+      V 290
+      H 206
+      Z"
+      fill="url(#brandGrad)"
+    />
+
+    <!-- Modern Glass Sheen across the J's Top Bar -->
+    <polygon points="206,236 356,236 356,258 206,270" fill="#ffffff" opacity="0.3" />
+  </g>
+
+  <!-- Crisp Squircle Border -->
+  <rect x="16" y="16" width="480" height="480" rx="116" ry="116" fill="none" stroke="url(#borderGrad)" stroke-width="12" />
+</svg>
