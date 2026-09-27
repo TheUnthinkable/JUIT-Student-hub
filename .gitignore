@@ -1,0 +1,27 @@
+# Cloudflare quick tunnel binary
+cloudflared.exe
+cloudflared
+
+# Python & Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs & temp files
+*.log
+scratch/
+mobile_overflows.json
+
+# Local test / debug images
+*.png
+*.jpg
+*.jpeg
+
+# Heavy raw unparsed archive files
+ACADEMICCALENDAR202627.pdf

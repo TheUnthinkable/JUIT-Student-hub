@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-theme-mode="dark" data-accent="blue">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JUIT Student Hub | Your Campus, Organized</title>
+  <meta name="description"
+    content="All-in-one companion for Jaypee University of Information Technology (JUIT), Solan: Authentic timetable, Annapurna mess menu, interactive campus map & room finder, academic calendar, attendance tracker, and student utilities." />
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>" />
+
+  <!-- PWA Web App Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%232563eb'><rect width='192' height='192' rx='40' fill='%230f172a'/><path d='M96 28L24 68l72 40 72-40-72-40zM24 124l72 40 72-40M24 96l72 40 72-40' fill='none' stroke='%2338bdf8' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+
+  <!-- SheetJS for Client-Side Excel Timetable Parsing (Local & Fast) -->
+  <script src="js/libs/xlsx.full.min.js" defer></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <!-- Google Material Symbols Outlined for Modern High-Tech HUD Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
+
+  <!-- Master Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body class="app-body-layout">
+
+  <!-- Offline Status Banner -->
+  <div class="offline-banner" id="offline-status-banner" style="display: none;">
+    ⚡ <strong>OFFLINE MODE:</strong> Showing your locally cached JUIT campus data.
+  </div>
+
+  <!-- ================= MASTER APP SHELL ================= -->
+  <div class="app-shell-layout" id="app-shell-layout">
+
+    <!-- ================= DESKTOP SIDEBAR ================= -->
+    <aside class="desktop-sidebar" id="desktop-sidebar">
+      <!-- Sidebar Brand: JUIT Hub SoLan -->
+      <div class="sidebar-brand-block">
+        <a href="#dash" class="sidebar-brand-row" id="brand-logo-link" title="JUIT Hub - Your campus, organized.">
+          <div class="sidebar-logo-j">J</div>
+          <div class="sidebar-brand-text">
+            <span class="sidebar-brand-name">JUIT Hub</span>
+            <span class="sidebar-solan-badge">SoLan</span>
+          </div>
+        </a>
+        <div class="sidebar-tagline">Your campus, organized.</div>
+      </div>
+
+      <!-- Campus Navigation Links -->
+      <nav class="sidebar-nav-list">
+        <a href="#dash" class="nav-link active" data-view="dash">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="#timetable" class="nav-link" data-view="timetable">
+          <span class="material-symbols-outlined nav-icon">calendar_today</span>
+          <span>Timetable</span>
+        </a>
+        <a href="#calendar" class="nav-link" data-view="calendar">
+          <span class="material-symbols-outlined nav-icon">event_note</span>
+          <span>Academic Calendar</span>
+        </a>
+        <a href="#mess" class="nav-link" data-view="mess">
+          <span class="material-symbols-outlined nav-icon">restaurant</span>
+          <span>Annapurna Mess</span>
+        </a>
+        <a href="#campus" class="nav-link" data-view="campus">
+          <span class="material-symbols-outlined nav-icon">map</span>
+          <span>Campus Map & Finder</span>
+        </a>
+        <a href="#announcements" class="nav-link" data-view="announcements">
+          <span class="material-symbols-outlined nav-icon">campaign</span>
+          <span>Announcements</span>
+        </a>
+        <a href="#academics" class="nav-link" data-view="academics">
+          <span class="material-symbols-outlined nav-icon">school</span>
+          <span>Academics & Attendance</span>
+        </a>
+        <a href="#resources" class="nav-link" data-view="resources">
+          <span class="material-symbols-outlined nav-icon">folder_zip</span>
+          <span>Resource Hub</span>
+        </a>
+        <a href="#events-clubs" class="nav-link" data-view="events-clubs">
+          <span class="material-symbols-outlined nav-icon">groups</span>
+          <span>Events & Clubs</span>
+        </a>
+        <a href="#portals" class="nav-link" data-view="portals">
+          <span class="material-symbols-outlined nav-icon">link</span>
+          <span>Useful Links</span>
+        </a>
+        <a href="#utilities" class="nav-link" data-view="utilities">
+          <span class="material-symbols-outlined nav-icon">apps</span>
+          <span>Student Utilities</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-section-title">SYSTEM & ADMIN</div>
+      <nav class="sidebar-nav-list">
+        <a href="#settings" class="nav-link" data-view="settings">
+          <span class="material-symbols-outlined nav-icon">tune</span>
+          <span>Settings & Theme</span>
+        </a>
+        <a href="#admin" class="nav-link" data-view="admin">
+          <span class="material-symbols-outlined nav-icon">admin_panel_settings</span>
+          <span>Admin & Excel Importer</span>
+        </a>
+      </nav>
+
+      <!-- Scholar Info Card at Sidebar Footer -->
+      <div class="sidebar-user-card" id="sidebar-user-card" title="Click to edit Scholar Profile">
+        <div class="avatar-circle">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-user-name">JUIT Scholar</div>
+          <div class="sidebar-user-batch" id="sidebar-user-batch-label">B.Tech Sem 1 • 26BT16</div>
+        </div>
+        <span class="material-symbols-outlined sidebar-user-edit">edit</span>
+      </div>
+    </aside>
+
+    <!-- ================= RIGHT COLUMN: TOP HEADER + MAIN VIEW CONTENT ================= -->
+    <div class="app-main-viewport">
+      <!-- TOP APP BAR -->
+      <header class="app-header">
+        <div class="header-inner">
+          <!-- Mobile Menu Toggle Button (shown on mobile) -->
+          <button type="button" class="btn-mobile-menu" id="btn-mobile-menu-toggle" aria-label="Toggle Mobile Menu">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+
+          <!-- Mobile Brand Logo Chip -->
+          <a href="#dash" class="mobile-header-brand" id="mobile-brand-link">
+            <div class="sidebar-logo-j" style="width: 28px; height: 28px; font-size: 14px; border-radius: 6px;">J</div>
+            <span class="mobile-brand-name">JUIT Hub</span>
+          </a>
+
+          <!-- Left: Live Clock & Date -->
+          <div class="header-clock-section">
+            <div class="live-clock-pill">
+              <span class="pulse-indicator"></span>
+              <span id="live-clock-time">09:47:08 PM</span>
+              <span class="clock-sep">•</span>
+              <span id="live-clock-date">Tuesday, 22 September 2026</span>
+            </div>
+          </div>
+
+          <!-- Right: Search, Notifications, Theme, Profile -->
+          <div class="header-actions">
+            <!-- Universal Search Trigger -->
+            <button type="button" class="btn-cmd-search" id="btn-open-search" title="Search Hub (Ctrl+K)">
+              <span class="material-symbols-outlined text-[17px]">search</span>
+              <span class="search-text-label">Search Hub...</span>
+              <span class="kbd-shortcut">Ctrl K</span>
+            </button>
+
+            <!-- Notification Bell -->
+            <button type="button" class="btn-icon-header" id="btn-open-notifications" title="Notifications & Announcements"
+              aria-label="Notifications">
+              <span class="material-symbols-outlined text-[19px]">notifications</span>
+              <span class="notif-badge-counter" id="notif-badge-counter" style="display: none;">3</span>
+            </button>
+
+            <!-- Quick Theme Mode Toggle -->
+            <button type="button" class="btn-icon-header" id="btn-quick-theme-toggle" title="Toggle Dark/Light Mode"
+              aria-label="Toggle Theme">
+              <span class="material-symbols-outlined text-[19px]">dark_mode</span>
+            </button>
+
+            <!-- Profile Avatar / Onboarding Trigger -->
+            <button type="button" class="user-profile-header-btn" id="btn-open-profile-settings"
+              title="Student Settings & Onboarding">
+              <div class="avatar-circle">
+                <span class="material-symbols-outlined text-[16px]">person</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- ================= MAIN APP CONTENT PANELS ================= -->
+      <main class="app-main-content">
+
+        <!-- ================= VIEW 1: DASHBOARD ================= -->
+        <section class="app-view-panel active" id="view-dash">
+          <!-- Hero Greeting Banner -->
+          <div class="dash-card dash-hero-banner" style="margin-bottom: 20px;">
+            <div>
+              <div class="hero-welcome-badge">
+                <span class="material-symbols-outlined text-[15px]">school</span>
+                <span>JUIT WAKNAGHAT • SOLAN CAMPUS</span>
+              </div>
+              <h1 class="hero-title" id="dash-live-greeting">Hi, JUIT Scholar 👋</h1>
+              <div class="dash-date-heading" id="dash-current-date-heading"
+                style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+                Here's your live academic briefing & campus overview for today.
+              </div>
+            </div>
+            <div class="hero-quick-stats">
+              <div class="stat-chip">
+                <span class="stat-number" id="dash-today-classes-count">--</span>
+                <span class="stat-label">Classes Today</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-number" style="color: #10b981;">Odd</span>
+                <span class="stat-label">Term 2026</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-number" style="color: #00e5ff;">1,550m</span>
+                <span class="stat-label">Solan Hills</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <!-- Campus Utilities & Immediate Links (Top Priority - Instant 1-Tap Access) -->
+            <div class="dash-card col-span-12" style="padding: 16px 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="font-size: 0.74rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; font-family: var(--font-mono);">
+                  QUICK CAMPUS LAUNCHPAD
+                </div>
+                <span style="font-size: 0.75rem; color: #38bdf8; font-weight: 600; font-family: var(--font-mono);">
+                  Direct Access
+                </span>
+              </div>
+
+              <div class="campus-utilities-grid">
+                <!-- Utility 1: Timetable -->
+                <a href="#timetable" data-action-view="timetable" class="utility-card">
+                  <div class="utility-icon-box" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Today's Schedule</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub">Classes, Times & Venues</div>
+                  </div>
+                </a>
+
+                <!-- Utility 2: Annapurna Mess -->
+                <a href="#mess" data-action-view="mess" class="utility-card">
+                  <div class="utility-icon-box mess-icon">
+                    <span class="material-symbols-outlined">restaurant</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Annapurna Mess</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub" id="dash-util-mess-sub">Tonight: Paneer Butter Masala...</div>
+                  </div>
+                </a>
+
+                <!-- Utility 3: Campus Finder -->
+                <a href="#campus" data-action-view="campus" class="utility-card">
+                  <div class="utility-icon-box campus-icon">
+                    <span class="material-symbols-outlined">explore</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Campus Map</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub">14 Landmarks & Venues</div>
+                  </div>
+                </a>
+
+                <!-- Utility 4: Attendance & Academics -->
+                <a href="#academics" data-action-view="academics" class="utility-card">
+                  <div class="utility-icon-box attendance-icon">
+                    <span class="material-symbols-outlined">assignment_ind</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Attendance</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub" id="dash-util-att-sub">Overall 89.4% • Safe</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Upcoming Milestone Advisory Alert -->
+            <div class="dash-card col-span-12" style="padding: 14px 20px;">
+              <div id="dash-milestone-countdown" class="countdown-box" style="margin: 0;"></div>
+            </div>
+
+            <!-- Left Column: Live/Next Class -->
+            <div class="dash-card col-span-6">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: var(--accent-primary); font-size: 22px;">schedule</span>
+                  <h2 style="font-size: 1.2rem; color: var(--text-primary); margin: 0;">Live & Next Class</h2>
+                </div>
+                <a href="#timetable" data-action-view="timetable" class="kbd-shortcut" style="color: var(--accent-primary); text-decoration: none;">
+                  Full Timetable →
+                </a>
+              </div>
+              <div id="dash-next-class-hero">
+                <div style="padding: 24px; text-align: center; color: var(--text-muted);">
+                  Calculating real-time class schedule...
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Today's Schedule Snapshot -->
+            <div class="dash-card col-span-6">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #38bdf8; font-size: 22px;">calendar_month</span>
+                    <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Today's Schedule</h2>
+                  </div>
+                  <div id="dash-today-schedule-sub" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                    Wednesday, 23 Sep • 5 periods
+                  </div>
+                </div>
+                <span class="sched-status-chip done" id="dash-schedule-status-header">Completed</span>
+              </div>
+              <div id="dash-upcoming-classes-preview" style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading today's classes...</div>
+              </div>
+            </div>
+
+            <!-- Annapurna Today's Meals Snapshot (col-span-6) -->
+            <div class="dash-card col-span-6">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: #f97316; font-size: 22px;">restaurant</span>
+                  <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Annapurna Dining Highlights</h2>
+                </div>
+                <a href="#mess" data-action-view="mess" class="kbd-shortcut" style="color: #f97316; text-decoration: none;">
+                  Full Menu →
+                </a>
+              </div>
+              <div id="dash-next-meal-preview">
+                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading today's meal highlights...</div>
+              </div>
+            </div>
+
+            <!-- Campus Notices Snapshot (col-span-6) -->
+            <div class="dash-card col-span-6">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: #10b981; font-size: 22px;">campaign</span>
+                  <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Campus Notices</h2>
+                </div>
+                <a href="#announcements" data-action-view="announcements" class="kbd-shortcut" style="color: #10b981; text-decoration: none;">
+                  All Circulars →
+                </a>
+              </div>
+              <div id="dash-announcements-preview" style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading circulars & notices...</div>
+              </div>
+            </div>
+
+            <!-- Waknaghat Mountain Microclimate & Status (col-span-12) -->
+            <div class="dash-card col-span-12" style="padding: 16px 20px;">
+              <div class="microclimate-widget" style="margin: 0; background: transparent; border: none; padding: 0;">
+                <div class="microclimate-header" style="margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #00e5ff; font-size: 20px;">cloudy_snowing</span>
+                    <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Waknaghat Mountain Microclimate</span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">Elevation ~1,550m Ridge</span>
+                  </div>
+                  <span style="font-size: 0.78rem; color: #00e5ff; font-weight: 700; background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.25); padding: 3px 10px; border-radius: 9999px;">
+                    17°C • Clear Solan Sky
+                  </span>
+                </div>
+                <div class="microclimate-stats-grid">
+                  <div class="microclimate-stat-box">
+                    <span class="microclimate-stat-label">Humidity</span>
+                    <span class="microclimate-stat-val">68%</span>
+                  </div>
+                  <div class="microclimate-stat-box">
+                    <span class="microclimate-stat-label">Wind Velocity</span>
+                    <span class="microclimate-stat-val">4 km/h NW</span>
+                  </div>
+                  <div class="microclimate-stat-box">
+                    <span class="microclimate-stat-label">Air Quality Index</span>
+                    <span class="microclimate-stat-val" style="color: #10b981;">AQI 28 • Pure Alpine</span>
+                  </div>
+                  <div class="microclimate-stat-box">
+                    <span class="microclimate-stat-label">Campus Lighting</span>
+                    <span class="microclimate-stat-val" style="color: #38bdf8;">Optimal Visibility</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Academic Downloads & Fast Vault -->
+            <div class="dash-card col-span-12 dash-vault-downloads-section">
+              <div class="dash-card-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="stat-icon-wrapper" style="background: rgba(0, 229, 255, 0.12); color: #00e5ff; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-outlined text-[22px]">download_for_offline</span>
+                  </div>
+                  <div>
+                    <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Academic Downloads & Fast Vault</h2>
+                    <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                      Official lecture notes, solved PYQs, lab manuals & derivation handbooks (Odd Semester 2026)
+                    </div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <a href="#resources" data-action-view="resources" class="kbd-shortcut" style="color: var(--accent-primary); text-decoration: none;">
+                    All Vault Materials (12) →
+                  </a>
+                </div>
+              </div>
+
+              <!-- Fast Downloads Horizontal / Grid Carousel -->
+              <div class="fast-downloads-carousel" id="dash-fast-downloads-carousel">
+                <!-- Dynamically populated by App.updateDashboardFastDownloads() -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 2: TIMETABLE ================= -->
+        <section class="app-view-panel" id="view-timetable">
+          <!-- Controls Bar -->
+          <div class="timetable-controls-bar">
+            <div class="controls-left-group">
+              <!-- Semester Selector -->
+              <div class="control-input-wrap">
+                <label class="control-label" for="timetable-sem-select">Academic Session & Semester</label>
+                <select class="select-styled" id="timetable-sem-select" aria-label="Select Semester"></select>
+              </div>
+
+              <!-- Batch Filter -->
+              <div class="control-input-wrap">
+                <label class="control-label" for="timetable-batch-select">Filter by Batch</label>
+                <select class="select-styled" id="timetable-batch-select" aria-label="Filter by Batch"></select>
+              </div>
+
+              <!-- Timetable Search Input -->
+              <div class="control-input-wrap" style="flex: 1; min-width: 220px;">
+                <label class="control-label" for="timetable-search-input">Search Timetable (Subject / Code / Room /
+                  Faculty)</label>
+                <div style="position: relative;">
+                  <input type="text" id="timetable-search-input"
+                    placeholder="Type e.g. Physics, CR01, DLR, 25B11CI112..." class="select-styled"
+                    style="width: 100%; padding-right: 30px;" />
+                  <button type="button" id="btn-clear-timetable-search"
+                    style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer;"
+                    title="Clear Search">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Color Coding Legend -->
+            <div class="schedule-legend">
+              <div class="legend-item"><span class="legend-dot dot-lecture"></span><span>Lecture (L)</span></div>
+              <div class="legend-item"><span class="legend-dot dot-lab"></span><span>Lab (P)</span></div>
+              <div class="legend-item"><span class="legend-dot dot-tutorial"></span><span>Tutorial (T)</span></div>
+              <div class="legend-item"><span class="legend-dot dot-practical"></span><span>Practical</span></div>
+            </div>
+
+            <!-- 1-Click Quick Batch Chips (hidden for minimalism) -->
+            <div class="quick-batch-row" id="quick-batch-container" style="display: none;"></div>
+          </div>
+
+          <!-- View Mode Switcher: Today View / Day View / Week Matrix View -->
+          <div id="timetable-view-mode-tabs" style="margin-top: 14px;"></div>
+
+          <!-- Live Period Tracker & Day Scrubber -->
+          <div id="timetable-live-tracker"></div>
+
+          <!-- Day Selector Pills (MON - SAT) -->
+          <div class="days-pills-row" id="timetable-day-pills"></div>
+
+          <!-- Schedule Header -->
+          <div class="schedule-section-header">
+            <div class="schedule-header-title">
+              <span id="schedule-day-title">Tuesday Schedule</span>
+              <span class="kbd-shortcut" id="schedule-classes-count" style="color: var(--accent-primary);">--
+                classes</span>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              Tip: Click any <span style="color: var(--accent-primary); font-weight: 700;">Venue</span> pill to locate
+              the classroom on the Campus Map.
+            </div>
+          </div>
+
+          <!-- Classes Cards Stack / Matrix -->
+          <div class="classes-stack-list" id="timetable-classes-list"></div>
+        </section>
+
+        <!-- ================= VIEW 3: ANNAPURNA MESS MENU ================= -->
+        <section class="app-view-panel" id="view-mess">
+          <div class="mess-hero-card">
+            <div class="mess-hero-left">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span class="hub-badge"
+                  style="background: rgba(249, 115, 22, 0.15); color: #f97316; border-color: rgba(249, 115, 22, 0.3);">
+                  Annapurna - A & B Dining Halls
+                </span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Cycle: September 2026</span>
+              </div>
+              <h2 id="mess-current-day-label">Tuesday Menu</h2>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+                Serving high-protein vegetarian meals, zero-maida breakfast varieties, seasonal fresh fruits, and
+                nightly sweetened milk.
+              </p>
+            </div>
+            <div id="mess-live-serving-badge" class="mess-serving-pill">
+              <span class="pulse-indicator"></span>
+              <span>Loading meal status...</span>
+            </div>
+          </div>
+
+          <!-- Day Selector (Mon - Sun) -->
+          <div class="mess-days-row" id="mess-day-tabs"></div>
+
+          <!-- 3-Column Meals Grid (Breakfast, Lunch, Dinner) -->
+          <div class="mess-meals-grid" id="mess-meals-container"></div>
+
+          <!-- Night Milk Distribution Schedule -->
+          <div class="milk-distribution-card">
+            <div
+              style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.4rem;">🥛</span>
+                <div>
+                  <h3 style="font-size: 1.15rem;">Night Milk Distribution Schedule</h3>
+                  <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Hot & cold sweetened milk
+                    distributed every evening across designated hostel points.</p>
+                </div>
+              </div>
+              <span class="kbd-shortcut" style="color: var(--color-milk);">09:15 PM – 09:45 PM</span>
+            </div>
+            <table class="milk-table">
+              <thead>
+                <tr>
+                  <th>Student Particulars</th>
+                  <th>Distribution Timing</th>
+                  <th>Distribution Location</th>
+                </tr>
+              </thead>
+              <tbody id="milk-schedule-tbody"></tbody>
+            </table>
+            <div
+              style="margin-top: 14px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); padding-top: 10px;">
+              ⚠️ <strong>Dining Notice:</strong> Menu may deviate in unavoidable circumstances. Please do not carry
+              fruits or eatables outside the dining hall — Do not waste food.
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 4: CAMPUS MAP & ROOM FINDER ================= -->
+        <section class="app-view-panel" id="view-campus">
+          <div class="campus-map-wrapper">
+            <!-- Sleek Unified Toolbar -->
+            <div class="map-toolbar">
+              <div class="map-toolbar-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; flex-wrap: wrap;">
+                <!-- Search Box with Autocomplete -->
+                <div class="map-search-container" style="position: relative; flex: 1; max-width: 440px;">
+                  <input type="text" id="map-search-input" placeholder="Search room e.g. CR01, LT1, CL52, Mess, LRC..."
+                    class="select-styled" style="width: 100%; padding-left: 36px; height: 38px; font-size: 0.86rem; border-radius: 8px;" autocomplete="off" />
+                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.55; font-size: 14px;">🔍</span>
+                  <button type="button" id="map-search-clear" class="btn-micro" style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 2px 6px;">✕</button>
+                  <div class="map-search-dropdown" id="map-search-dropdown" style="display: none;"></div>
+                </div>
+
+                <!-- Mode Switcher in Header -->
+                <div class="map-mode-switcher-bar" id="map-header-mode-bar">
+                  <button type="button" class="map-mode-pill active" data-mode="blueprint" title="CAD Architectural Blueprint">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">architecture</span>
+                    <span>Blueprint</span>
+                  </button>
+                  <button type="button" class="map-mode-pill" data-mode="walkways" title="Pedestrian Spine & Accessible Ramps">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">alt_route</span>
+                    <span>Walkways</span>
+                  </button>
+                  <button type="button" class="map-mode-pill" data-mode="night" title="Evening Ambient Illumination">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">bedtime</span>
+                    <span>Night Glow</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Category Filters Row -->
+              <div class="map-filters-row" id="map-category-filters" style="margin-top: 10px; width: 100%;"></div>
+            </div>
+
+            <!-- SVG Vector Canvas Box with Pan/Zoom & Flyout Drawer -->
+            <div class="map-viewport-box" id="map-viewport-box">
+              <svg class="map-svg-canvas" id="campus-vector-svg" viewBox="0 0 1000 680"></svg>
+              
+              <!-- Map Zoom & Centering Controls -->
+              <div class="map-zoom-controls">
+                <button type="button" class="btn-zoom" id="btn-map-zoom-in" title="Zoom In">+</button>
+                <button type="button" class="btn-zoom" id="btn-map-zoom-out" title="Zoom Out">−</button>
+                <button type="button" class="btn-zoom" id="btn-map-reset" title="Reset View" style="font-size: 14px;">↺</button>
+              </div>
+
+              <!-- Sleek Flyout Building Venue Drawer -->
+              <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer"></aside>
+            </div>
+          </div>
+
+          <!-- 4 Campus Building Cards Matching Screenshot 3 -->
+          <div class="campus-bldg-cards-grid">
+            <!-- Card 1: AB1 -->
+            <div class="bldg-detail-card" data-bldg="block1">
+              <div class="bldg-wing-label">
+                <span>INSTRUCTIONAL WING</span>
+                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
+              </div>
+              <h3 class="bldg-name">Academic Block 1 (AB1)</h3>
+              <p class="bldg-desc">
+                Classrooms CR01–CR10, Tutorial Rooms TR1–TR7, DLC Auditorium, Physics Labs, Electronics Labs & Language
+                Lab.
+              </p>
+              <div class="bldg-footer-chips">
+                <span class="chip-metric">4 Floors • 18 Rooms</span>
+                <span class="chip-status status-open">Open Now</span>
+              </div>
+            </div>
+
+            <!-- Card 2: AB2 -->
+            <div class="bldg-detail-card" data-bldg="block2">
+              <div class="bldg-wing-label">
+                <span>COMPUTING & THEATRES</span>
+                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
+              </div>
+              <h3 class="bldg-name">Academic Block 2 (AB2)</h3>
+              <p class="bldg-desc">
+                Lecture Theatres LT1, LT2, LT3, Main Computer Centre (CL01–CL52), Advanced AI & High-Performance
+                Computing Labs.
+              </p>
+              <div class="bldg-footer-chips">
+                <span class="chip-metric">4 Floors • 3 Theatres</span>
+                <span class="chip-status status-active">Active Sessions</span>
+              </div>
+            </div>
+
+            <!-- Card 3: AB3 -->
+            <div class="bldg-detail-card" data-bldg="block3">
+              <div class="bldg-wing-label">
+                <span>RESEARCH & ENGINEERING</span>
+                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
+              </div>
+              <h3 class="bldg-name">Academic Block 3 (AB3)</h3>
+              <p class="bldg-desc">
+                Classrooms CR11–CR20, TR8–TR10, Bioinformatics Lab (BIL), Genomics Lab, Civil Engineering Heavy
+                Structures Lab.
+              </p>
+              <div class="bldg-footer-chips">
+                <span class="chip-metric">4 Floors • 12 Research Units</span>
+                <span class="chip-status status-active">Labs Open</span>
+              </div>
+            </div>
+
+            <!-- Card 4: LRC & Messes -->
+            <div class="bldg-detail-card" data-bldg="lrc">
+              <div class="bldg-wing-label">
+                <span>CAMPUS CORE</span>
+                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
+              </div>
+              <h3 class="bldg-name">LRC Library & Messes</h3>
+              <p class="bldg-desc">
+                3-Floor Central Library, Annapurna Dining Halls A & B, Peach Tree Cafeteria, Open Air Theatre (OAT),
+                Medical Dispensary.
+              </p>
+              <div class="bldg-footer-chips">
+                <span class="chip-metric">Dining & Study</span>
+                <span class="chip-status status-open">Open Till 11 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turn-by-Turn Indoor Route Assistance Banner Matching Screenshot 3 -->
+          <div class="campus-turn-by-turn-card">
+            <div class="turn-by-turn-left">
+              <div class="walking-avatar-circle">
+                <span class="material-symbols-outlined">directions_walk</span>
+              </div>
+              <div>
+                <h3 class="turn-title">Need turn-by-turn indoor route assistance?</h3>
+                <p class="turn-desc">
+                  Access staircase shortcuts, ramp pathways for accessibility, and elevator status across all blocks.
+                </p>
+              </div>
+            </div>
+            <div class="turn-by-turn-actions">
+              <button type="button" class="btn-accessible-path" id="btn-accessible-path">
+                <span class="material-symbols-outlined text-[17px]">accessible</span>
+                <span>Accessible Paths</span>
+              </button>
+              <button type="button" class="btn-shortest-path" id="btn-shortest-path">
+                <span class="material-symbols-outlined text-[17px]">alt_route</span>
+                <span>Find Shortest Path</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Turn-by-Turn Route Navigation Modal -->
+          <div class="modal-backdrop" id="map-route-modal" style="display: none;">
+            <div class="modal-card route-modal-card" id="map-route-modal-card"></div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 5: ACADEMIC CALENDAR ================= -->
+        <section class="app-view-panel" id="view-calendar">
+          <!-- Calendar Hero Card with HUD Badge & Live Term Indicator -->
+          <div class="mess-hero-card" style="margin-bottom: 16px;">
+            <div class="mess-hero-left">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+                <span class="hub-badge" style="background: rgba(0, 229, 255, 0.15); color: var(--accent-primary); border-color: rgba(0, 229, 255, 0.3);">
+                  Academic Calendar 2026–2027
+                </span>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Ref: JUIT/WKG/REGR/2026-27/050</span>
+              </div>
+              <h2 style="font-size: 1.45rem; margin: 0 0 4px;">University Academic Schedule & Milestones</h2>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+                Track T1, T2 (Mid-Term), and T3 (End-Term) exams, mid-semester breaks, national holidays, fests, and sync deadlines directly with Google Calendar.
+              </p>
+            </div>
+            <div class="mess-serving-pill" id="calendar-active-term-pill">
+              <span class="pulse-indicator"></span>
+              <span>ODD Sem 2026 Active</span>
+            </div>
+          </div>
+
+          <!-- Calendar Search Bar & Top Action Buttons -->
+          <div style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="position: relative; flex: 1; min-width: 260px;">
+              <input type="text" id="calendar-search-input" placeholder="Search milestones e.g. T2, Diwali, Parakram, Murious, holidays..." class="select-styled" style="width: 100%; padding-left: 36px; box-sizing: border-box;" autocomplete="off" />
+              <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.5;">🔍</span>
+              <button type="button" id="calendar-search-clear" class="btn-micro" style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 2px 6px;">✕</button>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-secondary" id="btn-export-ics-main" style="font-size: 0.82rem; padding: 7px 14px; white-space: nowrap;">
+                📥 Export .ICS
+              </button>
+              <button type="button" class="btn-primary" id="btn-add-personal-main" style="font-size: 0.82rem; padding: 7px 14px; white-space: nowrap;">
+                + Add Personal Note
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls: Term Switcher & Category Filters -->
+          <div class="calendar-controls">
+            <div class="term-switcher">
+              <button type="button" class="term-btn active" id="btn-cal-odd">ODD Semester 2026 (Active)</button>
+              <button type="button" class="term-btn" id="btn-cal-even">EVEN Semester 2027</button>
+            </div>
+
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="map-filter-chip cal-filter-btn active" data-filter="all">All Events</button>
+              <button type="button" class="map-filter-chip cal-filter-btn" data-filter="exam">📝 Examinations</button>
+              <button type="button" class="map-filter-chip cal-filter-btn" data-filter="fest">🎉 Fests & Cultural</button>
+              <button type="button" class="map-filter-chip cal-filter-btn" data-filter="vacation">🏖️ Vacations & Breaks</button>
+              <button type="button" class="map-filter-chip cal-filter-btn" data-filter="holiday">🏛️ Gazetted Holidays</button>
+              <button type="button" class="map-filter-chip cal-filter-btn" data-filter="personal">⭐ Personal Notes</button>
+            </div>
+          </div>
+
+          <!-- View Switcher (Agenda / Month) -->
+          <div id="calendar-view-switcher"></div>
+
+          <!-- Timeline or Month Grid -->
+          <div class="calendar-timeline" id="calendar-timeline-container"></div>
+        </section>
+
+        <!-- ================= VIEW 6: ANNOUNCEMENTS ================= -->
+        <section class="app-view-panel" id="view-announcements">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Official Campus Announcements</h2>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">Administrative circulars,
+                examination schedules, hostel guidelines, and fests.</p>
+            </div>
+            <div style="min-width: 250px;">
+              <input type="text" id="announcements-search-input" placeholder="Search notices..." class="select-styled"
+                style="width: 100%;" />
+            </div>
+          </div>
+
+          <!-- Category Filters -->
+          <div class="map-filters-row" id="announcements-category-filters" style="margin-bottom: 16px;"></div>
+
+          <!-- Announcements Cards Grid -->
+          <div style="display: flex; flex-direction: column; gap: 12px;" id="announcements-cards-container"></div>
+        </section>
+
+        <!-- ================= VIEW 7: ACADEMICS & ATTENDANCE ================= -->
+        <section class="app-view-panel" id="view-academics">
+          <!-- Academic Module Header -->
+          <div class="academics-header-block">
+            <div class="academics-header-info">
+              <div class="academics-pre-tag">
+                <span class="hub-pill-tag">ACADEMIC TRACKER</span>
+                <span class="hub-live-badge">JUIT 80% / 75% Rule Compliance</span>
+              </div>
+              <h2 class="academics-main-title">Course Attendance & Academic Hub</h2>
+              <p class="academics-subtitle">
+                Track your course attendance with one tap, calculate safe bunks vs recovery classes, review semester schedule load, and forecast your SGPA & CGPA.
+              </p>
+            </div>
+          </div>
+
+          <!-- Academic Sub-Navigation Tabs -->
+          <div class="academics-subnav-row" id="academics-subnav-tabs">
+            <button type="button" class="academic-tab-btn active" data-subtab="personal-attendance" id="tab-btn-personal-attendance">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>My Course Attendance</span>
+              <span class="tab-chip-pill">Live Tracker</span>
+            </button>
+            <button type="button" class="academic-tab-btn" data-subtab="batch-attendance" id="tab-btn-batch-attendance">
+              <span class="material-symbols-outlined">group</span>
+              <span>Batch Schedule Load</span>
+              <span class="tab-chip-pill">All Batches</span>
+            </button>
+            <button type="button" class="academic-tab-btn" data-subtab="cgpa-checker" id="tab-btn-cgpa-checker">
+              <span class="material-symbols-outlined">calculate</span>
+              <span>CGPA & SGPA Predictor</span>
+              <span class="tab-chip-pill highlight">10-Point Scale</span>
+            </button>
+          </div>
+
+          <!-- SUB-PANEL 1: Personal Course Attendance Tracker (Default) -->
+          <div class="academic-subpanel active" id="subpanel-personal-attendance">
+            <div id="academics-attendance-container"></div>
+            <div style="margin-top: 30px;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 14px;">Registered Semester Courses Directory</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;"
+                id="academics-courses-list"></div>
+            </div>
+          </div>
+
+          <!-- SUB-PANEL 2: Batch Attendance Indicator (Secondary) -->
+          <div class="academic-subpanel" id="subpanel-batch-attendance" style="display: none;">
+            <div id="batch-attendance-container"></div>
+          </div>
+
+          <!-- SUB-PANEL 3: CGPA & SGPA Predictor -->
+          <div class="academic-subpanel" id="subpanel-cgpa-checker" style="display: none;">
+            <div id="academics-cgpa-container"></div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 8: RESOURCE HUB ================= -->
+        <section class="app-view-panel" id="view-resources">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Academic Resource Hub</h2>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">Lecture slides, previous year
+                question papers (PYQs), lab manuals, and textbook notes.</p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <select class="select-styled" id="resource-sem-filter">
+                <option value="all">All Semesters</option>
+                <option value="1" selected>Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="5">Semester 5</option>
+              </select>
+              <input type="text" id="resource-search-input" placeholder="Search by course/unit..." class="select-styled"
+                style="width: 200px;" />
+              <button type="button" class="btn-primary" id="btn-add-resource" style="font-size: 0.82rem; padding: 6px 14px;">+ Share
+                Note</button>
+            </div>
+          </div>
+
+          <!-- Academic Vault Subject Filter Tabs (SDF, English, Physics) -->
+          <div class="category-pills-row" id="resource-subject-filters"
+            style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+
+          <!-- Resource Type Filter Chips -->
+          <div class="map-filters-row" id="resource-type-filters" style="margin-bottom: 16px;"></div>
+
+          <!-- Resources Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;"
+            id="resources-grid-container"></div>
+        </section>
+
+        <!-- ================= VIEW 9: EVENTS & CLUBS ================= -->
+        <section class="app-view-panel" id="view-events-clubs">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Campus Life: Events & Student Clubs</h2>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">Technical symposiums, annual
+                cultural fests, sports meets, and professional student societies.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <div class="term-switcher">
+                <button type="button" class="term-btn active" id="tab-btn-events">Campus Events</button>
+                <button type="button" class="term-btn" id="tab-btn-clubs">Clubs & Societies</button>
+              </div>
+              <input type="text" id="events-clubs-search" placeholder="Search events or clubs..." class="select-styled"
+                style="width: 180px;" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;"
+            id="events-clubs-container"></div>
+        </section>
+
+        <!-- ================= VIEW 10: USEFUL LINKS ================= -->
+        <section class="app-view-panel" id="view-portals">
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="hub-badge" style="background: rgba(0, 229, 255, 0.15); color: var(--accent-primary); border-color: rgba(0, 229, 255, 0.3);">
+                Official Campus Portals
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Institutional Directory</span>
+            </div>
+            <h2 style="font-size: 1.5rem; margin: 0 0 4px;">University Digital Services Directory</h2>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+              Direct, verified links to JUIT Webkiosk, Moodle LMS, LRC Digital Library, Student Email, Fee Gateway, and Emergency Desks.
+            </p>
+          </div>
+
+          <div class="portals-directory-grid">
+            <!-- 1. JUIT Webkiosk -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">📊</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">JUIT Webkiosk</h3>
+                      <div class="portal-service-domain">webkiosk.juit.ac.in</div>
+                    </div>
+                  </div>
+                  <a href="https://webkiosk.juit.ac.in/" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Open Webkiosk</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Official academic records: check live attendance percentages, T1/T2/T3 marks breakdown, semester grade cards (SGPA/CGPA), and fee receipts.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">Attendance (80% Rule)</span>
+                <span class="portal-feature-tag">Marks Breakdown</span>
+                <span class="portal-feature-tag">Grade Sheets</span>
+                <span class="portal-feature-tag">Fee Receipts</span>
+              </div>
+            </div>
+
+            <!-- 2. JUIT Moodle LMS -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3);">🎓</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">JUIT Moodle LMS</h3>
+                      <div class="portal-service-domain">lms.juit.ac.in</div>
+                    </div>
+                  </div>
+                  <a href="https://lms.juit.ac.in/login/index.php" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Open Moodle</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Central learning management platform for weekly lecture slides, assignment submissions, lab quizzes, and official course notices.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">Lecture Slides</span>
+                <span class="portal-feature-tag">Assignments</span>
+                <span class="portal-feature-tag">Online Quizzes</span>
+                <span class="portal-feature-tag">Course Materials</span>
+              </div>
+            </div>
+
+            <!-- 3. LRC Digital Library & Koha OPAC -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">📚</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">LRC Digital Library</h3>
+                      <div class="portal-service-domain">juit.ac.in/lrc • Digital Library</div>
+                    </div>
+                  </div>
+                  <a href="https://www.juit.ac.in/lrc/Digital_library.php" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Open LRC</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Over 45,000 text and reference volumes, Previous Year Questions (PYQ archive), Koha Web OPAC catalog, and IEEE Xplore access on campus IP.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">PYQ Exam Archive</span>
+                <span class="portal-feature-tag">IEEE Xplore</span>
+                <span class="portal-feature-tag">Koha Book Catalog</span>
+                <span class="portal-feature-tag">DSpace Repository</span>
+              </div>
+            </div>
+
+            <!-- 4. Official JUIT Portal -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3);">🏛️</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">Official JUIT Portal</h3>
+                      <div class="portal-service-domain">juit.ac.in</div>
+                    </div>
+                  </div>
+                  <a href="https://www.juit.ac.in/" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Visit Portal</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Official university notifications, examination controller circulars, faculty directory, Training & Placement Cell (T&P), and convocation news.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">Official Circulars</span>
+                <span class="portal-feature-tag">Faculty Directory</span>
+                <span class="portal-feature-tag">Placements Cell</span>
+                <span class="portal-feature-tag">Admissions</span>
+              </div>
+            </div>
+
+            <!-- 5. Student Webmail (Office 365) -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.3);">✉️</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">Student Webmail</h3>
+                      <div class="portal-service-domain">outlook.office.com</div>
+                    </div>
+                  </div>
+                  <a href="https://outlook.office.com/mail/" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Open Webmail</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Official university Microsoft 365 student inbox for departmental circulars, placement drives, project submissions, and admin notices.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">@juit.ac.in Email</span>
+                <span class="portal-feature-tag">Placement Drive Alerts</span>
+                <span class="portal-feature-tag">MS Office 365</span>
+                <span class="portal-feature-tag">1TB OneDrive</span>
+              </div>
+            </div>
+
+            <!-- 6. Online Fee Payment (SBI Collect) -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(20, 184, 166, 0.15); color: #14b8a6; border: 1px solid rgba(20, 184, 166, 0.3);">💳</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">SBI Collect Fee Gateway</h3>
+                      <div class="portal-service-domain">onlinesbi.sbi/sbicollect</div>
+                    </div>
+                  </div>
+                  <a href="https://www.onlinesbi.sbi/sbicollect/icollecthome.htm" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Pay Online</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Official State Bank of India portal for semester tuition payments, hostel fee dues, examination charges, and downloading official receipts.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">Semester Tuition</span>
+                <span class="portal-feature-tag">Hostel Charges</span>
+                <span class="portal-feature-tag">Payment Challan</span>
+                <span class="portal-feature-tag">Official Receipts</span>
+              </div>
+            </div>
+
+            <!-- 7. Bus & Transport Service Desk -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(234, 179, 8, 0.15); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">🚌</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">Transport & Bus Desk</h3>
+                      <div class="portal-service-domain">juit.ac.in/bus-service</div>
+                    </div>
+                  </div>
+                  <a href="https://www.juit.ac.in/" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Bus Info</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  Daily shuttle and weekend bus schedules connecting Waknaghat Campus to Shimla (ISBT) and Solan Mall Road for day scholars and hostellers.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">Campus Shuttle</span>
+                <span class="portal-feature-tag">Waknaghat - Solan</span>
+                <span class="portal-feature-tag">Waknaghat - Shimla</span>
+                <span class="portal-feature-tag">Weekend Trips</span>
+              </div>
+            </div>
+
+            <!-- 8. Anti-Ragging & Proctorial Desk -->
+            <div class="portal-service-card">
+              <div>
+                <div class="portal-service-header">
+                  <div class="portal-service-lead">
+                    <div class="portal-service-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">🛡️</div>
+                    <div class="portal-service-meta">
+                      <h3 class="portal-service-title">Anti-Ragging Helpline</h3>
+                      <div class="portal-service-domain">juit.ac.in/anti-ragging</div>
+                    </div>
+                  </div>
+                  <a href="https://www.juit.ac.in/anti_ragging.php" target="_blank" rel="noopener noreferrer" class="portal-launch-btn">
+                    <span>Helpline</span>
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+                <p class="portal-service-desc">
+                  24x7 University Proctorial Board, Student Grievance Redressal Committee, and National Anti-Ragging Cell confidential contact lines.
+                </p>
+              </div>
+              <div class="portal-service-chips">
+                <span class="portal-feature-tag">24x7 Helpline</span>
+                <span class="portal-feature-tag">Proctorial Board</span>
+                <span class="portal-feature-tag">Confidential Grievance</span>
+                <span class="portal-feature-tag">Zero Tolerance</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 11: STUDENT UTILITIES ================= -->
+        <section class="app-view-panel" id="view-utilities">
+          <div style="margin-bottom: 16px;">
+            <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Student Productivity Utilities</h2>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+              CGPA/SGPA Estimator, Assignment Tracker, Pomodoro Study Timer, Scholar Scratchpad, and Emergency Helpline
+              Contacts.
+            </p>
+          </div>
+
+          <!-- Utilities Tabs Switcher -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+            <button type="button" class="map-filter-chip util-tab-btn active" data-tab="gpa">📊 SGPA & CGPA</button>
+            <button type="button" class="map-filter-chip util-tab-btn" data-tab="assignments">📝 Assignments</button>
+            <button type="button" class="map-filter-chip util-tab-btn" data-tab="pomodoro">⏱️ Study Pomodoro</button>
+            <button type="button" class="map-filter-chip util-tab-btn" data-tab="notes">📄 Scholar Notes</button>
+            <button type="button" class="map-filter-chip util-tab-btn" data-tab="emergency">📞 Emergency Contacts</button>
+          </div>
+
+          <div id="utilities-tab-content"></div>
+        </section>
+
+        <!-- ================= VIEW 12: SETTINGS & THEMES ================= -->
+        <section class="app-view-panel" id="view-settings">
+          <div style="margin-bottom: 20px;">
+            <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Personalization & Theme Settings</h2>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+              Customize your academic branch, active semester batch, UI theme mode, and accent palette.
+            </p>
+          </div>
+
+          <div class="dashboard-grid">
+            <!-- Student Profile Card -->
+            <div class="dash-card col-span-6">
+              <h3 style="font-size: 1.2rem; margin-bottom: 12px;">Scholar Identity</h3>
+              <div
+                style="background: var(--bg-elevated); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 14px;">
+                <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Active Enrolled
+                  Batch</div>
+                <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-top: 4px;"
+                  id="settings-display-batch">
+                  B.Tech CSE • Semester 1 • Batch 26BT16
+                </div>
+              </div>
+              <button type="button" class="btn-primary" onclick="App.openOnboardingModal()">
+                Edit Academic Profile & Branch ✎
+              </button>
+            </div>
+
+            <!-- Theme Modes Card -->
+            <div class="dash-card col-span-6">
+              <h3 style="font-size: 1.2rem; margin-bottom: 12px;">Theme Mode</h3>
+              <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                <button type="button" class="term-btn active" data-set-theme="dark">🌙 Dark Mode</button>
+                <button type="button" class="term-btn" data-set-theme="light">☀️ Light Mode</button>
+                <button type="button" class="term-btn" data-set-theme="system">💻 System Mode</button>
+              </div>
+
+              <h4 style="font-size: 0.95rem; margin: 16px 0 8px;">Accent Color Palette</h4>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="map-filter-chip active" data-set-accent="blue"
+                  style="border-left: 3px solid #2563eb;">JUIT Blue</button>
+                <button type="button" class="map-filter-chip" data-set-accent="purple"
+                  style="border-left: 3px solid #8b5cf6;">Purple</button>
+                <button type="button" class="map-filter-chip" data-set-accent="emerald"
+                  style="border-left: 3px solid #10b981;">Emerald</button>
+                <button type="button" class="map-filter-chip" data-set-accent="orange"
+                  style="border-left: 3px solid #f97316;">Orange</button>
+                <button type="button" class="map-filter-chip" data-set-accent="rose"
+                  style="border-left: 3px solid #f43f5e;">Rose</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW 13: ADMIN & EXCEL IMPORTER ================= -->
+        <section class="app-view-panel" id="view-admin">
+          <div style="margin-bottom: 16px;">
+            <h2 style="font-size: 1.5rem; margin: 0 0 4px;">JUIT Administrator Console</h2>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">
+              Manage campus timetable workbooks, Annapurna menus, notices, venues, and portal links.
+            </p>
+          </div>
+
+          <!-- Locked Banner (if not unlocked) -->
+          <div id="admin-locked-banner" class="dash-card" style="text-align: center; padding: 40px 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🛡️</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Admin Authorization Required</h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; max-width: 480px; margin: 0 auto 20px;">
+              The administrator panel allows modifying live campus databases and importing Excel workbooks. Enter the
+              passcode to proceed.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 10px; max-width: 360px; margin: 0 auto;">
+              <input type="password" id="admin-passcode-input" placeholder="Enter admin passcode" class="select-styled"
+                style="flex: 1;" />
+              <button type="button" class="btn-primary" id="btn-admin-unlock-submit">Unlock</button>
+            </div>
+            <div style="margin-top: 14px;">
+              <button type="button" class="btn-secondary" id="btn-admin-quick-unlock" style="font-size: 0.78rem;">
+                Demonstration 1-Click Unlock (juit2026)
+              </button>
+            </div>
+          </div>
+
+          <!-- Unlocked Admin Area -->
+          <div id="admin-content-area" style="display: none;">
+            <div class="map-filters-row" id="admin-tabs-nav" style="margin-bottom: 16px;"></div>
+            <div id="admin-panel-dynamic-view"></div>
+          </div>
+        </section>
+
+        <!-- Institutional Footer -->
+        <footer class="app-footer">
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 4px;">
+            JUIT Student Hub
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">
+            Student-built campus utility • Jaypee University of Information Technology, Waknaghat, Solan (H.P.) - 173234
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8;">
+            Not an official JUIT website. Designed for simplified scholar navigation.
+          </div>
+        </footer>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ================= NOTIFICATION CENTER DRAWER ================= -->
+  <div class="notification-drawer" id="notification-drawer">
+    <div class="notif-drawer-header">
+      <div style="font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+        <span>🔔</span>
+        <span>Notifications</span>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button type="button" class="btn-micro" id="btn-mark-all-read">Mark Read</button>
+        <button type="button" class="btn-close-drawer" id="btn-close-notif-drawer">✕</button>
+      </div>
+    </div>
+    <div class="notif-drawer-body" id="notification-items-list"></div>
+  </div>
+
+
+  <!-- ================= UNIVERSAL SEARCH / COMMAND PALETTE MODAL ================= -->
+  <div class="modal-backdrop" id="search-modal-backdrop">
+    <div class="modal-content-window">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; gap: 8px;">
+          <span>🔍</span>
+          <span>Search JUIT Hub</span>
+        </div>
+        <button type="button" class="btn-close-drawer" id="btn-close-search-modal">✕</button>
+      </div>
+      <div>
+        <input type="text" class="search-modal-input" id="search-modal-input"
+          placeholder="Search classrooms (CR01, LT3), courses (SDF), dishes, fests..." autocomplete="off" />
+      </div>
+      <div class="search-results-list" id="search-modal-results">
+        <div style="padding: 24px; text-align: center; color: var(--text-muted);">
+          Type any course code, room, dish, or calendar event.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STUDENT ONBOARDING / PROFILE MODAL ================= -->
+  <div class="modal-backdrop" id="onboarding-modal-backdrop">
+    <div class="modal-content-window" style="max-width: 500px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.6rem;">🎓</span>
+          <div>
+            <h3 style="font-size: 1.25rem; margin: 0;">Scholar Profile & Onboarding</h3>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">Customize your JUIT Hub schedule & batch</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-drawer" id="btn-close-onboarding-modal">✕</button>
+      </div>
+
+      <form id="onboarding-profile-form">
+        <div style="margin-bottom: 12px;">
+          <label class="control-label" for="onboard-name-input">Scholar Name</label>
+          <input type="text" id="onboard-name-input" class="select-styled" style="width: 100%;" value="Scholar"
+            required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="control-label" for="onboard-programme-select">Programme</label>
+            <select class="select-styled" id="onboard-programme-select" style="width: 100%;">
+              <option value="B.Tech" selected>B.Tech</option>
+              <option value="M.Tech">M.Tech</option>
+              <option value="M.Sc">M.Sc</option>
+              <option value="PhD">PhD</option>
+            </select>
+          </div>
+          <div>
+            <label class="control-label" for="onboard-branch-select">Branch</label>
+            <select class="select-styled" id="onboard-branch-select" style="width: 100%;">
+              <option value="CSE" selected>CSE</option>
+              <option value="CSE/AIML">CSE / AIML</option>
+              <option value="ECE">ECE</option>
+              <option value="Civil">Civil</option>
+              <option value="Biotech">Biotechnology</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <label class="control-label" for="onboard-sem-select">Semester</label>
+            <select class="select-styled" id="onboard-sem-select" style="width: 100%;">
+              <option value="1" selected>Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+          <div>
+            <label class="control-label" for="onboard-batch-select">Batch</label>
+            <select class="select-styled" id="onboard-batch-select" style="width: 100%;"></select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label class="control-label" for="onboard-role-select">User Role</label>
+          <select class="select-styled" id="onboard-role-select" style="width: 100%;">
+            <option value="Student" selected>Student</option>
+            <option value="Faculty">Faculty</option>
+            <option value="Admin">Admin</option>
+            <option value="Super Admin">Super Admin</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 10px; font-size: 0.95rem;">
+          Save & Load My Campus Hub →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Universal Modal for Popups / Inspects -->
+  <div class="modal-backdrop" id="universal-modal">
+    <div class="modal-content-window" id="universal-modal-content"></div>
+  </div>
+
+  <!-- ================= FLOATING MOBILE BOTTOM HUD DOCK ================= -->
+  <nav class="mobile-hud-dock" aria-label="Mobile Navigation Dock">
+    <button type="button" class="mobile-hud-item active" data-view="dash" title="Dashboard">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>Home</span>
+    </button>
+    <button type="button" class="mobile-hud-item" data-view="timetable" title="Timetable">
+      <span class="material-symbols-outlined">calendar_today</span>
+      <span>Classes</span>
+    </button>
+    <button type="button" class="mobile-hud-item" data-view="campus" title="Campus Map & Venue Navigator">
+      <span class="material-symbols-outlined">map</span>
+      <span>Map</span>
+    </button>
+    <button type="button" class="mobile-hud-item" data-view="mess" title="Annapurna Mess">
+      <span class="material-symbols-outlined">restaurant</span>
+      <span>Mess</span>
+    </button>
+    <button type="button" class="mobile-hud-item" data-view="resources" title="Academic Vault & Math Tutorials">
+      <span class="material-symbols-outlined">download_for_offline</span>
+      <span>Vault</span>
+    </button>
+    <button type="button" class="mobile-hud-item" id="btn-mobile-hud-more" title="More Campus Modules">
+      <span class="material-symbols-outlined">apps</span>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <!-- ================= MOBILE SLIDE-OVER DRAWER ================= -->
+  <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+  <aside class="mobile-drawer" id="mobile-drawer" aria-label="Campus Menu Drawer">
+    <div class="mobile-drawer-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-logo-pin" style="width: 36px; height: 36px; font-size: 1rem;">
+          <span class="material-symbols-outlined text-[20px]">school</span>
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); letter-spacing: -0.02em;">
+            JUIT Hub</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">JUIT Solan • Campus Hub</div>
+        </div>
+      </div>
+      <button type="button" class="mobile-drawer-close-btn" id="btn-close-mobile-drawer" aria-label="Close menu">✕</button>
+    </div>
+
+    <div class="sidebar-section-title">Campus Navigation</div>
+    <nav class="sidebar-nav-list">
+      <a href="#dash" class="nav-link" data-view="dash"><span
+          class="material-symbols-outlined nav-icon">dashboard</span><span>Dashboard</span></a>
+      <a href="#timetable" class="nav-link" data-view="timetable"><span
+          class="material-symbols-outlined nav-icon">calendar_today</span><span>Timetable</span></a>
+      <a href="#calendar" class="nav-link" data-view="calendar"><span
+          class="material-symbols-outlined nav-icon">event_note</span><span>Academic Calendar</span></a>
+      <a href="#mess" class="nav-link" data-view="mess"><span
+          class="material-symbols-outlined nav-icon">restaurant</span><span>Annapurna Mess</span></a>
+      <a href="#campus" class="nav-link" data-view="campus"><span
+          class="material-symbols-outlined nav-icon">map</span><span>Campus Map & Finder</span></a>
+      <a href="#announcements" class="nav-link" data-view="announcements"><span
+          class="material-symbols-outlined nav-icon">campaign</span><span>Announcements</span></a>
+      <a href="#academics" class="nav-link" data-view="academics"><span
+          class="material-symbols-outlined nav-icon">school</span><span>Academics & Attendance</span></a>
+      <a href="#resources" class="nav-link" data-view="resources"><span
+          class="material-symbols-outlined nav-icon">folder_zip</span><span>Resource Hub (Vault)</span></a>
+      <a href="#events-clubs" class="nav-link" data-view="events-clubs"><span
+          class="material-symbols-outlined nav-icon">celebration</span><span>Events & Clubs</span></a>
+      <a href="#portals" class="nav-link" data-view="portals"><span
+          class="material-symbols-outlined nav-icon">link</span><span>Useful Links</span></a>
+      <a href="#utilities" class="nav-link" data-view="utilities"><span
+          class="material-symbols-outlined nav-icon">construction</span><span>Student Utilities</span></a>
+    </nav>
+
+    <div class="sidebar-section-title" style="margin-top: 16px;">System & Admin</div>
+    <nav class="sidebar-nav-list">
+      <a href="#settings" class="nav-link" data-view="settings"><span
+          class="material-symbols-outlined nav-icon">tune</span><span>Settings & Theme</span></a>
+      <a href="#admin" class="nav-link" data-view="admin"><span
+          class="material-symbols-outlined nav-icon">admin_panel_settings</span><span>Admin & Importer</span></a>
+    </nav>
+
+    <div class="sidebar-user-card" id="mobile-sidebar-user-card" style="margin-top: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="avatar-circle" style="width: 34px; height: 34px;">
+          <span class="material-symbols-outlined text-[18px]" style="color: var(--accent-primary);">school</span>
+        </div>
+        <div>
+          <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary);">JUIT Scholar</div>
+          <div style="font-size: 0.72rem; color: var(--text-muted);">B.Tech Sem 1 • Batch 26BT16</div>
+        </div>
+      </div>
+      <span class="material-symbols-outlined" style="font-size: 15px; color: var(--accent-primary);">edit</span>
+    </div>
+  </aside>
+
+  <!-- ================= APPLICATION SCRIPTS ================= -->
+  <!-- 1. Offline Data Bundles (Timetable, Mess, Campus, Calendar, Announcements, Clubs) -->
+  <script src="js/data/bundle.js"></script>
+  <script src="js/data/initial_data.js"></script>
+
+  <!-- 2. Core Functional Controllers -->
+  <script src="js/theme.js"></script>
+  <script src="js/timetable.js"></script>
+  <script src="js/mess.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/academics.js"></script>
+  <script src="js/resources.js"></script>
+  <script src="js/announcements.js"></script>
+  <script src="js/events-clubs.js"></script>
+  <script src="js/utilities.js"></script>
+  <script src="js/portals.js"></script>
+  <script src="js/admin.js"></script>
+
+  <!-- 3. Master App Orchestrator -->
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>

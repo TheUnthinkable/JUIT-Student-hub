@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JUIT Hub - Mobile Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111827;
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.35);
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .container {
+      max-width: 480px;
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow);
+      text-align: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+    .qr-card {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 16px;
+      display: inline-block;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      margin-bottom: 24px;
+    }
+    .qr-card img {
+      display: block;
+      width: 220px;
+      height: 220px;
+      border-radius: 8px;
+    }
+    .link-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .link-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .link-text {
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: #e5e7eb;
+      word-break: break-all;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
+    }
+    .guide-box {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: left;
+    }
+    .guide-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #93c5fd;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .guide-item {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .guide-item strong {
+      color: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">
+      <span class="pulse-dot"></span> LIVE HTTPS DEPLOY LINK
+    </div>
+    <h1>JUIT Student Hub</h1>
+    <p class="subtitle">Scan the QR code with your phone camera or tap the button to open directly.</p>
+
+    <div class="qr-card">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=https://gmbh-empirical-abs-functional.trycloudflare.com" alt="Scan QR Code to open on Mobile">
+    </div>
+
+    <div class="link-box">
+      <div class="link-label">Live Mobile Public URL (HTTPS)</div>
+      <div class="link-text" id="live-url">https://gmbh-empirical-abs-functional.trycloudflare.com</div>
+    </div>
+
+    <a href="https://gmbh-empirical-abs-functional.trycloudflare.com" target="_blank" class="btn btn-primary" id="open-btn">
+      🚀 Open Hub in Browser
+    </a>
+
+    <button onclick="navigator.clipboard.writeText('https://gmbh-empirical-abs-functional.trycloudflare.com').then(() => alert('Link copied to clipboard!'))" class="btn" style="background: rgba(255,255,255,0.08); color: white;">
+      📋 Copy Link to Clipboard
+    </button>
+
+    <div class="guide-box">
+      <div class="guide-title">📱 Install as App on your Phone</div>
+      <div class="guide-item"><strong>iPhone (Safari):</strong> Tap the <em>Share icon</em> (square with arrow) &rarr; Tap <strong>"Add to Home Screen"</strong>.</div>
+      <div class="guide-item"><strong>Android (Chrome):</strong> Tap the <em>three dots (&vellip;)</em> &rarr; Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</div>
+      <div class="guide-item" style="margin-top: 8px; color: #6ee7b7;">&check; Works completely offline once loaded!</div>
+    </div>
+  </div>
+</body>
+</html>

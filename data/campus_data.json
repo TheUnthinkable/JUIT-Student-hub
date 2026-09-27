@@ -1,0 +1,488 @@
+{
+  "institution": "Jaypee University of Information Technology, Waknaghat, Solan",
+  "campusOverview": {
+    "name": "JUIT Waknaghat Campus",
+    "location": "Waknaghat, P.O. Dumehar, Tehsil Kandaghat, District Solan, H.P. - 173234",
+    "elevation": "1,550 meters above sea level",
+    "campusArea": "25 scenic hill acres"
+  },
+  "buildings": [
+    {
+      "id": "block1",
+      "name": "Academic Block 1",
+      "code": "AB1",
+      "category": "academic",
+      "coordinates": {
+        "x": 320,
+        "y": 310,
+        "w": 130,
+        "h": 90
+      },
+      "icon": "school",
+      "color": "#3b82f6",
+      "summary": "Main Academic Complex housing Classrooms CR01-CR10, Tutorial Rooms TR1-TR7, Physics Labs, Electronics Labs, and Language Lab.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Classrooms CR01, CR02, CR03, CR04, CR05",
+            "Distance Learning Classroom (DLC / Smart Hall)",
+            "Physics Laboratories (PHLAB1, PHLAB2)",
+            "Dean Academics Office Annex"
+          ]
+        },
+        {
+          "level": "1st Floor",
+          "facilities": [
+            "Classrooms CR06, CR07, CR08, CR09, CR10",
+            "Language Communication Lab (LANGULAB)",
+            "Group Discussion & Placement Room (GDROOM)",
+            "Tutorial Rooms TR1, TR2, TR3"
+          ]
+        },
+        {
+          "level": "2nd Floor",
+          "facilities": [
+            "Electronics & Hardware Labs (ECL1, ECL2, ECL3)",
+            "Computer-Aided Drafting & Drawing Hall (CAD, DRAWR)",
+            "Tutorial Rooms TR4, TR5, TR6"
+          ]
+        },
+        {
+          "level": "3rd Floor",
+          "facilities": [
+            "Communication & Microwave Lab (ECL7)",
+            "Tutorial Room TR7",
+            "ECE Faculty Cabins"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "block2",
+      "name": "Academic Block 2 (Lecture Theatres & Computing Centre)",
+      "code": "AB2",
+      "category": "academic",
+      "coordinates": {
+        "x": 480,
+        "y": 270,
+        "w": 140,
+        "h": 100
+      },
+      "icon": "computer",
+      "color": "#8b5cf6",
+      "summary": "Tiered Lecture Theatres LT1-LT3, Main Computer Centre, High Performance Computing Labs CL01-CL52, and AI/Project Labs.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Central Server Room & IT Network Control",
+            "Computer Labs CL1A, CL1B (Introductory & Programming Labs)",
+            "Student Project Work Area"
+          ]
+        },
+        {
+          "level": "1st Floor",
+          "facilities": [
+            "Lecture Theatre 1 (LT1 - Tiered Amphitheatre)",
+            "Lecture Theatre 2 (LT2 - Tiered Amphitheatre)",
+            "Faculty Cabins (CSE & IT Department)"
+          ]
+        },
+        {
+          "level": "2nd Floor",
+          "facilities": [
+            "Lecture Theatre 3 (LT3 - 250 Seater Multimedia Hall)",
+            "Computer Labs CL04, CL06, CL07",
+            "Data Engineering & Systems Labs"
+          ]
+        },
+        {
+          "level": "3rd Floor",
+          "facilities": [
+            "Computer Labs CL10, CL11, CL31, CL52",
+            "Advanced Computing Labs (ALAB1, ALAB2)",
+            "DevOps & Software Engineering Lab (DLAB)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "block3",
+      "name": "Academic Block 3 (Biotech, Civil & Research Labs)",
+      "code": "AB3",
+      "category": "academic",
+      "coordinates": {
+        "x": 650,
+        "y": 310,
+        "w": 130,
+        "h": 90
+      },
+      "icon": "biotech",
+      "color": "#10b981",
+      "summary": "Specialized Biotech, Bioinformatics, Genomics, Concrete & Environmental Engineering Labs, plus CR11-CR20.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Classrooms CR11, CR12",
+            "Undergraduate Lab UG2",
+            "Civil Heavy Structures & Concrete Technology Lab",
+            "Surveying & Geotechnical Lab"
+          ]
+        },
+        {
+          "level": "1st Floor",
+          "facilities": [
+            "Classrooms CR13, CR14",
+            "Bioinformatics Infrastructure Lab (BIL)",
+            "Tutorial Room TR8",
+            "Environmental Engineering Lab"
+          ]
+        },
+        {
+          "level": "2nd Floor",
+          "facilities": [
+            "Classrooms CR16, CR17, CR18",
+            "Microbiology & Cell Biology Lab (MICROLAB)",
+            "Genomics & Proteomics Lab (GENOMELAB)",
+            "Tutorial Room TR9"
+          ]
+        },
+        {
+          "level": "3rd Floor",
+          "facilities": [
+            "Classrooms CR19, CR20",
+            "Plant Tissue Culture & Bioprocess Lab",
+            "Tutorial Room TR10",
+            "Civil & Biotech Faculty Chambers"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lrc",
+      "name": "Learning Resource Centre (LRC / Central Library)",
+      "code": "LRC",
+      "category": "library",
+      "coordinates": {
+        "x": 410,
+        "y": 170,
+        "w": 120,
+        "h": 80
+      },
+      "icon": "local_library",
+      "color": "#f59e0b",
+      "summary": "Premier 3-floor intellectual hub with over 45,000 volumes, DSpace Digital Library, IEEE & Springer digital access, and 24x7 reading halls.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Circulation Counter & Book Issue/Return",
+            "Reference Book Section",
+            "Newspaper & Popular Magazines Lounge",
+            "LRC Staff & Librarian Office"
+          ]
+        },
+        {
+          "level": "1st Floor",
+          "facilities": [
+            "Digital Library Terminal Room (DSpace & E-Resources)",
+            "Previous Year Question Papers (PYQ) Repository",
+            "Main Reading Hall (Silent Study)",
+            "Subject Book Stacks"
+          ]
+        },
+        {
+          "level": "2nd Floor",
+          "facilities": [
+            "Journals & Periodicals Archive",
+            "Research Scholar & PhD Discussion Cubicles",
+            "Group Study Zone",
+            "Seminar & Audio-Visual Hall"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "name": "Administrative Block",
+      "code": "ADMIN",
+      "category": "admin",
+      "coordinates": {
+        "x": 260,
+        "y": 180,
+        "w": 110,
+        "h": 75
+      },
+      "icon": "account_balance",
+      "color": "#64748b",
+      "summary": "University Headquarters housing the Vice-Chancellor, Registrar, Examination Controller, and Student Accounts.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Main Campus Reception & Information Helpdesk",
+            "Student Accounts & Fee Receipt Section",
+            "Bank Extension Counter"
+          ]
+        },
+        {
+          "level": "1st Floor",
+          "facilities": [
+            "Controller of Examinations (COE) Office",
+            "Dean of Students (DOS) & Proctorial Board",
+            "Registry & Student Records Branch"
+          ]
+        },
+        {
+          "level": "2nd Floor",
+          "facilities": [
+            "Vice-Chancellor (VC) Secretariat",
+            "Registrar Office",
+            "Academic Council & Boardroom"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "annapurna_a",
+      "name": "Annapurna Dining Hall A (Senior Boys & Central Dining)",
+      "code": "MESS-A",
+      "category": "mess",
+      "coordinates": {
+        "x": 360,
+        "y": 450,
+        "w": 130,
+        "h": 85
+      },
+      "icon": "restaurant",
+      "color": "#ef4444",
+      "summary": "Central Annapurna Dining Facility serving warm breakfast, lunch, and dinner to senior students and hostellers.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Dining Hall No. 1 (Seating 600+ students)",
+            "Tandoor & Live Chapati Station",
+            "Self-Service Salad & Curd Counter",
+            "Night Milk Distribution Station 1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "annapurna_b",
+      "name": "Annapurna Dining Hall B (Girls & 1st Year Dining)",
+      "code": "MESS-B",
+      "category": "mess",
+      "coordinates": {
+        "x": 520,
+        "y": 450,
+        "w": 130,
+        "h": 85
+      },
+      "icon": "restaurant_menu",
+      "color": "#f97316",
+      "summary": "Dedicated dining complex for Girls and First-Year boys, with adjoining tuck shop and canteen.",
+      "floors": [
+        {
+          "level": "Ground Floor",
+          "facilities": [
+            "Girls Dining Hall & First-Year Dining Section",
+            "Zero-Maida Diet & Nutrition Counter",
+            "Special Diet Station"
+          ]
+        },
+        {
+          "level": "Annex",
+          "facilities": [
+            "Peach Tree Cafeteria & Meet & Treet Tuck Shop",
+            "First Year Boys Night Milk Collection Point",
+            "Late-Night Snacks & Beverage Counter"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "oat",
+      "name": "Open Air Theatre (OAT)",
+      "code": "OAT",
+      "category": "cultural",
+      "coordinates": {
+        "x": 450,
+        "y": 380,
+        "w": 80,
+        "h": 50
+      },
+      "icon": "theater_comedy",
+      "color": "#ec4899",
+      "summary": "Heart of JUIT cultural life: venue for Murious, Le-Fiestus, DJ Nights, Induction Ceremony, and Open Air Student Gatherings.",
+      "floors": [
+        {
+          "level": "Ground",
+          "facilities": [
+            "Tiered Stone Amphitheatre",
+            "Central Cultural Stage & Acoustic Wall",
+            "Sound & Lighting Console Deck"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hostels_girls",
+      "name": "Girls Hostels (Geeta Bhawan & Malviya Bhawan)",
+      "code": "GH",
+      "category": "hostel",
+      "coordinates": {
+        "x": 720,
+        "y": 180,
+        "w": 130,
+        "h": 90
+      },
+      "icon": "apartment",
+      "color": "#a855f7",
+      "summary": "Secure campus living for female scholars with panoramic mountain views and modern hostel amenities.",
+      "floors": [
+        {
+          "level": "Complex",
+          "facilities": [
+            "Geeta Bhawan & Geeta Bhawan Extension",
+            "Malviya Bhawan (Blocks A & B)",
+            "Night Milk Distribution Counters (09:15 - 09:45 PM)",
+            "Indoor Badminton, Common Room & Gymnasium"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hostels_boys",
+      "name": "Boys Hostels (Shastri, Azad, Patel, Subhash)",
+      "code": "BH",
+      "category": "hostel",
+      "coordinates": {
+        "x": 160,
+        "y": 420,
+        "w": 140,
+        "h": 100
+      },
+      "icon": "apartment",
+      "color": "#06b6d4",
+      "summary": "Multi-tier hostel blocks for male students nestled into the hill terrace.",
+      "floors": [
+        {
+          "level": "Complex",
+          "facilities": [
+            "Shastri Bhawan",
+            "Azad Bhawan",
+            "Patel Bhawan",
+            "Subhash Bhawan & Bhagat Singh Bhawan",
+            "Reading Lounges, Table Tennis & Laundry Services"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sports_complex",
+      "name": "Sports Arena & Gymnasium",
+      "code": "SPORTS",
+      "category": "sports",
+      "coordinates": {
+        "x": 680,
+        "y": 440,
+        "w": 110,
+        "h": 75
+      },
+      "icon": "sports_basketball",
+      "color": "#14b8a6",
+      "summary": "Outdoor basketball courts, floodlit volleyball & tennis courts, indoor badminton arena, and university gym.",
+      "floors": [
+        {
+          "level": "Ground",
+          "facilities": [
+            "Full Court Basketball Arena (Parakram Main Venue)",
+            "Volleyball Courts",
+            "Indoor Badminton & Table Tennis Room",
+            "Fitness Centre & Gymnasium"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dispensary",
+      "name": "Dispensary & Health Centre",
+      "code": "HEALTH",
+      "category": "facility",
+      "coordinates": {
+        "x": 200,
+        "y": 280,
+        "w": 90,
+        "h": 60
+      },
+      "icon": "local_hospital",
+      "color": "#ef4444",
+      "summary": "24x7 campus medical dispensary with resident doctor, nursing staff, emergency observation beds, and campus ambulance.",
+      "floors": [
+        {
+          "level": "Ground",
+          "facilities": [
+            "OPD Consultation Chamber",
+            "Pharmacy & Medicine Stock",
+            "Observation Beds & First Aid",
+            "24x7 Dedicated Ambulance Bay"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "main_gate",
+      "name": "Main Entrance Gate & PNB ATM",
+      "code": "GATE",
+      "category": "facility",
+      "coordinates": {
+        "x": 100,
+        "y": 160,
+        "w": 90,
+        "h": 60
+      },
+      "icon": "security",
+      "color": "#64748b",
+      "summary": "Campus security check-post on Shimla-Solan highway with 24x7 Punjab National Bank ATM and visitor registry.",
+      "floors": [
+        {
+          "level": "Ground",
+          "facilities": [
+            "Campus Security Gatehouse & Visitor Gate Pass Desk",
+            "Punjab National Bank (PNB) 24x7 ATM",
+            "Taxi & Campus Bus Drop-off Bay"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "viewpoint",
+      "name": "Helipad & Shivalik Hill Viewpoint",
+      "code": "VIEW",
+      "category": "facility",
+      "coordinates": {
+        "x": 580,
+        "y": 140,
+        "w": 90,
+        "h": 50
+      },
+      "icon": "landscape",
+      "color": "#0ea5e9",
+      "summary": "Scenic high-altitude ridge overlooking the verdant Solan valley, popular for sunset walks and mountain photography.",
+      "floors": [
+        {
+          "level": "Ridge",
+          "facilities": [
+            "Campus Helipad / Open Pavilion",
+            "Panoramic Valley Viewpoint",
+            "Hill Path connecting to Campus Mandir"
+          ]
+        }
+      ]
+    }
+  ]
+}

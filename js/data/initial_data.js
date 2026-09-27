@@ -1,0 +1,515 @@
+/**
+ * Initial Campus Data Bundle for JUIT Student Hub
+ * Populates Announcements, Academic Vault Resources (linking to PDFs in /vault), Campus Events & Clubs.
+ */
+
+window.JUIT_DATA = window.JUIT_DATA || {};
+
+// ================= 1. OFFICIAL CAMPUS ANNOUNCEMENTS =================
+window.JUIT_DATA.announcements = [
+  {
+    id: 'ann-1',
+    title: 'Schedule for T-2 Mid-Semester Examinations (Odd Semester 2026)',
+    category: 'Examination',
+    priority: 'Urgent',
+    pinned: true,
+    date: '2026-09-22',
+    author: 'Controller of Examinations',
+    summary: 'Detailed date sheet and seating plans for T-2 examinations across AB1 and AB3 lecture halls. All students must carry institutional ID cards.',
+    details: 'The T-2 examinations for B.Tech / M.Tech Odd Semester 2026 will be conducted in two shifts daily (10:00 AM - 11:30 AM and 02:00 PM - 03:30 PM). Strict compliance with examination hall rules is mandatory. Electronic gadgets and smartwatches are strictly prohibited.'
+  },
+  {
+    id: 'ann-2',
+    title: 'Annapurna Dining Hall: Revision in Night Milk & Weekend Menu Schedule',
+    category: 'Mess',
+    priority: 'High',
+    pinned: true,
+    date: '2026-09-20',
+    author: 'Chief Warden & Mess Committee',
+    summary: 'Night sweetened milk distribution timings updated to 09:15 PM – 09:45 PM. Fresh fruit quotas increased across all hostel blocks.',
+    details: 'Hot turmeric milk and cold Bournvita milk will be distributed from designated counters on the Ground Floor LRC Wing and Girls Hostel common halls. Students are requested to bring their own clean mugs.'
+  },
+  {
+    id: 'ann-3',
+    title: 'Murious 19.0: Annual National Technical Symposium Registrations Open',
+    category: 'Events',
+    priority: 'High',
+    pinned: false,
+    date: '2026-09-18',
+    author: 'TIEDC & Student Council',
+    summary: 'Over 25 technical competitions including 36-hour Hackathon, RoboWars, CodeSprint, and Circuit Craft. Prize pool exceeding ₹3,50,000.',
+    details: 'Teams from premier institutes across Northern India will participate. Internal student registrations receive a 50% early bird discount. Register via the Events & Clubs section.'
+  },
+  {
+    id: 'ann-4',
+    title: 'Attendance Advisory: Strict Adherence to 80% Minimum Threshold',
+    category: 'Academic',
+    priority: 'High',
+    pinned: false,
+    date: '2026-09-15',
+    author: 'Dean of Academics & Research',
+    summary: 'Students falling below the mandatory 80% attendance requirement risk debarment from T-3 final examinations.',
+    details: 'Review your manual attendance calculator in the Academics tab and cross-check records on JUIT Webkiosk regularly. Medical leaves must be submitted within 3 days of return.'
+  },
+  {
+    id: 'ann-5',
+    title: 'Hostel Maintenance & Campus High-Speed Wi-Fi Upgrade Notice',
+    category: 'Hostel',
+    priority: 'Normal',
+    pinned: false,
+    date: '2026-09-10',
+    author: 'Network Operations Centre (NOC)',
+    summary: 'Wi-Fi 6 access points installed across Azad, Subhash, and Geeta Hostels for seamless academic research and online lectures.',
+    details: 'Network bandwidth has been expanded to 1 Gbps symmetric leased line. Contact NOC room AB2 for static IP configuration and portal access issues.'
+  }
+];
+
+// ================= 2. ACADEMIC VAULT RESOURCES & NOTES =================
+window.JUIT_DATA.resources = [
+  {
+    id: 'res-1',
+    title: 'SDF Lecture 1: Introduction to C Programming & Compiler Pipeline',
+    code: '25B11CI112',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Notes',
+    unit: 'Unit 1: Fundamentals',
+    author: 'Department of CSE',
+    date: '2026-09-01',
+    size: '185 KB',
+    format: 'PDF',
+    link: 'vault/SDF_Lecture_1_Introduction_to_C.pdf',
+    description: 'Structure of C program, compilation stages (preprocessing, compilation, assembly, linking), variables and execution model.'
+  },
+  {
+    id: 'res-2',
+    title: 'SDF Lecture 4: Constants, Variables & Memory Data Representation',
+    code: '25B11CI112',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Notes',
+    unit: 'Unit 1: Fundamentals',
+    author: 'Department of CSE',
+    date: '2026-09-05',
+    size: '210 KB',
+    format: 'PDF',
+    link: 'vault/SDF_Lecture_4_Constants_and_Variables.pdf',
+    description: 'Primary data types, type modifiers, memory allocation sizes, format specifiers, and variable scope rules.'
+  },
+  {
+    id: 'res-3',
+    title: 'SDF: Control Flow Statements & Nested Loops Handbook',
+    code: '25B11CI112',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Notes',
+    unit: 'Unit 2: Control Structures',
+    author: 'MIT 6.087 Reference Archive',
+    date: '2026-09-08',
+    size: '240 KB',
+    format: 'PDF',
+    link: 'vault/SDF_MIT_6087_Control_Flow_Statements.pdf',
+    description: 'In-depth guide to if-else conditionals, switch-case branching, while/for loops, break, and continue mechanics.'
+  },
+  {
+    id: 'res-4',
+    title: 'SDF: Bitwise Operators, Expressions & Precedence Table',
+    code: '25B11CI112',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Notes',
+    unit: 'Unit 2: Expressions',
+    author: 'MIT 6.087 Reference Archive',
+    date: '2026-09-10',
+    size: '195 KB',
+    format: 'PDF',
+    link: 'vault/SDF_MIT_6087_Operators_and_Data_Types.pdf',
+    description: 'Comprehensive operator precedence hierarchy, bitwise shift operations, masks, and truth table calculations.'
+  },
+  {
+    id: 'res-5',
+    title: 'SDF Let Us C: Getting Started & Essential Problem Sets',
+    code: '25B11CI112',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Book',
+    unit: 'Reference Text',
+    author: 'Yashavant Kanetkar',
+    date: '2026-08-25',
+    size: '320 KB',
+    format: 'PDF',
+    link: 'vault/SDF_Let_Us_C_Getting_Started.pdf',
+    description: 'Essential beginner handbook with fundamental algorithms, pseudocode conventions, and classic practice exercises.'
+  },
+  {
+    id: 'res-6',
+    title: 'SDF Laboratory Assignment Solutions Manual (CL01–CL52)',
+    code: '25B17CI172',
+    semester: 1,
+    subject: 'SDF',
+    type: 'Lab Manual',
+    unit: 'Lab Exercises',
+    author: 'SDF Lab Faculty Team',
+    date: '2026-09-12',
+    size: '410 KB',
+    format: 'PDF',
+    link: 'vault/SDF_Lab_Assignment_Solutions_Manual.pdf',
+    description: 'Complete solved C code for all 10 weekly laboratory sessions with dry run traces and test cases.'
+  },
+  {
+    id: 'res-7',
+    title: 'Technical English: Communication Skills Lecture Notes',
+    code: '25B11HS111',
+    semester: 1,
+    subject: 'English',
+    type: 'Notes',
+    unit: 'Unit 1 & 2: Professional Speaking',
+    author: 'Department of HSS',
+    date: '2026-09-02',
+    size: '225 KB',
+    format: 'PDF',
+    link: 'vault/English_Communication_Skills_Lecture_Notes.pdf',
+    description: '7 Cs of business communication, presentation dynamics, non-verbal cues, and technical report writing standards.'
+  },
+  {
+    id: 'res-8',
+    title: 'English Language Lab Manual & GD Frameworks (LANGULAB)',
+    code: '25B17HS171',
+    semester: 1,
+    subject: 'English',
+    type: 'Lab Manual',
+    unit: 'Laboratory & GD',
+    author: 'Language Lab Instructors',
+    date: '2026-09-04',
+    size: '260 KB',
+    format: 'PDF',
+    link: 'vault/English_Language_Lab_Manual.pdf',
+    description: 'Phonetics, consonant/vowel drills, group discussion leadership frameworks, and mock interview preparations.'
+  },
+  {
+    id: 'res-9',
+    title: 'English Previous Year Solved Question Papers (T1, T2 & T3)',
+    code: '25B11HS111',
+    semester: 1,
+    subject: 'English',
+    type: 'PYQ',
+    unit: 'Past Exam Archive',
+    author: 'LRC Exam Archive',
+    date: '2026-09-06',
+    size: '340 KB',
+    format: 'PDF',
+    link: 'vault/English_PYQ_Solved_Archive.pdf',
+    description: '5-year solved question papers with model answers, paragraph comprehension, and vocabulary builders.'
+  },
+  {
+    id: 'res-10',
+    title: 'Engineering Physics: Electrodynamics & Laser Optics Notes',
+    code: '25B11PH111',
+    semester: 1,
+    subject: 'Physics',
+    type: 'Notes',
+    unit: 'Unit 3 & 4: Modern Physics',
+    author: 'Department of Physics',
+    date: '2026-09-05',
+    size: '290 KB',
+    format: 'PDF',
+    link: 'vault/Physics_Electrodynamics_Optics_Notes.pdf',
+    description: 'Maxwell field equations, optical fiber propagation, laser population inversion, and Ruby/He-Ne systems.'
+  },
+  {
+    id: 'res-11',
+    title: 'Engineering Physics: Formula & Derivation Handbook',
+    code: '25B11PH111',
+    semester: 1,
+    subject: 'Physics',
+    type: 'Notes',
+    unit: 'Exam Quick-Revision',
+    author: 'Physics Faculty Team',
+    date: '2026-09-07',
+    size: '275 KB',
+    format: 'PDF',
+    link: 'vault/Physics_Formula_and_Derivation_Handbook.pdf',
+    description: 'Step-by-step derivations for Newton rings, thin film interference, diffraction grating, and Schrödinger wave equation.'
+  },
+  {
+    id: 'res-12',
+    title: 'Engineering Physics Laboratory Manual (PHLAB1 & PHLAB2)',
+    code: '25B17PH171',
+    semester: 1,
+    subject: 'Physics',
+    type: 'Lab Manual',
+    unit: 'Laboratory Experiments',
+    author: 'Physics Lab Instructors',
+    date: '2026-09-09',
+    size: '380 KB',
+    format: 'PDF',
+    link: 'vault/Physics_Laboratory_Manual_PHLAB.pdf',
+    description: 'Full procedure, apparatus circuit schematics, formula derivations, and viva questions for all semester physics experiments.'
+  },
+  {
+    id: 'res-13',
+    title: 'Basic Electronics Tutorial 1: Charge, Current, Voltage & Power',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Unit 1: DC Circuit Fundamentals',
+    author: 'Department of ECE',
+    date: '2026-09-03',
+    size: '124 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_Tutorial_1.pdf',
+    description: 'Calculations on charge flow, current waveforms, power absorbed by network elements, solar cell IV curves, and dependent voltage/current sources.'
+  },
+  {
+    id: 'res-14',
+    title: 'Basic Electronics Tutorial 2: Circuit Topology, KVL, KCL & Resistors',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Unit 1: Network Theorems',
+    author: 'Department of ECE',
+    date: '2026-09-06',
+    size: '136 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_Tutorial_2.pdf',
+    description: 'Nodes, branches, loops, Kirchhoff laws (KVL & KCL), bridge circuits, series-parallel resistor reduction, and voltage/current division.'
+  },
+  {
+    id: 'res-15',
+    title: 'Basic Electronics Tutorial 3: Nodal Analysis, Supernodes & Mesh Analysis',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Unit 2: Nodal & Mesh Analysis',
+    author: 'Department of ECE',
+    date: '2026-09-10',
+    size: '165 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_Tutorial_3.pdf',
+    description: 'Systematic nodal voltage formulations, supernode techniques, planar mesh analysis with dependent sources, and supermesh circuits.'
+  },
+  {
+    id: 'res-16',
+    title: 'Basic Electronics Tutorial 4: Superposition, Thévenin & Norton Theorems',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Unit 2: Network Theorems',
+    author: 'Department of ECE',
+    date: '2026-09-14',
+    size: '156 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_Tutorial_4.pdf',
+    description: 'Superposition for multi-source networks, source transformations, Thévenin equivalent resistance (Voc/Isc & test source), and Norton circuits.'
+  },
+  {
+    id: 'res-17',
+    title: 'Basic Electronics Tutorial 5: PN Junction Diode & Zener Regulators',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Unit 3: Semiconductor Diodes',
+    author: 'Department of ECE',
+    date: '2026-09-18',
+    size: '193 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_Tutorial_5.pdf',
+    description: 'Semiconductor diode equation, thermal voltage, static/dynamic AC & DC resistance, piecewise-linear models, and Zener diode regulation curves.'
+  },
+  {
+    id: 'res-18',
+    title: 'Basic Electronics: Complete Tutorial Problem Sets Bundle (1–5)',
+    code: '25B11EC111',
+    semester: 1,
+    subject: 'Basic Electronics',
+    type: 'Tutorial',
+    unit: 'Units 1–3: Complete Tutorial Pack',
+    author: 'ECE Faculty Team',
+    date: '2026-09-20',
+    size: '772 KB',
+    format: 'PDF',
+    link: 'vault/Basic_Electronics_All_Tutorials_Bundle.pdf',
+    description: 'Complete compiled 18-page tutorial package containing all 5 Basic Electronics tutorial assignment problem sets with circuit schematics.'
+  },
+  {
+    id: 'res-19',
+    title: 'Mathematics I Tutorial Sheet 1: Limits, Continuity, Chain Rule & Jacobian',
+    code: '25B11MA113',
+    semester: 1,
+    subject: 'Mathematics',
+    type: 'Tutorial',
+    unit: 'Unit 1: Multivariable Calculus',
+    author: 'Department of Mathematics',
+    date: '2026-09-24',
+    size: '383 KB',
+    format: 'PDF',
+    link: 'vault/Math1_Tutorial_Sheet_1.pdf',
+    description: 'Official Tutorial Sheet 1 covering delta-epsilon limits, continuity, partial derivatives, Euler theorem on homogeneous functions, chain rule, and Jacobians.'
+  },
+  {
+    id: 'res-20',
+    title: 'Mathematics I Tutorial Sheet 2: Taylor Series, Maxima-Minima & Lagrange Multiplier',
+    code: '25B11MA113',
+    semester: 1,
+    subject: 'Mathematics',
+    type: 'Tutorial',
+    unit: 'Unit 2: Optimization & Expansions',
+    author: 'Department of Mathematics',
+    date: '2026-09-24',
+    size: '450 KB',
+    format: 'PDF',
+    link: 'vault/Math1_Tutorial_Sheet_2.pdf',
+    description: 'Official Tutorial Sheet 2 covering multivariable Taylor series expansions, stationary points classification, and Lagrange multiplier optimization.'
+  },
+  {
+    id: 'res-21',
+    title: 'Mathematics I Tutorial Sheet 3: Double Integrals, Change of Order & Beta-Gamma Functions',
+    code: '25B11MA113',
+    semester: 1,
+    subject: 'Mathematics',
+    type: 'Tutorial',
+    unit: 'Unit 3: Multiple Integrals & Special Functions',
+    author: 'Department of Mathematics',
+    date: '2026-09-24',
+    size: '254 KB',
+    format: 'PDF',
+    link: 'vault/Math1_Tutorial_Sheet_3.pdf',
+    description: 'Official Tutorial Sheet 3 covering double integrals over regions, order reversal, polar coordinates transformations, and Beta-Gamma special functions.'
+  },
+  {
+    id: 'res-22',
+    title: 'Mathematics I Tutorial Sheet 4: Applications of Double Integrals to Area & Volume',
+    code: '25B11MA113',
+    semester: 1,
+    subject: 'Mathematics',
+    type: 'Tutorial',
+    unit: 'Unit 4: Engineering Applications of Integrals',
+    author: 'Department of Mathematics',
+    date: '2026-09-24',
+    size: '448 KB',
+    format: 'PDF',
+    link: 'vault/Math1_Tutorial_Sheet_4.pdf',
+    description: 'Official Tutorial Sheet 4 covering planar transformations, area and volume enclosed under paraboloids, surface area, and engineering applications.'
+  },
+  {
+    id: 'res-23',
+    title: 'Mathematics I: Complete Tutorial Problem Sets Bundle (1–4)',
+    code: '25B11MA113',
+    semester: 1,
+    subject: 'Mathematics',
+    type: 'Tutorial',
+    unit: 'Units 1–4: Complete Tutorial Pack',
+    author: 'Department of Mathematics',
+    date: '2026-09-24',
+    size: '1.5 MB',
+    format: 'PDF',
+    link: 'vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf',
+    description: 'Official compilation of all 4 Mathematics I tutorial assignment sheets with verified solutions and answer keys.'
+  }
+];
+
+// ================= 3. CAMPUS EVENTS =================
+window.JUIT_DATA.events = [
+  {
+    id: 'ev-1',
+    title: 'Murious 19.0: National Technical Symposium',
+    category: 'Technical',
+    date: '2026-10-15',
+    time: '09:00 AM – 08:00 PM',
+    venue: 'Academic Block 2 & Auditorium',
+    badge: 'Flagship Fest',
+    image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%232563eb"><circle cx="50" cy="50" r="40"/></svg>',
+    summary: 'Annual techfest featuring 36-hour Hackathon, RoboWars, Web Development Sprint, and Drone Racing.'
+  },
+  {
+    id: 'ev-2',
+    title: 'ACM CodeSprint 2026: Algorithmic Contest',
+    category: 'Coding',
+    date: '2026-09-28',
+    time: '05:30 PM – 08:30 PM',
+    venue: 'CL01 – CL08 (Academic Block 2)',
+    badge: 'Rated Contest',
+    summary: 'Competitive programming challenge organized by ACM JUIT Chapter. Top performers win internships and cash prizes.'
+  },
+  {
+    id: 'ev-3',
+    title: 'Le Fiestus 2027 Cultural Auditions',
+    category: 'Cultural',
+    date: '2026-10-04',
+    time: '04:30 PM – 07:30 PM',
+    venue: 'Open Air Theatre (OAT)',
+    badge: 'Auditions',
+    summary: 'Auditions for university rock band, bhangra troupe, western dance society, and dramatic club.'
+  },
+  {
+    id: 'ev-4',
+    title: 'Inter-Department Cricket & Football Championship',
+    category: 'Sports',
+    date: '2026-10-10',
+    time: '06:00 AM – 06:00 PM',
+    venue: 'Main Campus Sports Ground',
+    badge: 'Intramural',
+    summary: 'Annual sporting tournament across CSE, ECE, Civil, and Biotechnology student teams.'
+  }
+];
+
+// ================= 4. STUDENT CLUBS & SOCIETIES =================
+window.JUIT_DATA.clubs = [
+  {
+    id: 'club-1',
+    name: 'TIEDC Innovation & Entrepreneurship Cell',
+    category: 'Technical',
+    lead: 'Dr. Faculty Coordinator & Student Heads',
+    members: '180+ Active Scholars',
+    icon: 'rocket_launch',
+    color: '#3b82f6',
+    description: 'Fosters student startup ventures, organizes hackathons, and provides incubation seed grants.'
+  },
+  {
+    id: 'club-2',
+    name: 'ACM Student Chapter JUIT',
+    category: 'Technical',
+    lead: 'Department of Computer Science',
+    members: '240+ Coders',
+    icon: 'terminal',
+    color: '#0284c7',
+    description: 'Premier computing society conducting weekly algorithm workshops, open-source sprints, and peer mentorship.'
+  },
+  {
+    id: 'club-3',
+    name: 'IEEE Student Branch (STB99261)',
+    category: 'Technical',
+    lead: 'Department of ECE & CSE',
+    members: '150+ Researchers',
+    icon: 'memory',
+    color: '#059669',
+    description: 'Focuses on robotics, signal processing, embedded systems, and publication of student IEEE papers.'
+  },
+  {
+    id: 'club-4',
+    name: 'Synapse Cultural & Arts Club',
+    category: 'Cultural',
+    lead: 'Student Welfare Council',
+    members: '300+ Artists',
+    icon: 'palette',
+    color: '#ec4899',
+    description: 'Orchestrates music, street drama, fine arts, photography exhibitions, and annual university fests.'
+  },
+  {
+    id: 'club-5',
+    name: 'Rotaract Club of Waknaghat',
+    category: 'Social Service',
+    lead: 'Youth Wing of Rotary International',
+    members: '120+ Volunteers',
+    icon: 'volunteer_activism',
+    color: '#f97316',
+    description: 'Social welfare organization conducting blood donation drives, mountain cleanup campaigns, and village tutoring.'
+  }
+];
+
+console.log('JUIT Campus Initial Data (Announcements, Vault Resources, Events & Clubs) loaded.');

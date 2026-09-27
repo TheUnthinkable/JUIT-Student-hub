@@ -1,0 +1,24 @@
+{
+  "name": "JUIT Student Hub",
+  "short_name": "JUIT Hub",
+  "description": "Your campus, organized. All-in-one companion for Jaypee University of Information Technology students.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#080b12",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%232563eb'><rect width='192' height='192' rx='40' fill='%230f172a'/><path d='M96 28L24 68l72 40 72-40-72-40zM24 124l72 40 72-40M24 96l72 40 72-40' fill='none' stroke='%2338bdf8' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232563eb'><rect width='512' height='512' rx='100' fill='%230f172a'/><path d='M256 74L64 182l192 108 192-108-192-108zM64 330l192 108 192-108M64 256l192 108 192-108' fill='none' stroke='%2338bdf8' stroke-width='36' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
