@@ -52,6 +52,9 @@ const App = {
     if (window.AdminController) {
       window.AdminController.init();
     }
+    if (window.BusGuideController) {
+      window.BusGuideController.init();
+    }
 
     // 4. Bind UI Shell
     this.bindNavigation();
@@ -94,7 +97,7 @@ const App = {
     });
 
     // Synchronize bottom HUD dock: if active view is a secondary module, illuminate 'More'
-    const directDockViews = ['dash', 'timetable', 'academics', 'mess'];
+    const directDockViews = ['dash', 'timetable', 'academics', 'mess', 'resources'];
     const hudMoreBtn = document.getElementById('btn-mobile-hud-more');
     if (hudMoreBtn) {
       const isSecondary = !directDockViews.includes(viewId);
@@ -140,6 +143,8 @@ const App = {
       if (typeof window.AcademicsController.onViewActivated === 'function') {
         window.AcademicsController.onViewActivated();
       }
+    } else if (viewId === 'bus' && window.BusGuideController) {
+      window.BusGuideController.init();
     } else if (viewId === 'admin' && window.AdminController) {
       window.AdminController.checkAdminStatus();
     }
@@ -1174,6 +1179,26 @@ const App = {
               action: () => {
                 closeSearch();
                 App.switchView('announcements');
+              }
+            });
+          }
+        });
+
+        // 6. Bus Travel Guide Routes
+        const busRoutes = window.BusGuideController?.routes || [];
+        busRoutes.forEach(r => {
+          if (r.name.toLowerCase().includes(q) || r.tagline.toLowerCase().includes(q) || r.tags.some(t => t.includes(q)) || 'bus travel route transit waknaghat hrtc'.includes(q)) {
+            hits.push({
+              category: 'Bus Travel Guide',
+              icon: '🚌',
+              title: `${r.name} (${r.directionLabel.split('/')[0].trim()})`,
+              sub: `${r.approxTime} • ${r.transfers === 0 ? 'Direct Bus' : 'Change at ' + r.transferPoint} • ${r.approxFare}`,
+              action: () => {
+                closeSearch();
+                App.switchView('bus');
+                if (window.BusGuideController) {
+                  window.BusGuideController.openRouteGuide(r.id);
+                }
               }
             });
           }

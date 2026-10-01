@@ -3,7 +3,7 @@
  * Provides offline caching for timetable, mess, campus map, and core assets.
  */
 
-const CACHE_NAME = 'juit-hub-cache-v5';
+const CACHE_NAME = 'juit-hub-cache-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -25,6 +25,7 @@ const ASSETS_TO_CACHE = [
   './js/portals.js',
   './js/academics.js',
   './js/resources.js',
+  './js/bus.js',
   './js/announcements.js',
   './js/events-clubs.js',
   './js/utilities.js',

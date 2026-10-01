@@ -85,6 +85,10 @@
           <span class="material-symbols-outlined nav-icon">map</span>
           <span>Campus Map & Finder</span>
         </a>
+        <a href="#bus" class="nav-link" data-view="bus">
+          <span class="material-symbols-outlined nav-icon">directions_bus</span>
+          <span>Bus Travel Guide</span>
+        </a>
         <a href="#announcements" class="nav-link" data-view="announcements">
           <span class="material-symbols-outlined nav-icon">campaign</span>
           <span>Announcements</span>
@@ -256,7 +260,21 @@
                   </div>
                 </a>
 
-                <!-- Utility 2: Annapurna Mess -->
+                <!-- Utility 2: Attendance & Academics -->
+                <a href="#academics" data-action-view="academics" class="utility-card">
+                  <div class="utility-icon-box attendance-icon">
+                    <span class="material-symbols-outlined">how_to_reg</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Attendance</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub" id="dash-util-att-sub">Overall 89.4% • Safe</div>
+                  </div>
+                </a>
+
+                <!-- Utility 3: Annapurna Mess -->
                 <a href="#mess" data-action-view="mess" class="utility-card">
                   <div class="utility-icon-box mess-icon">
                     <span class="material-symbols-outlined">restaurant</span>
@@ -266,11 +284,39 @@
                       <span class="utility-title">Annapurna Mess</span>
                       <span class="utility-arrow">›</span>
                     </div>
-                    <div class="utility-sub" id="dash-util-mess-sub">Tonight: Paneer Butter Masala...</div>
+                    <div class="utility-sub" id="dash-util-mess-sub">Cycle: October 2026</div>
                   </div>
                 </a>
 
-                <!-- Utility 3: Campus Finder -->
+                <!-- Utility 4: Resource Hub Vault -->
+                <a href="#resources" data-action-view="resources" class="utility-card">
+                  <div class="utility-icon-box" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+                    <span class="material-symbols-outlined">folder_zip</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Resource Hub</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub">PYQs, Notes & Vault</div>
+                  </div>
+                </a>
+
+                <!-- Utility 5: Bus Travel Guide -->
+                <a href="#bus" data-action-view="bus" class="utility-card">
+                  <div class="utility-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <span class="material-symbols-outlined">directions_bus</span>
+                  </div>
+                  <div class="utility-content">
+                    <div class="utility-title-row">
+                      <span class="utility-title">Bus Travel Guide</span>
+                      <span class="utility-arrow">›</span>
+                    </div>
+                    <div class="utility-sub">Waknaghat Routes & Tips</div>
+                  </div>
+                </a>
+
+                <!-- Utility 6: Campus Finder -->
                 <a href="#campus" data-action-view="campus" class="utility-card">
                   <div class="utility-icon-box campus-icon">
                     <span class="material-symbols-outlined">explore</span>
@@ -281,20 +327,6 @@
                       <span class="utility-arrow">›</span>
                     </div>
                     <div class="utility-sub">14 Landmarks & Venues</div>
-                  </div>
-                </a>
-
-                <!-- Utility 4: Attendance & Academics -->
-                <a href="#academics" data-action-view="academics" class="utility-card">
-                  <div class="utility-icon-box attendance-icon">
-                    <span class="material-symbols-outlined">assignment_ind</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Attendance</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub" id="dash-util-att-sub">Overall 89.4% • Safe</div>
                   </div>
                 </a>
               </div>
@@ -719,6 +751,209 @@
           <!-- Turn-by-Turn Route Navigation Modal -->
           <div class="modal-backdrop" id="map-route-modal" style="display: none;">
             <div class="modal-card route-modal-card" id="map-route-modal-card"></div>
+          </div>
+        </section>
+
+        <!-- ================= VIEW: JUIT BUS TRAVEL GUIDE ================= -->
+        <section class="app-view-panel" id="view-bus">
+          <!-- Main Hero Banner -->
+          <div class="bus-hero-banner">
+            <div class="bus-hero-top">
+              <div class="bus-hero-badge">
+                <span class="material-symbols-outlined text-[16px]">directions_bus</span>
+                <span>WAKNAGHAT HIGHWAY TRANSIT DESK • NH-5</span>
+              </div>
+              <h1 class="bus-main-title">JUIT Bus Guide</h1>
+              <p class="bus-main-subtitle">Your visual guide to travelling from JUIT by bus across Himachal Pradesh and beyond.</p>
+            </div>
+
+            <!-- Mandatory Official Notice / Disclaimer -->
+            <div class="bus-disclaimer-card">
+              <div class="disclaimer-header">
+                <span class="material-symbols-outlined text-[20px]">info</span>
+                <strong>Official Route & Schedule Reference Guide</strong>
+              </div>
+              <p class="disclaimer-body">
+                This guide provides route structures, highway boarding points, transfer hubs, and typical schedules. <strong>This is NOT a real-time bus tracker</strong> — live GPS API feeds are not available in this region. Bus timings can change due to weather, hill traffic, and operational changes. <em>Verify the schedule locally at Waknaghat before travelling.</em>
+              </p>
+            </div>
+          </div>
+
+          <!-- WAKNAGHAT HIGHWAY DIRECTION VISUALIZER (Visual Highway Guide) -->
+          <div class="dash-card bus-highway-compass-card">
+            <div class="compass-header">
+              <div class="compass-header-left">
+                <div class="compass-tag">CRITICAL BOARDING RULE</div>
+                <h3 class="compass-title">Direction Matters: NH-5 Highway Boarding Sides at Waknaghat</h3>
+              </div>
+              <div class="compass-warning-pill">
+                ⚠️ Always confirm direction with conductor
+              </div>
+            </div>
+
+            <div class="highway-schematic-grid">
+              <!-- Uphill Side -->
+              <div class="highway-dir-box uphill-box">
+                <div class="dir-box-header">
+                  <span class="dir-arrow">▲</span>
+                  <span class="dir-title">UPHILL SIDE (Mountain Side)</span>
+                </div>
+                <div class="dir-destinations">
+                  <strong>Towards:</strong> Shimla, Kufri, Narkanda, Theog, Rampur, Kinnaur
+                </div>
+                <div class="dir-instruction">
+                  Cross to the mountain side (passenger shelter & shops). All buses climbing up to Shimla stop here.
+                </div>
+                <div class="dir-board-label">Look for: <code>SHIMLA</code> / <code>ISBT TUTIKANDI</code></div>
+              </div>
+
+              <!-- Junction Marker -->
+              <div class="highway-junction-marker">
+                <div class="junction-pin">
+                  <span class="material-symbols-outlined">signpost</span>
+                  <span>WAKNAGHAT JUNCTION</span>
+                </div>
+                <div class="junction-sub">JUIT Link Road connects here (~2.5 km from campus gate)</div>
+              </div>
+
+              <!-- Downhill Side -->
+              <div class="highway-dir-box downhill-box">
+                <div class="dir-box-header">
+                  <span class="dir-arrow">▼</span>
+                  <span class="dir-title">DOWNHILL SIDE (Valley Side)</span>
+                </div>
+                <div class="dir-destinations">
+                  <strong>Towards:</strong> Kandaghat, Solan, Dharampur, Kasauli, Kalka, Chandigarh, Delhi
+                </div>
+                <div class="dir-instruction">
+                  Stand on the valley side (facing south down the hill). Buses heading towards Solan, Kalka, and Chandigarh pull over here.
+                </div>
+                <div class="dir-board-label">Look for: <code>SOLAN</code> / <code>CHANDIGARH 43</code> / <code>DELHI</code></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="bus-search-filter-section">
+            <div class="bus-search-bar-wrap">
+              <span class="material-symbols-outlined bus-search-icon">search</span>
+              <input type="text" id="bus-search-input" class="bus-search-input" placeholder="Where do you want to go? (e.g. Shimla, Solan, Chandigarh, Kasauli, Manali, Delhi, Kalka...)" />
+            </div>
+
+            <div class="bus-filter-pills-row" id="bus-filter-pills">
+              <button type="button" class="bus-filter-pill active" data-filter="all">All Destinations (12)</button>
+              <button type="button" class="bus-filter-pill" data-filter="direct">✓ Direct Routes</button>
+              <button type="button" class="bus-filter-pill" data-filter="transfer">⚡ Transfer Required</button>
+              <button type="button" class="bus-filter-pill" data-filter="getaway">🌲 Weekend Getaways</button>
+              <button type="button" class="bus-filter-pill" data-filter="hub">🚆 Transit Hubs & Rail</button>
+              <button type="button" class="bus-filter-pill" data-filter="saved">★ Saved Routes</button>
+            </div>
+          </div>
+
+          <!-- Destination Cards Grid -->
+          <div class="bus-destinations-grid" id="bus-destinations-grid"></div>
+
+          <!-- Educational Guide: Understanding Himachal Buses -->
+          <div class="dash-card bus-glossary-section">
+            <div class="glossary-header">
+              <span class="material-symbols-outlined text-[22px]" style="color: var(--accent-primary);">menu_book</span>
+              <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-primary);">Understanding Himachal Buses & Travel Terms</h3>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.84rem; margin: 6px 0 16px;">Essential practical knowledge for first-time student travelers in Himachal Pradesh.</p>
+            
+            <div class="glossary-cards-grid">
+              <div class="glossary-card">
+                <div class="glossary-term">HRTC</div>
+                <div class="glossary-full">Himachal Road Transport Corporation</div>
+                <div class="glossary-desc">The state-owned public bus service. Safe hill drivers, extensive network reaching every remote valley. Green/blue livery.</div>
+              </div>
+              <div class="glossary-card">
+                <div class="glossary-term">Ordinary Bus</div>
+                <div class="glossary-full">Regular 3x2 Seater Hill Bus</div>
+                <div class="glossary-desc">Most common and affordable service. Frequent departures from Waknaghat. Buy ticket directly from the conductor inside the bus.</div>
+              </div>
+              <div class="glossary-card">
+                <div class="glossary-term">Deluxe / Semi-Deluxe</div>
+                <div class="glossary-full">2x2 Comfortable Coach</div>
+                <div class="glossary-desc">Higher comfort seating, limited stops, faster transit on long-distance runs (e.g. Shimla–Chandigarh, Shimla–Manali).</div>
+              </div>
+              <div class="glossary-card">
+                <div class="glossary-term">Volvo / Scania AC</div>
+                <div class="glossary-full">Premium Highway Cruiser</div>
+                <div class="glossary-desc">Air-conditioned multi-axle luxury coaches running between Shimla, Chandigarh, and Delhi. Advance booking available on hrtchp.com.</div>
+              </div>
+              <div class="glossary-card">
+                <div class="glossary-term">ISBT</div>
+                <div class="glossary-full">Inter-State Bus Terminal</div>
+                <div class="glossary-desc">Major regional bus stations with designated numbered departure bays, ticket counters, waiting halls, and cloakrooms.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- "Before You Leave JUIT" Interactive Checklist -->
+          <div class="dash-card bus-checklist-card">
+            <div class="checklist-header">
+              <span class="material-symbols-outlined text-[20px]" style="color: #10b981;">checklist</span>
+              <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">“Before You Leave JUIT” Checklist</h3>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.82rem; margin: 4px 0 14px;">Tick off these quick practical steps before heading up to Waknaghat:</p>
+
+            <div class="checklist-items-grid">
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Check today’s timetable & daylight hours</span>
+              </label>
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Know which side of NH-5 to wait on (Shimla vs Solan side)</span>
+              </label>
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Carry cash & small change (₹10, ₹20, ₹50 notes)</span>
+              </label>
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Confirm destination with conductor before boarding (“Shimla jayegi?”)</span>
+              </label>
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Note down destination bus stand (ISBT Tutikandi vs Old Bus Stand)</span>
+              </label>
+              <label class="bus-checklist-label">
+                <input type="checkbox" class="bus-checklist-checkbox" />
+                <span>Keep phone charged & save your offline route in JUIT Hub</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Common Transfer Hubs Reference Card -->
+          <div class="dash-card bus-transfer-hubs-card">
+            <div class="hubs-header">
+              <span class="material-symbols-outlined text-[20px]" style="color: #f59e0b;">alt_route</span>
+              <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Key Transfer Hubs Around JUIT</h3>
+            </div>
+            <div class="transfer-hubs-grid">
+              <div class="hub-pill-card">
+                <div class="hub-pill-name">Dharampur Chowk</div>
+                <div class="hub-pill-dest">Transfer for <strong>Kasauli</strong></div>
+                <div class="hub-pill-sub">~45 mins downhill from Waknaghat. Walk 50m to Kasauli shuttle stand.</div>
+              </div>
+              <div class="hub-pill-card">
+                <div class="hub-pill-name">Kandaghat Junction</div>
+                <div class="hub-pill-dest">Transfer for <strong>Chail & Sadhupul</strong></div>
+                <div class="hub-pill-sub">~15 mins downhill. Chail road branches right at the bazaar.</div>
+              </div>
+              <div class="hub-pill-card">
+                <div class="hub-pill-name">Shimla ISBT Tutikandi</div>
+                <div class="hub-pill-dest">Transfer for <strong>Kufri, Narkanda & Manali</strong></div>
+                <div class="hub-pill-sub">~45 mins uphill. Central interchange for all Upper Himachal routes.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Final Bottom Disclaimer -->
+          <div class="bus-footer-disclaimer">
+            Bus timings, routes and availability can change due to weather, traffic, road conditions and operational changes. Timings shown are approximate/reference information. Confirm the current service locally before travelling.
           </div>
         </section>
 
@@ -1434,6 +1669,10 @@
       <span class="material-symbols-outlined">restaurant</span>
       <span>Mess</span>
     </button>
+    <button type="button" class="mobile-hud-item" data-view="resources" title="Resource Hub Vault">
+      <span class="material-symbols-outlined">folder_zip</span>
+      <span>Vault</span>
+    </button>
     <button type="button" class="mobile-hud-item" id="btn-mobile-hud-more" title="More Campus Modules">
       <span class="material-symbols-outlined">apps</span>
       <span>More</span>
@@ -1469,6 +1708,8 @@
           class="material-symbols-outlined nav-icon">restaurant</span><span>Annapurna Mess</span></a>
       <a href="#campus" class="nav-link" data-view="campus"><span
           class="material-symbols-outlined nav-icon">map</span><span>Campus Map & Finder</span></a>
+      <a href="#bus" class="nav-link" data-view="bus"><span
+          class="material-symbols-outlined nav-icon">directions_bus</span><span>Bus Travel Guide</span></a>
       <a href="#announcements" class="nav-link" data-view="announcements"><span
           class="material-symbols-outlined nav-icon">campaign</span><span>Announcements</span></a>
       <a href="#academics" class="nav-link" data-view="academics"><span
@@ -1518,6 +1759,7 @@
   <script src="js/calendar.js"></script>
   <script src="js/academics.js"></script>
   <script src="js/resources.js"></script>
+  <script src="js/bus.js"></script>
   <script src="js/announcements.js"></script>
   <script src="js/events-clubs.js"></script>
   <script src="js/utilities.js"></script>
