@@ -261,8 +261,12 @@ def parse_cell_string(cell_str):
         if tok_clean not in batches:
             batches.append(tok_clean)
             
+    # Correction for known Excel omission: SDF lecture in CR09 taught by RTY is for batch 26BT25
     if not batches:
-        if 'ALL' in batches_part.upper():
+        if code == '25B11CI112' and faculty == 'RTY' and 'CR09' in venue:
+            batches = ['26BT25']
+            batches_part = '26BT25'
+        elif 'ALL' in batches_part.upper():
             batches = ['ALL']
         elif batches_part:
             batches = [batches_part]
@@ -374,7 +378,7 @@ def build_all_timetable_data():
 def build_mess_data():
     return {
         "title": "Annapurna Dining Hall Weekly Menu",
-        "month": "September 2026",
+        "month": "October 2026",
         "mealTimings": {
             "breakfast": {
                 "label": "Breakfast",
@@ -402,159 +406,158 @@ def build_mess_data():
                 "start": "21:15",
                 "end": "21:45",
                 "display": "09:15 PM – 09:45 PM",
-                "locations": "Geeta Bhawan, Malviya-B, Dining Hall 1, Peach Tree / Meet & Treet"
+                "locations": "Geeta Bhawan, Malviya-B, Dining Hall 1, Azad & Shastri Extension"
             }
         },
         "milkDistribution": [
             {
-                "group": "Girls",
-                "timing": "09:15 PM – 09:45 PM",
-                "place": "Geeta Bhawan, Geeta Bhawan Extension & Malviya - B"
+                "group": "GIRLS",
+                "timing": "09:15PM TO 09:45PM",
+                "place": "Geeta Bhawan, Geeta Bhawan Extention & Malviya - B"
             },
             {
-                "group": "Boys (Senior & General)",
-                "timing": "09:15 PM – 09:45 PM",
-                "place": "Dining Hall No. 1 & First Year Dining Hall"
+                "group": "BOYS",
+                "timing": "09:15PM TO 09:45PM",
+                "place": "Dinning hall no. 1 & First Year Dining Hall"
             },
             {
-                "group": "Boys (First Year)",
-                "timing": "Along With Dinner (07:30 PM – 09:00 PM)",
-                "place": "Peach Tree & Meet & Treet Dining Points"
+                "group": "BOYS",
+                "timing": "07:30 PM to 08:30 pm",
+                "place": "Azad & Shastri Extention"
             }
         ],
-        "importantNotice": "The menu may deviate in unavoidable circumstances. Please do not carry fruits/eatables outside the dining hall — Avoid food wastage.",
+        "importantNotice": "The menu may deviate in unavoidable circumstances. Please do not carry fruits / eatables outside the dining hall — Do not waste food.",
         "weeklyMenu": {
             "Monday": {
                 "dayCode": "MON",
                 "breakfast": {
-                    "items": ["Stuffed Parantha", "Plain Curd", "Daliya", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Pickle", "Tea"],
-                    "highlights": ["Zero Maida", "High Protein Sprouts", "Fresh Curd"],
-                    "category": "North Indian Parantha Breakfast"
+                    "items": ["Aaloo Sandwich", "Poha", "Dalia", "Boiled Egg", "Kala Chana Chaat", "Bread", "Butter", "Jam", "Cold Coffee", "Apple"],
+                    "highlights": ["Fresh Apple", "Chilled Cold Coffee", "Boiled Egg", "Kala Chana Chaat"],
+                    "fruit": "Apple",
+                    "category": "Sandwich & Cold Coffee Breakfast"
                 },
                 "lunch": {
-                    "items": ["Aaloo Methi", "Kadhi Pakoda", "Multigrain Tandoori Roti & Plain Chapati", "Rice", "Salad", "Papad", "Fresh Pear"],
-                    "highlights": ["Multigrain Tandoori Roti", "Kadhi Pakoda Special", "Fresh Seasonal Fruit"],
-                    "fruit": "Fresh Pear"
+                    "items": ["Dal Rajmah", "Mix Veg.", "Plain Curd", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
+                    "highlights": ["Himachali Dal Rajmah", "Fresh Plain Curd", "Tandoori Roti & Plain Chapati"]
                 },
                 "dinner": {
-                    "items": ["Dal Panchranga", "Egg Curry / Egg Bhurji", "Aaloo Beans", "Multigrain Tandoori & Plain Chapati", "Rice", "Salad", "Corn Salad"],
-                    "sweetDish": "Semiya, Hot & Cold Sweetened Milk",
-                    "highlights": ["Egg Curry / Bhurji", "Dal Panchranga", "Semiya Sweet Dish"],
-                    "sweet": "Semiya"
+                    "items": ["Dal Arhar", "Matar Mushroom", "Tandoori Roti & Plain Chapati", "Rice", "Corn Salad", "Green Chutney", "Veg. Soup"],
+                    "sweetDish": "Moong Dal Halwa, Hot Milk",
+                    "sweet": "Moong Dal Halwa",
+                    "highlights": ["Desi Ghee Moong Dal Halwa", "Matar Mushroom Special", "Hot Milk", "Veg. Soup"]
                 }
             },
             "Tuesday": {
                 "dayCode": "TUE",
                 "breakfast": {
-                    "items": ["Veg Sandwich", "Macaroni (Zero Maida)", "Cornflakes", "Kala Chana Chat", "Bread", "Butter", "Jam", "Milk", "Tea"],
-                    "highlights": ["Zero Maida Macaroni", "Kala Chana Chat", "Veg Sandwich"],
-                    "category": "Continental & Desi Blend"
+                    "items": ["Stuffed Parantha", "Curd", "Macaroni", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Pickle", "Tea"],
+                    "highlights": ["Hot Stuffed Parantha", "Fresh Curd", "Macaroni", "Sprouts (Chat Masala)"],
+                    "category": "North Indian Parantha & Curd Breakfast"
                 },
                 "lunch": {
-                    "items": ["Dal Rajmah", "Aaloo Shimla Mirch", "Plain Curd", "Tandoori Roti & Plain Chapati", "Rice", "Salad", "Apple Royal"],
-                    "highlights": ["Famous Himachali Rajmah Rice", "Apple Royal", "Plain Curd"],
-                    "fruit": "Apple Royal"
+                    "items": ["Choley Bhature", "Pakodi with Saunth Chutney / Dahi Vada", "Rice", "Lemon Onion Salad", "Apple Golden"],
+                    "fruit": "Apple Golden",
+                    "highlights": ["Choley Bhature Special", "Dahi Vada / Pakodi with Saunth", "Apple Golden"]
                 },
                 "dinner": {
-                    "items": ["Dal Moong Sabut", "Shahi Paneer", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
-                    "sweetDish": "Besan Ladoo, Hot & Cold Milk",
-                    "highlights": ["Shahi Paneer Special", "Besan Ladoo", "Sabut Moong"],
-                    "sweet": "Besan Ladoo"
+                    "items": ["Dal Chana Urad", "Malai Kofta", "Tandoori & Multi Grain Chapati", "Rice", "Salad"],
+                    "sweetDish": "Fruit Custard, Hot Milk",
+                    "sweet": "Fruit Custard",
+                    "highlights": ["Royal Malai Kofta", "Chilled Fruit Custard", "Multi Grain Chapati", "Hot Milk"]
                 }
             },
             "Wednesday": {
                 "dayCode": "WED",
                 "breakfast": {
-                    "items": ["Poha", "Veg Cutlet", "Daliya", "Boiled Egg", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Tea"],
-                    "highlights": ["Boiled Egg / Veg Cutlet", "Maharashtrian Poha", "High Protein Sprouts"],
-                    "category": "Campus Favorite Breakfast"
+                    "items": ["Bread Pakora / Bread Roll", "Veg Semiya", "Dalia", "Kala Chana Chaat", "Bread", "Butter", "Jam", "Tea", "Banana"],
+                    "fruit": "Banana",
+                    "highlights": ["Crispy Bread Pakora / Roll", "Fresh Banana", "Kala Chana Chaat"],
+                    "category": "Campus Special Bread Pakora Breakfast"
                 },
                 "lunch": {
-                    "items": ["Choley Bhature", "Fragrant Biryani", "Dahi Vada / Pakodi With Sounth Chutney", "Onion Salad & Lemon", "Fresh Banana"],
-                    "highlights": ["Choley Bhature Treat", "Dahi Vada with Sounth", "Vegetable Biryani", "Fresh Banana"],
-                    "fruit": "Fresh Banana"
+                    "items": ["Aaloo Methi", "Kadhi Pakora", "Tandoori Roti & Plain Chapati", "Rice", "Salad", "Papad"],
+                    "highlights": ["Kadhi Pakora Special", "Fresh Aaloo Methi", "Crispy Papad"]
                 },
                 "dinner": {
-                    "items": ["Dal Chana Urad", "Mix Veg.", "Tandoori Roti & Plain Chapati", "Matar Pulao", "Salad", "Green Chutney"],
-                    "sweetDish": "Amul Butter Scotch / Mango Cup Ice Cream, Hot & Cold Milk",
-                    "highlights": ["Amul Ice Cream Cup", "Matar Pulao", "Special Green Chutney"],
-                    "sweet": "Amul Butter Scotch / Mango Cup"
+                    "items": ["Dal Moong Malka", "Egg Bhurji / Egg Curry", "Soya Chap", "Tandoori Roti & Plain Chapati", "Veg. Pulao", "Salad"],
+                    "sweetDish": "Semiya, Hot Milk",
+                    "sweet": "Semiya",
+                    "highlights": ["Egg Curry / Egg Bhurji", "Soya Chap Curry", "Sweet Semiya", "Hot Milk"]
                 }
             },
             "Thursday": {
                 "dayCode": "THU",
                 "breakfast": {
-                    "items": ["Poori", "Aaloo Tomato Sabji", "Veg Semiya", "Kala Chana Chaat", "Bread", "Butter", "Jam", "Cold Coffee", "Golden Apple"],
-                    "highlights": ["Poori Aaloo Feast", "Refreshing Cold Coffee", "Golden Apple"],
-                    "category": "Festive Poori Morning"
+                    "items": ["Poori", "Aaloo Tomato Sabji", "Cornflakes", "Boiled Egg", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Milk", "Tea"],
+                    "highlights": ["Hot Poori Aaloo Sabji", "Boiled Egg", "High Protein Sprouts"],
+                    "category": "Festive Poori Aaloo Feast"
                 },
                 "lunch": {
-                    "items": ["Dal Moong Malka", "Matar Paneer", "Boondi Raita", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
-                    "highlights": ["Matar Paneer", "Chilled Boondi Raita", "Moong Malka"],
-                    "fruit": "Golden Apple (Breakfast)"
+                    "items": ["Dal Lobia(Rongi)", "Matar Paneer", "Boondi Raita", "Tandoori Roti & Plain Chapati", "Rice", "Salad", "Apple Golden"],
+                    "fruit": "Apple Golden",
+                    "highlights": ["Matar Paneer", "Chilled Boondi Raita", "Dal Lobia (Rongi)", "Apple Golden"]
                 },
                 "dinner": {
-                    "items": ["Dal Arhar", "Soya Chaap Curry", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
-                    "sweetDish": "Sooji Halwa, Hot & Cold Milk",
-                    "highlights": ["Soya Chaap Curry", "Desi Ghee Sooji Halwa", "Arhar Dal"],
-                    "sweet": "Sooji Halwa"
+                    "items": ["Dal Makhani", "Aaloo Gobhi", "Tandoori Roti & Plain Chapati", "Rice", "Salad", "Green Chutney"],
+                    "sweetDish": "Gulab Jamun, Hot Milk",
+                    "sweet": "Gulab Jamun",
+                    "highlights": ["Creamy Dal Makhani", "Hot Gulab Jamun", "Aaloo Gobhi", "Hot Milk"]
                 }
             },
             "Friday": {
                 "dayCode": "FRI",
                 "breakfast": {
-                    "items": ["Kachori Dal / Matar", "Aaloo Sabji", "Maggi (Zero Maida)", "Boiled Egg", "Daliya", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Tea"],
-                    "highlights": ["Crispy Kachori with Aaloo", "Zero Maida Maggi", "Boiled Egg"],
-                    "category": "Friday Street Style Special"
+                    "items": ["Idli", "Sambhar", "Vada", "Coconut Chutney", "Upma", "Kala Chana Chaat ( Onion + Tomato)", "Bread", "Butter", "Jam", "Tea", "Banana"],
+                    "fruit": "Banana",
+                    "highlights": ["Steaming Idli, Sambhar & Crispy Vada", "Coconut Chutney & Upma", "Fresh Banana"],
+                    "category": "South Indian Weekend Morning Feast"
                 },
                 "lunch": {
-                    "items": ["Dal Masoor Sabut", "Mix Veg.", "Boondi Raita", "Tandoori Roti & Plain Chapati", "Rice", "Corn Salad", "Fresh Banana"],
-                    "highlights": ["Healthy Corn Salad", "Boondi Raita", "Fresh Banana"],
-                    "fruit": "Fresh Banana"
+                    "items": ["Dal Kala Chana", "Aloo Shimla Mirch", "Veg Raita", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
+                    "highlights": ["Dal Kala Chana", "Aloo Shimla Mirch", "Chilled Veg Raita"]
                 },
                 "dinner": {
-                    "items": ["Dal Maharani", "Kadhai Paneer / Paneer Bhurji", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
-                    "sweetDish": "Gulab Jamun, Hot & Cold Milk",
-                    "highlights": ["Kadhai Paneer / Bhurji", "Hot Gulab Jamun", "Dal Maharani"],
-                    "sweet": "Hot Gulab Jamun"
+                    "items": ["Dal Green Moong Sabut", "Chilli Paneer", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
+                    "sweetDish": "Rice Kheer, Hot Milk",
+                    "sweet": "Rice Kheer",
+                    "highlights": ["Indo-Chinese Chilli Paneer", "Traditional Rice Kheer", "Dal Green Moong Sabut", "Hot Milk"]
                 }
             },
             "Saturday": {
                 "dayCode": "SAT",
                 "breakfast": {
-                    "items": ["South Indian Feast (Idli, Sambhar, Vada, Upma, Coconut Chutney)", "Kala Chana Chat", "Bread", "Butter", "Jam", "Cold Coffee"],
-                    "highlights": ["Steaming Idli Sambhar & Vada", "Cold Coffee", "Coconut Chutney"],
-                    "category": "South Indian Weekend Feast"
+                    "items": ["Ajwain Methi Parantha", "Aaloo Tomato Sabji", "Poha", "Sprouts (Chat Masala)", "Bread", "Butter", "Jam", "Cold Coffee"],
+                    "highlights": ["Ajwain Methi Parantha with Aaloo Sabji", "Chilled Cold Coffee", "Poha"],
+                    "category": "Ajwain Methi Parantha & Cold Coffee Morning"
                 },
                 "lunch": {
-                    "items": ["Dal Rajmah", "Lauki Tomato", "Sweet Lassi", "Tandoori Roti & Plain Chapati", "Rice", "Salad", "Fresh Guava"],
-                    "highlights": ["Sweet Chilled Lassi", "Rajmah Rice", "Fresh Guava"],
-                    "fruit": "Fresh Guava"
+                    "items": ["Dal Sabut Masoor", "Mix Veg.", "Tandoori Roti & Plain Chapati", "Rice", "Corn Salad", "Lassi", "Fruit Chaat"],
+                    "highlights": ["Sweet Chilled Lassi", "Tangy Fruit Chaat", "Corn Salad", "Dal Sabut Masoor"]
                 },
                 "dinner": {
-                    "items": ["Dal Chana Masala", "Dry Aaloo Matar", "Multigrain Tandoori Roti & Plain Chapati", "Matar Pulao", "Salad", "Green Chutney"],
-                    "sweetDish": "Fruit Custard, Hot & Cold Milk",
-                    "highlights": ["Chilled Fruit Custard", "Multigrain Tandoori", "Matar Pulao"],
-                    "sweet": "Fruit Custard"
+                    "items": ["Dal Maharani", "Aloo Beans", "Tandoori Roti & Plain Chapati", "Veg Pulao", "Salad", "Tomato/Mushroom Soup"],
+                    "sweetDish": "Besan Ladoo, Hot Milk",
+                    "sweet": "Besan Ladoo",
+                    "highlights": ["Dal Maharani", "Tomato/Mushroom Soup", "Fragrant Veg Pulao", "Besan Ladoo", "Hot Milk"]
                 }
             },
             "Sunday": {
                 "dayCode": "SUN",
                 "breakfast": {
-                    "items": ["Bread Pakora / Pav Bhaji", "White Sauce Pasta (Zero Maida)", "Cornflakes", "Fluffy Omelette", "Bread", "Butter", "Jam", "Milk", "Tea"],
-                    "highlights": ["Bread Pakora / Pav Bhaji", "Zero Maida White Sauce Pasta", "Fresh Omelette"],
-                    "category": "Sunday Mega Brunch"
+                    "items": ["Aaloo Bonda / Burger", "Red Sauce Pasta", "Cornflakes", "Omlette", "Bread", "Butter", "Jam", "Milk", "Tea", "Banana"],
+                    "fruit": "Banana",
+                    "highlights": ["Aaloo Bonda / Burger", "Italian Red Sauce Pasta", "Fresh Fluffy Omlette", "Fresh Banana"],
+                    "category": "Sunday Grand Brunch"
                 },
                 "lunch": {
-                    "items": ["Paneer Onion Parantha", "Veg Biryani", "Fresh Curd", "Butter", "Salad", "Papad", "Pickle", "Amul Kashmiri Kulfi"],
-                    "highlights": ["Paneer Onion Parantha with Butter", "Amul Kashmiri Kulfi", "Veg Biryani"],
-                    "sweet": "Amul Kashmiri Kulfi"
+                    "items": ["Paneer Onion Paratha / Dal / Matar Kachori", "Aaloo Tomato Sabji", "Plain Curd", "Veg Biryani"],
+                    "highlights": ["Paneer Onion Paratha / Matar Kachori", "Aromatic Veg Biryani", "Fresh Plain Curd"]
                 },
                 "dinner": {
-                    "items": ["Dal Makhani", "Masala Bhindi / Baingan Bharta", "Tandoori Roti & Plain Chapati", "Rice", "Salad"],
-                    "sweetDish": "Rice Kheer, Hot & Cold Milk",
-                    "highlights": ["Creamy Dal Makhani", "Slow-Cooked Rice Kheer", "Masala Bhindi / Baingan Bharta"],
-                    "sweet": "Rice Kheer"
+                    "items": ["Dal Chana Masala", "Chilli Nutri / Sarson Saag", "Tandoori Roti & Plain Chapati", "Rice", "Green Chutney", "Salad"],
+                    "sweetDish": "Amul Kulfi - Rajasthani / Kashmiri, Hot Milk",
+                    "sweet": "Amul Kulfi (Rajasthani / Kashmiri)",
+                    "highlights": ["Amul Kulfi - Rajasthani / Kashmiri", "Chilli Nutri / Sarson Saag", "Dal Chana Masala", "Hot Milk"]
                 }
             }
         }
@@ -1078,7 +1081,20 @@ def main():
         with open(os.path.join(p, 'campus_data.json'), 'w', encoding='utf-8') as f:
             json.dump(campus, f, ensure_ascii=False, indent=2)
             
-    print("Successfully built all data files in data/ and js/data/!")
+    # Also regenerate js/data/bundle.js for unified loading
+    bundle_content = f"""// Auto-generated JUIT Student Hub Data Bundle
+window.JUIT_DATA = {{
+  timetable: {json.dumps(timetable, ensure_ascii=False)},
+  mess: {json.dumps(mess, ensure_ascii=False)},
+  calendar: {json.dumps(calendar, ensure_ascii=False)},
+  campus: {json.dumps(campus, ensure_ascii=False)}
+}};
+console.log('JUIT Hub Data Bundle successfully initialized.');
+"""
+    with open('js/data/bundle.js', 'w', encoding='utf-8') as f:
+        f.write(bundle_content)
+        
+    print("Successfully built all data files in data/, js/data/ and js/data/bundle.js!")
 
 if __name__ == '__main__':
     main()

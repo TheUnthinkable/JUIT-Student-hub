@@ -21,6 +21,11 @@ const MessController = {
     this.updateLiveServingStatus();
     this.updateDashboardCard();
     
+    const monthLabel = document.getElementById('mess-month-cycle-label');
+    if (monthLabel && this.data.month) {
+      monthLabel.textContent = `Cycle: ${this.data.month}`;
+    }
+    
     // Live refresh every minute
     setInterval(() => {
       this.updateLiveServingStatus();

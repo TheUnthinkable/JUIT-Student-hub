@@ -629,26 +629,26 @@ const AcademicsController = {
       if (currentPct < T) {
         statusColor = '#ef4444';
         const needed = Math.ceil((T * total - 100 * attended) / (100 - T));
-        statusBadge = `<span style="font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(239, 68, 68, 0.15); color: #ef4444;">Debarment Risk</span>`;
+        statusBadge = `<span class="attendance-status-badge danger">Debarment Risk</span>`;
         adviceHtml = `
-          <div style="background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #fca5a5; margin: 10px 0;">
+          <div class="attendance-advice-box danger">
             ⚠️ Must attend the next <strong>${needed}</strong> consecutive ${needed === 1 ? 'class' : 'classes'} to reach ${T}% compliance.
           </div>
         `;
       } else {
         const canBunk = Math.floor((100 * attended - T * total) / T);
         if (canBunk > 0) {
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #10b981;">Safe (+${canBunk} Bunks)</span>`;
+          statusBadge = `<span class="attendance-status-badge safe">Safe (+${canBunk} Bunks)</span>`;
           adviceHtml = `
-            <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #86efac; margin: 10px 0;">
+            <div class="attendance-advice-box safe">
               ✓ On track. You can safely miss <strong>${canBunk}</strong> ${canBunk === 1 ? 'class' : 'classes'} and stay above ${T}%.
             </div>
           `;
         } else {
           statusColor = '#f59e0b';
-          statusBadge = `<span style="font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #f59e0b;">Borderline Cutoff</span>`;
+          statusBadge = `<span class="attendance-status-badge warning">Borderline Cutoff</span>`;
           adviceHtml = `
-            <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #fde047; margin: 10px 0;">
+            <div class="attendance-advice-box warning">
               ⚠️ Right on the ${T}% cutoff. Missing the next class will cause a shortage.
             </div>
           `;
@@ -659,54 +659,58 @@ const AcademicsController = {
       const ifMiss1 = (attended / (total + 1) * 100).toFixed(1);
 
       return `
-        <div class="dash-card attendance-card" data-course-code="${code}" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;">
+        <div class="dash-card attendance-card" data-course-code="${code}">
           <!-- Course Card Header -->
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span class="hub-badge" style="font-size: 0.75rem;">${code}</span>
+          <div class="attendance-card-header">
+            <div class="attendance-card-title-group">
+              <div class="attendance-card-badges">
+                <span class="hub-badge">${code}</span>
                 ${statusBadge}
               </div>
-              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1.3;">${c.name}</h3>
+              <h3 class="attendance-course-name">${c.name}</h3>
             </div>
-            <div style="text-align: right; flex-shrink: 0;">
-              <span style="font-size: 1.5rem; font-weight: 800; color: ${statusColor};">${pctFormatted}%</span>
-              <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Attendance</div>
+            <div class="attendance-pct-box">
+              <span class="attendance-pct-number" style="color: ${statusColor};">${pctFormatted}%</span>
+              <span class="attendance-pct-label">Attendance</span>
             </div>
           </div>
 
           <!-- Progress Bar -->
-          <div class="progress-bar-wrap" style="height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; position: relative; margin-bottom: 14px; overflow: hidden;">
-            <div class="progress-bar-fill" style="width: ${Math.min(100, currentPct)}%; background: ${statusColor}; height: 100%; border-radius: 4px; transition: width 0.3s ease;"></div>
+          <div class="attendance-progress-track">
+            <div class="attendance-progress-fill" style="width: ${Math.min(100, currentPct)}%; background: ${statusColor};"></div>
           </div>
 
-          <!-- Interactive Steppers for Present / Absent -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;">
+          <!-- Dual Interactive Stepper Controls -->
+          <div class="attendance-steppers-grid">
             <!-- Present Stepper -->
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-secondary);">Attended:</span>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" class="btn-step" data-action="dec-present" data-code="${code}" style="width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-primary); cursor: pointer; font-weight: 700;">−</button>
-                <span style="font-size: 0.95rem; font-weight: 700; color: #10b981; min-width: 22px; text-align: center;">${attended}</span>
-                <button type="button" class="btn-step" data-action="inc-present" data-code="${code}" style="padding: 2px 8px; height: 26px; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.15); color: #10b981; cursor: pointer; font-weight: 700; font-size: 0.78rem;">+1 Present</button>
+            <div class="attendance-stepper-box present-box">
+              <div class="stepper-box-top">
+                <span class="stepper-box-label">Attended</span>
+                <span class="stepper-count attended">${attended}</span>
+              </div>
+              <div class="stepper-box-actions">
+                <button type="button" class="btn-step btn-step-dec" data-action="dec-present" data-code="${code}" aria-label="Decrease attended">−</button>
+                <button type="button" class="btn-step btn-step-inc present" data-action="inc-present" data-code="${code}">+1 Present</button>
               </div>
             </div>
 
             <!-- Absent Stepper -->
-            <div style="display: flex; align-items: center; justify-content: space-between; border-left: 1px solid var(--border-subtle); padding-left: 10px;">
-              <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-secondary);">Missed:</span>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" class="btn-step" data-action="dec-absent" data-code="${code}" style="width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-primary); cursor: pointer; font-weight: 700;">−</button>
-                <span style="font-size: 0.95rem; font-weight: 700; color: #ef4444; min-width: 22px; text-align: center;">${missed}</span>
-                <button type="button" class="btn-step" data-action="inc-absent" data-code="${code}" style="padding: 2px 8px; height: 26px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.15); color: #ef4444; cursor: pointer; font-weight: 700; font-size: 0.78rem;">+1 Absent</button>
+            <div class="attendance-stepper-box absent-box">
+              <div class="stepper-box-top">
+                <span class="stepper-box-label">Missed</span>
+                <span class="stepper-count missed">${missed}</span>
+              </div>
+              <div class="stepper-box-actions">
+                <button type="button" class="btn-step btn-step-dec" data-action="dec-absent" data-code="${code}" aria-label="Decrease missed">−</button>
+                <button type="button" class="btn-step btn-step-inc absent" data-action="inc-absent" data-code="${code}">+1 Absent</button>
               </div>
             </div>
           </div>
 
           <!-- Total & Edit Counts -->
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
-            <span>Total Conducted: <strong style="color: var(--text-primary);">${total}</strong></span>
-            <button type="button" class="btn-edit-counts" data-code="${code}" style="background: none; border: none; color: #3b82f6; cursor: pointer; font-size: 0.75rem; padding: 2px 6px;">
+          <div class="attendance-conducted-bar">
+            <span>Total Conducted: <strong>${total}</strong></span>
+            <button type="button" class="btn-edit-counts" data-code="${code}">
               ✎ Edit Exact Numbers
             </button>
           </div>
@@ -714,9 +718,9 @@ const AcademicsController = {
           ${adviceHtml}
 
           <!-- Forecast Pills -->
-          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border-subtle); padding-top: 8px;">
-            <span>If attended next: <strong style="color: #10b981;">${ifAttend1}%</strong></span>
-            <span>If missed next: <strong style="color: #ef4444;">${ifMiss1}%</strong></span>
+          <div class="attendance-forecast-row">
+            <span class="forecast-item next-attend">If attended next: <strong>${ifAttend1}%</strong></span>
+            <span class="forecast-item next-miss">If missed next: <strong>${ifMiss1}%</strong></span>
           </div>
         </div>
       `;
@@ -727,44 +731,46 @@ const AcademicsController = {
 
     container.innerHTML = `
       <!-- SUMMARY & TARGET SELECTOR BANNER -->
-      <div class="dash-card col-span-12" style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px; margin-bottom: 22px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-              <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted);">Aggregate University Attendance</span>
-              <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px; background: ${isSafeAggregate ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${isSafeAggregate ? '#10b981' : '#ef4444'};">
+      <div class="dash-card col-span-12 attendance-summary-card">
+        <div class="summary-card-inner">
+          <div class="summary-left">
+            <div class="summary-badge-row">
+              <span class="summary-badge-title">Aggregate University Attendance</span>
+              <span class="summary-status-badge ${isSafeAggregate ? 'safe' : 'danger'}">
                 ${isSafeAggregate ? '✓ Safe Standing' : '⚠️ Below Mandate'}
               </span>
             </div>
-            <div style="display: flex; align-items: baseline; gap: 12px;">
-              <span style="font-size: 2.4rem; font-weight: 800; color: ${isSafeAggregate ? '#10b981' : '#ef4444'};">${aggregatePct}%</span>
-              <span style="font-size: 0.9rem; color: var(--text-secondary);">${totalAttended} of ${totalConducted} classes attended across registered courses</span>
+            <div class="summary-big-stats">
+              <span class="summary-big-pct" style="color: ${isSafeAggregate ? '#10b981' : '#ef4444'};">${aggregatePct}%</span>
+              <span class="summary-subtext">${totalAttended} of ${totalConducted} classes attended across registered courses</span>
             </div>
           </div>
 
           <!-- Target Rule Selector & Quick Actions -->
-          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; background: var(--bg-elevated); padding: 4px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-              <button type="button" class="btn-target-toggle ${T === 80 ? 'active' : ''}" data-target="80" style="padding: 6px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: ${T === 80 ? '#2563eb' : 'transparent'}; color: ${T === 80 ? '#ffffff' : 'var(--text-secondary)'};">
+          <div class="summary-right">
+            <div class="target-rule-segmented">
+              <button type="button" class="btn-target-toggle ${T === 80 ? 'active' : ''}" data-target="80">
                 80% Rule (JUIT Rule)
               </button>
-              <button type="button" class="btn-target-toggle ${T === 75 ? 'active' : ''}" data-target="75" style="padding: 6px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; background: ${T === 75 ? '#2563eb' : 'transparent'}; color: ${T === 75 ? '#ffffff' : 'var(--text-secondary)'};">
+              <button type="button" class="btn-target-toggle ${T === 75 ? 'active' : ''}" data-target="75">
                 75% Rule (Relaxed)
               </button>
             </div>
-            <button type="button" class="btn-secondary" id="btn-add-custom-course" style="font-size: 0.82rem; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px;">
-              <span class="material-symbols-outlined" style="font-size: 15px;">add</span>
-              <span>Add Subject</span>
-            </button>
-            <button type="button" class="btn-secondary" id="btn-reset-attendance" style="font-size: 0.82rem; padding: 7px 12px; color: var(--text-muted);" title="Reset to standard semester baseline">
-              ↺ Reset
-            </button>
+            <div class="summary-action-btns">
+              <button type="button" class="btn-secondary" id="btn-add-custom-course">
+                <span class="material-symbols-outlined text-[16px]">add</span>
+                <span>Add Subject</span>
+              </button>
+              <button type="button" class="btn-secondary" id="btn-reset-attendance" title="Reset to standard semester baseline">
+                ↺ Reset
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- COURSE CARDS GRID -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+      <div class="academics-cards-grid">
         ${courseCardsHtml}
       </div>
     `;

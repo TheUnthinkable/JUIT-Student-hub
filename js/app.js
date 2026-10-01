@@ -93,6 +93,24 @@ const App = {
       btn.classList.toggle('active', match);
     });
 
+    // Synchronize bottom HUD dock: if active view is a secondary module, illuminate 'More'
+    const directDockViews = ['dash', 'timetable', 'academics', 'mess'];
+    const hudMoreBtn = document.getElementById('btn-mobile-hud-more');
+    if (hudMoreBtn) {
+      const isSecondary = !directDockViews.includes(viewId);
+      hudMoreBtn.classList.toggle('active', isSecondary);
+      let dot = hudMoreBtn.querySelector('.hud-active-dot');
+      if (isSecondary) {
+        if (!dot) {
+          dot = document.createElement('span');
+          dot.className = 'hud-active-dot';
+          hudMoreBtn.appendChild(dot);
+        }
+      } else if (dot) {
+        dot.remove();
+      }
+    }
+
     // Toggle panels
     document.querySelectorAll('.app-view-panel').forEach(panel => {
       panel.classList.remove('active');
@@ -126,7 +144,7 @@ const App = {
       window.AdminController.checkAdminStatus();
     }
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   },
 
   bindNavigation() {
@@ -909,11 +927,13 @@ const App = {
     const openDrawer = () => {
       if (drawer) drawer.classList.add('active');
       if (backdrop) backdrop.classList.add('active');
+      document.body.classList.add('mobile-drawer-open');
     };
 
     const closeDrawer = () => {
       if (drawer) drawer.classList.remove('active');
       if (backdrop) backdrop.classList.remove('active');
+      document.body.classList.remove('mobile-drawer-open');
     };
 
     if (toggleBtn) {
@@ -953,6 +973,7 @@ const App = {
     const backdrop = document.getElementById('mobile-drawer-backdrop');
     if (drawer) drawer.classList.remove('active');
     if (backdrop) backdrop.classList.remove('active');
+    document.body.classList.remove('mobile-drawer-open');
   },
 
   /* ================= PWA & SERVICE WORKER ================= */

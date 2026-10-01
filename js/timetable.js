@@ -434,7 +434,7 @@ const TimetableController = {
       const targetClean = this.activeBatch.trim().replace(/[.,;]+$/, '').toUpperCase();
 
       dayEntries = dayEntries.filter(e => {
-        if (!e.batches || e.batches.length === 0) return true;
+        if (!e.batches || e.batches.length === 0) return false;
         if (e.batches.includes('ALL')) return true;
 
         for (const b of e.batches) {

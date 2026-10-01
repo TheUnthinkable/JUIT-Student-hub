@@ -2494,8 +2494,10 @@
         "typeName": "Lecture",
         "code": "25B11CI112",
         "subject": "Software Development Fundamentals (SDF)",
-        "batches": [],
-        "batchesRaw": "",
+        "batches": [
+          "26BT25"
+        ],
+        "batchesRaw": "26BT25",
         "faculty": "RTY",
         "venue": "CR09",
         "venueDetails": {
