@@ -66,11 +66,19 @@ const App = {
 
     // 5. Check URL Hash or Initial View
     const hash = window.location.hash.replace('#', '');
-    if (hash && document.getElementById(`view-${hash}`)) {
+    if (hash && (document.getElementById(`view-${hash}`) || hash === 'events')) {
       this.switchView(hash);
     } else {
       this.switchView('dash');
     }
+
+    // Listen to hash changes (back/forward or external links)
+    window.addEventListener('hashchange', () => {
+      const h = window.location.hash.replace('#', '');
+      if (h && (document.getElementById(`view-${h}`) || h === 'events')) {
+        this.switchView(h);
+      }
+    });
 
     // 6. Refresh Dashboard Highlights & Real-time Live Class Countdown
     this.refreshDashboard();
@@ -92,7 +100,7 @@ const App = {
     window.location.hash = viewId;
 
     // Update active state in desktop sidebar, top tabs, and mobile bottom HUD dock
-    document.querySelectorAll('.nav-link, .nav-tab-item, .mobile-nav-item, .mobile-hud-item').forEach(btn => {
+    document.querySelectorAll('.nav-link, .nav-tab-item, .mobile-nav-item, .mobile-hud-item, .mobile-hud-dock a, .mobile-hud-dock button').forEach(btn => {
       const match = (btn.dataset.view === viewId || (btn.dataset.view === 'events' && viewId === 'events-clubs') || (btn.dataset.view === 'events-clubs' && viewId === 'events'));
       btn.classList.toggle('active', match);
     });
@@ -966,21 +974,63 @@ const App = {
     const backdrop = document.getElementById('mobile-drawer-backdrop');
     const closeBtn = document.getElementById('btn-close-mobile-drawer');
     const hudMoreBtn = document.getElementById('btn-mobile-hud-more');
+    const moreSheet = document.getElementById('mobile-more-sheet');
+    const moreBackdrop = document.getElementById('mobile-more-backdrop');
+    const closeMoreBtn = document.getElementById('btn-close-mobile-more');
 
     const openDrawer = () => {
-      if (drawer) drawer.classList.add('active');
-      if (backdrop) backdrop.classList.add('active');
+      this.closeMobileDrawer();
+      if (drawer) {
+        drawer.classList.remove('-translate-x-full');
+        drawer.classList.add('translate-x-0', 'active');
+      }
+      if (backdrop) {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('active');
+      }
+      document.body.classList.add('mobile-drawer-open');
+    };
+
+    const openMoreSheet = () => {
+      this.closeMobileDrawer();
+      if (moreSheet) {
+        moreSheet.classList.remove('translate-y-full');
+        moreSheet.classList.add('translate-y-0', 'active');
+      }
+      if (moreBackdrop) {
+        moreBackdrop.classList.remove('hidden');
+        moreBackdrop.classList.add('active');
+      }
       document.body.classList.add('mobile-drawer-open');
     };
 
     const closeDrawer = () => {
-      if (drawer) drawer.classList.remove('active');
-      if (backdrop) backdrop.classList.remove('active');
+      if (drawer) {
+        drawer.classList.remove('active', 'translate-x-0');
+        drawer.classList.add('-translate-x-full');
+      }
+      if (backdrop) {
+        backdrop.classList.remove('active');
+        backdrop.classList.add('hidden');
+      }
+      document.body.classList.remove('mobile-drawer-open');
+    };
+
+    const closeMoreSheet = () => {
+      if (moreSheet) {
+        moreSheet.classList.remove('active', 'translate-y-0');
+        moreSheet.classList.add('translate-y-full');
+      }
+      if (moreBackdrop) {
+        moreBackdrop.classList.remove('active');
+        moreBackdrop.classList.add('hidden');
+      }
       document.body.classList.remove('mobile-drawer-open');
     };
 
     if (toggleBtn) {
       toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
         if (drawer && drawer.classList.contains('active')) {
           closeDrawer();
@@ -994,28 +1044,65 @@ const App = {
       hudMoreBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (drawer && drawer.classList.contains('active')) {
-          closeDrawer();
+        if (moreSheet && moreSheet.classList.contains('active')) {
+          closeMoreSheet();
         } else {
-          openDrawer();
+          openMoreSheet();
         }
       });
     }
 
     if (closeBtn) {
-      closeBtn.addEventListener('click', closeDrawer);
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDrawer();
+      });
     }
 
     if (backdrop) {
-      backdrop.addEventListener('click', closeDrawer);
+      backdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeDrawer();
+      });
+    }
+
+    if (closeMoreBtn) {
+      closeMoreBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeMoreSheet();
+      });
+    }
+
+    if (moreBackdrop) {
+      moreBackdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeMoreSheet();
+      });
     }
   },
 
   closeMobileDrawer() {
     const drawer = document.getElementById('mobile-drawer');
     const backdrop = document.getElementById('mobile-drawer-backdrop');
-    if (drawer) drawer.classList.remove('active');
-    if (backdrop) backdrop.classList.remove('active');
+    const moreSheet = document.getElementById('mobile-more-sheet');
+    const moreBackdrop = document.getElementById('mobile-more-backdrop');
+
+    if (drawer) {
+      drawer.classList.remove('active', 'translate-x-0');
+      drawer.classList.add('-translate-x-full');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('active');
+      backdrop.classList.add('hidden');
+    }
+    if (moreSheet) {
+      moreSheet.classList.remove('active', 'translate-y-0');
+      moreSheet.classList.add('translate-y-full');
+    }
+    if (moreBackdrop) {
+      moreBackdrop.classList.remove('active');
+      moreBackdrop.classList.add('hidden');
+    }
     document.body.classList.remove('mobile-drawer-open');
   },
 

@@ -1670,42 +1670,40 @@
   <!-- ======================================================================
        MOBILE BOTTOM HUD DOCK (Visible on < lg screens)
        ====================================================================== -->
-  <nav class="mobile-hud-dock fixed bottom-0 inset-x-0 z-50 pb-safe px-margin-mobile pointer-events-none lg:hidden" aria-label="Mobile Navigation Dock">
-    <div class="max-w-md mx-auto mb-3 pointer-events-auto">
-      <div class="bg-surface-container-low/95 backdrop-blur-xl rounded-full shadow-[0_12px_32px_-4px_rgba(10,13,19,0.7),0_2px_6px_-1px_rgba(245,158,11,0.04)] px-space-xs py-space-xs flex items-center justify-between border border-white/[0.08]">
-        <a aria-current="page" class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all text-primary bg-primary/10 active" data-view="dash" href="#dash">
-          <span class="material-symbols-outlined text-[20px]">cottage</span>
-          <span class="font-label-sm text-label-sm mt-0.5">Home</span>
-        </a>
-        <a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-view="timetable" href="#timetable">
-          <span class="material-symbols-outlined text-[20px]">calendar_today</span>
-          <span class="font-label-sm text-label-sm mt-0.5">Classes</span>
-        </a>
-        <a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-view="campus" href="#campus">
-          <span class="material-symbols-outlined text-[20px]">explore</span>
-          <span class="font-label-sm text-label-sm mt-0.5">Campus</span>
-        </a>
-        <a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-view="mess" href="#mess">
-          <span class="material-symbols-outlined text-[20px]">restaurant</span>
-          <span class="font-label-sm text-label-sm mt-0.5">Mess</span>
-        </a>
-        <a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-view="resources" href="#resources">
-          <span class="material-symbols-outlined text-[20px]">menu_book</span>
-          <span class="font-label-sm text-label-sm mt-0.5">Vault</span>
-        </a>
-        <button type="button" class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all relative cursor-pointer" id="btn-mobile-hud-more" aria-label="More navigation options">
-          <span class="material-symbols-outlined text-[20px]">more_horiz</span>
-          <span class="font-label-sm text-label-sm mt-0.5">More</span>
-        </button>
-      </div>
+  <nav class="mobile-hud-dock fixed bottom-0 inset-x-0 z-40 pb-safe px-3 mb-2 flex justify-center lg:hidden" aria-label="Mobile Navigation Dock">
+    <div class="w-full max-w-md bg-surface-container-low/95 backdrop-blur-xl rounded-full shadow-[0_12px_32px_-4px_rgba(10,13,19,0.7),0_2px_6px_-1px_rgba(245,158,11,0.04)] px-1 py-1 flex items-center justify-between border border-white/[0.08]">
+      <a class="mobile-hud-item active flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all cursor-pointer" data-view="dash" href="#dash">
+        <span class="material-symbols-outlined text-[20px]">cottage</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Home</span>
+      </a>
+      <a class="mobile-hud-item flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all cursor-pointer" data-view="timetable" href="#timetable">
+        <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Classes</span>
+      </a>
+      <a class="mobile-hud-item flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all cursor-pointer" data-view="campus" href="#campus">
+        <span class="material-symbols-outlined text-[20px]">explore</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Campus</span>
+      </a>
+      <a class="mobile-hud-item flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all cursor-pointer" data-view="mess" href="#mess">
+        <span class="material-symbols-outlined text-[20px]">restaurant</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Mess</span>
+      </a>
+      <a class="mobile-hud-item flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all cursor-pointer" data-view="resources" href="#resources">
+        <span class="material-symbols-outlined text-[20px]">menu_book</span>
+        <span class="font-label-sm text-label-sm mt-0.5">Vault</span>
+      </a>
+      <button type="button" class="mobile-hud-item flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all relative cursor-pointer" id="btn-mobile-hud-more" aria-label="More navigation options">
+        <span class="material-symbols-outlined text-[20px]">more_horiz</span>
+        <span class="font-label-sm text-label-sm mt-0.5">More</span>
+      </button>
     </div>
   </nav>
 
   <!-- ======================================================================
-       MOBILE SLIDE-OVER DRAWER
+       MOBILE SLIDE-OVER DRAWER (Opened via top-left hamburger menu)
        ====================================================================== -->
-  <div class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity" id="mobile-drawer-backdrop"></div>
-  <aside class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-surface-container-low z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-5 flex flex-col justify-between overflow-y-auto border-l border-white/[0.08]" id="mobile-drawer" aria-label="Campus Menu Drawer">
+  <div class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 transition-opacity" id="mobile-drawer-backdrop"></div>
+  <aside class="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-surface-container-low z-50 transform -translate-x-full transition-transform duration-300 ease-in-out p-5 flex flex-col justify-between overflow-y-auto border-r border-white/[0.08] shadow-2xl" id="mobile-drawer" aria-label="Campus Menu Drawer">
     <div class="space-y-5">
       <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
         <div class="flex items-center gap-2">
@@ -1749,6 +1747,96 @@
     <div class="pt-4 border-t border-white/[0.06] space-y-3">
       <a href="#settings" data-view="settings" class="nav-link"><span class="material-symbols-outlined">tune</span><span>Preferences</span></a>
       <a href="#admin" data-view="admin" class="nav-link"><span class="material-symbols-outlined">lock</span><span>Admin Portal</span></a>
+    </div>
+  </aside>
+
+  <!-- ======================================================================
+       MOBILE MORE BOTTOM SHEET (Opened via bottom-right 'More' dock item)
+       ====================================================================== -->
+  <div class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 transition-opacity" id="mobile-more-backdrop"></div>
+  <aside class="fixed inset-x-0 bottom-0 bg-surface-container-low z-50 transform translate-y-full transition-transform duration-300 ease-in-out px-5 pt-3 pb-8 rounded-t-3xl border-t border-white/[0.1] shadow-[0_-12px_40px_rgba(0,0,0,0.8)] max-h-[85vh] overflow-y-auto flex flex-col" id="mobile-more-sheet" aria-label="Campus More Services Sheet">
+    <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-4 shrink-0"></div>
+
+    <div class="flex items-center justify-between pb-3 border-b border-white/[0.08] mb-4 shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">widgets</span>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Campus Services</h3>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-close-mobile-more">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2.5 pb-4">
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#utilities" data-view="utilities">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">calculate</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Utilities</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#announcements" data-view="announcements">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">campaign</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Notices</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#events-clubs" data-view="events-clubs">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">celebration</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Events</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#bus" data-view="bus">
+        <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">directions_bus</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Transit</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#calendar" data-view="calendar">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">date_range</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Calendar</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#academics" data-view="academics">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">checklist</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Attendance</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#portals" data-view="portals">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">hub</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Portals</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#settings" data-view="settings">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-highest text-on-surface-variant flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">tune</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Settings</span>
+      </a>
+
+      <a class="flex flex-col items-center justify-center p-3 rounded-2xl bg-surface-container hover:bg-surface-container-high border border-white/[0.04] transition-all text-center group cursor-pointer" href="#admin" data-view="admin">
+        <div class="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">lock</span>
+        </div>
+        <span class="font-label-sm text-xs font-medium text-on-surface">Admin</span>
+      </a>
+    </div>
+
+    <div class="pt-3 border-t border-white/[0.08] flex items-center justify-around text-xs text-on-surface-variant">
+      <a class="hover:text-primary transition-colors flex items-center gap-1" href="#timetable" data-view="timetable"><span class="material-symbols-outlined text-[15px]">calendar_today</span>Classes</a>
+      <a class="hover:text-primary transition-colors flex items-center gap-1" href="#mess" data-view="mess"><span class="material-symbols-outlined text-[15px]">restaurant</span>Mess</a>
+      <a class="hover:text-primary transition-colors flex items-center gap-1" href="#resources" data-view="resources"><span class="material-symbols-outlined text-[15px]">menu_book</span>Vault</a>
+      <a class="hover:text-primary transition-colors flex items-center gap-1" href="#campus" data-view="campus"><span class="material-symbols-outlined text-[15px]">explore</span>Map</a>
     </div>
   </aside>
 
@@ -1882,7 +1970,8 @@
   </script>
 
   <!-- Application Controllers & Data -->
-  <script src="data/juit_data.js"></script>
+  <script src="js/data/bundle.js"></script>
+  <script src="js/data/initial_data.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/timetable.js"></script>
   <script src="js/mess.js"></script>
@@ -1895,7 +1984,7 @@
   <script src="js/academics.js"></script>
   <script src="js/portals.js"></script>
   <script src="js/admin.js"></script>
-  <script src="js/bus-guide.js"></script>
+  <script src="js/bus.js"></script>
   <script src="js/app.js"></script>
 </body>
 

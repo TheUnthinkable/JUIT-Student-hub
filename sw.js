@@ -3,7 +3,7 @@
  * Provides offline caching for timetable, mess, campus map, and core assets.
  */
 
-const CACHE_NAME = 'juit-hub-stitch-v1';
+const CACHE_NAME = 'juit-hub-stitch-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -16,7 +16,9 @@ const ASSETS_TO_CACHE = [
   './icon-192.png',
   './icon-512.png',
   './css/stitch-theme.css',
-  './data/juit_data.js',
+  './css/fonts/MaterialSymbolsOutlined.woff2',
+  './js/data/bundle.js',
+  './js/data/initial_data.js',
   './js/theme.js',
   './js/timetable.js',
   './js/mess.js',
@@ -25,7 +27,7 @@ const ASSETS_TO_CACHE = [
   './js/portals.js',
   './js/academics.js',
   './js/resources.js',
-  './js/bus-guide.js',
+  './js/bus.js',
   './js/announcements.js',
   './js/events-clubs.js',
   './js/utilities.js',
