@@ -352,7 +352,50 @@ const TimetableController = {
 
   renderQuickBatchChips() {
     const container = document.getElementById('quick-batch-container');
-    if (container) container.style.display = 'none';
+    if (!container) return;
+
+    const currentSheet = this.data[this.activeSemesterId];
+    const batches = (currentSheet && currentSheet.batches) ? currentSheet.batches : [];
+    if (batches.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.style.display = 'flex';
+    const topBatches = batches.slice(0, 12);
+
+    let html = `<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider flex-shrink-0 mr-1">Quick Batches:</span>`;
+    
+    const isAllActive = (!this.activeBatch || this.activeBatch === 'ALL');
+    html += `
+      <button type="button" class="px-2.5 py-1 rounded font-label-sm text-label-sm transition-colors cursor-pointer ${isAllActive ? 'bg-primary text-on-primary font-semibold shadow-sm' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-highest'}" data-batch="ALL">
+        All
+      </button>
+    `;
+
+    topBatches.forEach(b => {
+      const isActive = (this.activeBatch === b);
+      html += `
+        <button type="button" class="px-2.5 py-1 rounded font-label-sm text-label-sm transition-colors cursor-pointer ${isActive ? 'bg-primary text-on-primary font-semibold shadow-sm' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-highest'}" data-batch="${b}">
+          ${b}${isActive ? ' (Active)' : ''}
+        </button>
+      `;
+    });
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('button[data-batch]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.activeBatch = btn.dataset.batch;
+        localStorage.setItem('juit_selected_batch', this.activeBatch);
+        const batchSelect = document.getElementById('timetable-batch-select');
+        if (batchSelect) batchSelect.value = this.activeBatch;
+        this.renderQuickBatchChips();
+        this.renderDayPills();
+        this.renderSchedule();
+        this.updateDashboardToday();
+      });
+    });
   },
 
   renderViewModeTabs() {
@@ -360,23 +403,21 @@ const TimetableController = {
     if (!container) return;
 
     container.innerHTML = `
-      <div class="term-switcher" style="margin-bottom: 10px;">
-        <button type="button" class="term-btn ${this.viewMode === 'today' ? 'active' : ''}" data-mode="today" title="Today's Classes">
-          <span class="tab-label-icon">⚡</span>
-          <span class="tab-label-text">Today</span>
-        </button>
-        <button type="button" class="term-btn ${this.viewMode === 'day' ? 'active' : ''}" data-mode="day" title="Specific Day View">
-          <span class="tab-label-icon">📆</span>
-          <span class="tab-label-text">Day</span>
-        </button>
-        <button type="button" class="term-btn ${this.viewMode === 'week' ? 'active' : ''}" data-mode="week" title="Full Week Matrix">
-          <span class="tab-label-icon">📊</span>
-          <span class="tab-label-text">Matrix</span>
-        </button>
-      </div>
+      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'today' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="today">
+        <span class="material-symbols-outlined text-[16px]">bolt</span>
+        <span>Today View</span>
+      </button>
+      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'day' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="day">
+        <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+        <span>Day View</span>
+      </button>
+      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'week' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="week">
+        <span class="material-symbols-outlined text-[16px]">view_column</span>
+        <span>Week Matrix View</span>
+      </button>
     `;
 
-    container.querySelectorAll('.term-btn').forEach(btn => {
+    container.querySelectorAll('button[data-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.viewMode = btn.dataset.mode;
         if (this.viewMode === 'today') {
@@ -399,22 +440,21 @@ const TimetableController = {
     container.innerHTML = this.days.map(d => {
       const isToday = (d === currentDayCode);
       const isActive = (d === this.activeDay);
-      
       const dayClasses = this.filterAndMergeEntries(d);
       const count = dayClasses.length;
 
       return `
-        <button type="button" class="day-pill-btn ${isActive ? 'active' : ''}" data-day="${d}">
-          <span class="day-name-label">
-            ${d}
-            ${isToday ? '<span class="today-dot-indicator" title="Today"></span>' : ''}
-          </span>
-          <span class="day-count-label">${count} ${count === 1 ? 'class' : 'classes'}</span>
-        </button>
+        <div class="${isActive ? 'bg-surface-container-high ring-1 ring-primary shadow-md' : 'bg-surface-container-low hover:bg-surface-container'} p-space-md rounded-xl text-center cursor-pointer transition-colors border border-outline-variant/15" data-day="${d}">
+          <div class="flex items-center justify-center gap-1.5">
+            <p class="font-headline-sm text-headline-sm font-bold ${isActive ? 'text-primary' : 'text-on-surface'}">${d}</p>
+            ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>' : ''}
+          </div>
+          <p class="font-label-sm text-label-sm ${isActive ? 'text-secondary font-medium' : 'text-outline'} mt-0.5">${count} ${count === 1 ? 'class' : 'classes'}</p>
+        </div>
       `;
     }).join('');
 
-    container.querySelectorAll('.day-pill-btn').forEach(btn => {
+    container.querySelectorAll('[data-day]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeDay = btn.dataset.day;
         this.renderDayPills();
@@ -644,42 +684,34 @@ const TimetableController = {
         const isLunch = item.isLunch;
         const breakTitle = isLunch ? 'Lunch Break & Campus Leisure' : `Free Period (${item.durationMins >= 60 ? `${Math.round(item.durationMins/60)} hr` : `${item.durationMins} mins`})`;
         const breakSub = isLunch ? 'Annapurna Mess is serving fresh lunch' : 'LRC Library study cubicles available';
-        const actionBtn = isLunch
-          ? `<a href="#mess" class="break-action-link" onclick="if(window.App) App.switchView('mess')">View Mess Menu →</a>`
-          : `<a href="#resources" class="break-action-link" onclick="if(window.App) App.switchView('resources')">Reserve Cubicle →</a>`;
         const tagLabel = isLunch ? 'MESS ACTIVE' : 'FREE TIME';
-        const tagColor = isLunch ? '#f97316' : '#f59e0b';
 
         return `
-          <div class="break-card">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <div class="break-icon-pill">
-                ${isLunch ? '🍽️' : '☕'}
+          <div class="bg-surface-container-lowest/80 p-space-md rounded-xl flex items-center justify-between gap-space-md border border-outline-variant/20 shadow-sm">
+            <div class="flex items-center gap-space-md">
+              <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-outline flex-shrink-0">
+                <span class="material-symbols-outlined text-[20px]">${isLunch ? 'restaurant' : 'coffee'}</span>
               </div>
               <div>
-                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary);">
-                  ${breakTitle}
+                <div class="flex items-center gap-2">
+                  <p class="font-body-md text-body-md font-semibold text-on-surface">${breakTitle}</p>
+                  <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high ${isLunch ? 'text-secondary' : 'text-outline'}">${tagLabel}</span>
                 </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
-                  ${item.timeLabel} • ${breakSub}
-                </div>
+                <p class="font-label-sm text-label-sm text-outline mt-0.5">${item.timeLabel} • ${breakSub}</p>
               </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              ${actionBtn}
-              <span class="kbd-shortcut" style="color: ${tagColor}; border-color: ${tagColor}40;">
-                ${tagLabel}
-              </span>
-            </div>
+            ${isLunch
+              ? `<a class="font-label-sm text-label-sm text-secondary hover:underline flex items-center gap-1 font-medium whitespace-nowrap" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>View Mess Menu</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>`
+              : `<a class="font-label-sm text-label-sm text-secondary hover:underline flex items-center gap-1 font-medium whitespace-nowrap" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Reserve Cubicle</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>`
+            }
           </div>
         `;
       }
 
       const c = item.data;
-      const typeIcon = c.type === 'L' ? '📖' : (c.type === 'P' ? '🔬' : '👥');
-      const durationBadge = c.durationSlots > 1 ? `<span class="kbd-shortcut" style="margin-left: 6px;">${c.durationSlots} hrs</span>` : '';
+      const durationBadge = c.durationSlots > 1 ? `<span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded bg-surface-container-lowest text-outline">${c.durationSlots} hrs</span>` : '';
       
-      // Co-attending batches (all other batches attending together)
+      // Co-attending batches
       let coAttending = '';
       if (c.batches && c.batches.length > 0 && !c.batches.includes('ALL')) {
         const others = c.batches.filter(b => b !== this.activeBatch);
@@ -690,140 +722,82 @@ const TimetableController = {
         coAttending = `Batches: ${c.batchesRaw}`;
       }
 
-      // Live status badge
-      let statusPill = '';
-      if (c.status === 'LIVE_NOW') {
-        statusPill = `<span class="live-class-status-badge live"><span class="pulse-indicator"></span> HAPPENING NOW (${c.timeDiff}m left)</span>`;
-      } else if (c.status === 'NEXT_UP') {
-        statusPill = `<span class="live-class-status-badge next">⏳ NEXT CLASS (in ${c.timeDiff}m)</span>`;
-      } else if (c.status === 'COMPLETED') {
-        statusPill = `<span class="live-class-status-badge past">✓ Completed</span>`;
-      }
-
       const attState = attendanceRecords[c.uniqueId];
       const isAttended = attState === 'attended';
       const isMissed = attState === 'missed';
       const attBtnLabel = isAttended ? '✓ Attended' : (isMissed ? '✕ Missed' : 'Mark Attended');
-      const attBtnClass = isAttended ? 'attended' : (isMissed ? 'missed' : '');
-
       const typeLabel = c.type === 'L' ? 'Lecture (L)' : (c.type === 'P' ? 'Lab (P)' : 'Tutorial (T)');
-      const typeColor = c.type === 'L' ? '#3b82f6' : (c.type === 'P' ? '#10b981' : '#f59e0b');
-
-      // Lab specific action button: Check-in GPS if unattended
-      let mainActionBtnHtml = '';
-      if (c.type === 'P' && !isAttended && !isMissed) {
-        mainActionBtnHtml = `
-          <button type="button" class="btn-gps-checkin btn-attendance-toggle" data-unique-id="${c.uniqueId}" title="GPS Geofenced Campus Check-in">
-            <span>📍</span>
-            <span>Check-in GPS</span>
-          </button>
-        `;
-      } else {
-        mainActionBtnHtml = `
-          <button type="button" class="btn-attendance-toggle ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track your class attendance">
-            ${attBtnLabel}
-          </button>
-        `;
-      }
-
-      // Contextual Notes & Manual Vault Download Button
       const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
 
       return `
-        <div class="class-card type-${c.type} ${c.status === 'LIVE_NOW' ? 'is-live-now' : ''} ${c.status === 'NEXT_UP' ? 'is-next-up' : ''} ${c.status === 'COMPLETED' ? 'is-past' : ''}" id="${c.uniqueId}">
-          
-          ${c.status === 'LIVE_NOW' ? `
-            <div class="class-progress-rail">
-              <div class="class-progress-fill" style="width: ${c.progress}%;"></div>
+        <div class="bg-surface-container-low hover:bg-surface-container p-space-md rounded-xl shadow-sm transition-colors flex flex-wrap lg:flex-nowrap items-center justify-between gap-space-md border border-outline-variant/15 group ${c.status === 'LIVE_NOW' ? 'ring-1 ring-primary' : ''}" id="${c.uniqueId}">
+          <div class="flex items-center gap-space-md min-w-0">
+            <div class="w-12 h-12 rounded-xl ${c.type === 'P' ? 'bg-secondary/20 text-secondary' : (c.type === 'T' ? 'bg-secondary-container/20 text-secondary-container' : 'bg-primary-container/20 text-primary')} flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[24px]">${c.type === 'P' ? 'science' : (c.type === 'T' ? 'groups' : 'school')}</span>
             </div>
-          ` : ''}
-
-          <div class="class-card-left">
-            <div class="class-type-badge-icon" title="${c.typeName}">
-              ${typeIcon}
-            </div>
-            <div class="class-details-block">
-              <!-- Top Row: Title, Code, Type, Live Pill -->
-              <div class="class-title-row">
-                <span class="class-course-name">${c.cleanSubject}</span>
-                <span class="class-code-tag">${c.code}</span>
-                <span class="class-type-label-pill" style="color: ${typeColor}; font-weight: 700; font-size: 0.85rem;">
-                  ${typeLabel}
-                </span>
+            <div class="space-y-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-space-xs">
+                <span class="font-headline-sm text-headline-sm font-semibold text-on-surface truncate">${c.cleanSubject}</span>
+                <span class="font-code-sm text-code-sm px-2 py-0.5 rounded bg-surface-container-lowest text-outline">${c.code}</span>
+                <span class="font-label-sm text-label-sm px-2 py-0.5 rounded ${c.type === 'P' ? 'bg-secondary text-on-secondary-fixed-variant font-semibold' : (c.type === 'T' ? 'bg-secondary-container text-on-secondary font-medium' : 'bg-primary-container text-on-primary font-medium')}">${typeLabel}</span>
                 ${durationBadge}
-                ${statusPill}
+                ${c.status === 'LIVE_NOW' ? '<span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-sm text-label-sm font-semibold animate-pulse">● LIVE NOW</span>' : ''}
+                ${c.status === 'NEXT_UP' ? '<span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm font-medium">⏳ NEXT UP</span>' : ''}
               </div>
-
-              <!-- Meta Row: Time & Faculty -->
-              <div class="class-meta-row">
-                <span class="meta-item">
-                  <span style="opacity: 0.7;">🕒</span>
-                  <strong style="color: var(--text-primary);">${c.time}</strong>
-                </span>
+              <div class="flex items-center gap-space-md text-on-surface-variant font-label-sm text-label-sm flex-wrap">
+                <div class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px] text-outline">schedule</span>
+                  <span>${c.time}</span>
+                </div>
                 ${c.faculty ? `
-                  <span class="meta-item">
-                    <span style="opacity: 0.7;">👥</span>
-                    <span>${c.faculty}</span>
-                  </span>
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px] text-outline">person</span>
+                    <span>Faculty: ${c.faculty}</span>
+                  </div>
+                ` : ''}
+                ${coAttending ? `
+                  <div class="flex items-center gap-1 text-outline">
+                    <span class="material-symbols-outlined text-[15px]">group</span>
+                    <span>${coAttending}</span>
+                  </div>
                 ` : ''}
               </div>
-
-              <!-- Co-attending row -->
-              ${coAttending ? `
-                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
-                  ${coAttending}
-                </div>
-              ` : ''}
             </div>
           </div>
 
-          <div class="class-card-right">
-            <!-- Row 1: Primary Actions (Attendance + Venue + Inspect) - 100% aligned across all cards -->
-            <div class="card-action-primary-row">
-              ${mainActionBtnHtml}
-
-              <!-- Venue Locator Pill -->
-              ${c.venue ? `
-                <button type="button" class="venue-locator-pill" data-venue="${c.venue}" title="Show location on campus map">
-                  <span class="venue-pin-icon">📍</span>
-                  <span>Venue: ${c.venue}</span>
+          <div class="flex flex-wrap items-center gap-space-sm flex-shrink-0 ml-auto lg:ml-0">
+            <button type="button" class="btn-attendance-toggle px-space-md py-1.5 rounded-lg font-body-sm text-body-sm transition-colors cursor-pointer ${isAttended ? 'bg-secondary-container text-on-secondary font-semibold' : (isMissed ? 'bg-error-container text-on-error-container' : 'bg-surface-container-highest hover:bg-surface-bright text-on-surface')}" data-unique-id="${c.uniqueId}" title="Track your class attendance">
+              ${attBtnLabel}
+            </button>
+            ${c.venue ? `
+              <button type="button" class="venue-locator-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-secondary font-label-md text-label-md transition-colors shadow-sm cursor-pointer border border-outline-variant/30" data-venue="${c.venue}" title="Show location on campus map">
+                <span class="material-symbols-outlined text-[16px] text-error">location_on</span>
+                <span>Venue: ${c.venue}</span>
+              </button>
+            ` : `
+              <div class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-outline font-label-md text-label-md">
+                <span class="material-symbols-outlined text-[16px]">location_off</span>
+                <span>Venue TBA</span>
+              </div>
+            `}
+            ${vaultRes ? `
+              ${vaultRes.hasMultiple ? `
+                <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-label-md transition-colors border border-outline-variant/30 cursor-pointer" 
+                  data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
+                  data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}'>
+                  <span class="material-symbols-outlined text-[16px]">folder_open</span>
+                  <span>${vaultRes.shortTitle || 'Tutorials'}</span>
                 </button>
               ` : `
-                <div class="venue-locator-pill is-tba" title="Venue to be announced">
-                  <span class="venue-pin-icon" style="opacity: 0.6;">📍</span>
-                  <span>Venue TBA</span>
-                </div>
+                <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-label-md transition-colors border border-outline-variant/30" title="Download Material">
+                  <span class="material-symbols-outlined text-[16px]">download</span>
+                  <span>${vaultRes.shortTitle || 'Notes'}</span>
+                </a>
               `}
-
-              <!-- Inspector Details Button -->
-              <button type="button" class="btn-class-inspect" data-class-id="${c.uniqueId}" title="Class details, Google Calendar & Moodle">
-                ⓘ
-              </button>
-            </div>
-
-            <!-- Row 2: In-Class Direct Notes / Manual Download (ONLY if notes exist for this subject) -->
-            ${vaultRes ? `
-              <div class="card-action-notes-row" style="display: flex; gap: 6px; flex-wrap: wrap;">
-                ${vaultRes.hasMultiple ? `
-                  <button type="button" class="btn-class-download-banner btn-tutorials-modal-trigger" 
-                    data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
-                    data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}' 
-                    style="${vaultRes.subjectType === 'math' ? 'background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.35);' : 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35);'} cursor: pointer;">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">${vaultRes.subjectType === 'math' ? 'functions' : 'folder_open'}</span>
-                    <span>${vaultRes.shortTitle || 'Tutorials'} (${vaultRes.tutorials.length - 1} Sheets)</span>
-                  </button>
-                  <a href="${vaultRes.link}" download="${vaultRes.link.split('/').pop()}" class="btn-class-download-banner" title="Download Complete Solved Master Compilation">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
-                    <span>All Bundle</span>
-                  </a>
-                ` : `
-                  <a href="${vaultRes.link}" download class="btn-class-download-banner" title="Download ${vaultRes.title}">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
-                    <span>Download ${vaultRes.label} (PDF)</span>
-                  </a>
-                `}
-              </div>
             ` : ''}
+            <button type="button" class="btn-class-inspect w-8 h-8 rounded-lg bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-outline-variant/30" data-class-id="${c.uniqueId}" title="Class Details">
+              <span class="material-symbols-outlined text-[18px]">info</span>
+            </button>
           </div>
         </div>
       `;
@@ -891,17 +865,20 @@ const TimetableController = {
     const trackerContainer = document.getElementById('timetable-live-tracker');
     if (!trackerContainer) return;
 
+    const headingEl = document.getElementById('timetable-timeline-heading');
+    if (headingEl) {
+      headingEl.textContent = `Viewing Schedule for ${this.dayFullNames[this.activeDay] || this.activeDay}`;
+    }
+
+    const clockBadge = document.getElementById('timetable-live-clock-badge');
+    if (clockBadge) {
+      const now = new Date();
+      clockBadge.textContent = `Clock: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
     const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
     const isToday = (this.activeDay === currentDayCode);
     const curMins = this.getCurrentMinutes();
-
-    const formatMinutes = (m) => {
-      const h = Math.floor(m / 60);
-      const min = m % 60;
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      const h12 = h % 12 || 12;
-      return `${String(h12).padStart(2, '0')}:${String(min).padStart(2, '0')} ${ampm}`;
-    };
 
     let liveClass = null;
     let nextClass = null;
@@ -940,30 +917,77 @@ const TimetableController = {
     const dayEnd = 1080;
     const dayTotal = 540;
 
-    let progressPct = 0;
-    if (curMins >= dayEnd) {
-      progressPct = 100;
-    } else if (curMins > dayStart) {
-      progressPct = Math.round(((curMins - dayStart) / dayTotal) * 100);
+    // Generate Gantt track segments
+    let ganttSlotsHtml = '';
+    let currentMarker = dayStart;
+
+    const sortedClasses = [...classes].sort((a, b) => {
+      const rA = this.parseTimeRange(a.time);
+      const rB = this.parseTimeRange(b.time);
+      return (rA ? rA.start : 0) - (rB ? rB.start : 0);
+    });
+
+    for (const c of sortedClasses) {
+      const r = this.parseTimeRange(c.time);
+      if (!r) continue;
+
+      const cStart = Math.max(dayStart, Math.min(dayEnd, r.start));
+      const cEnd = Math.max(dayStart, Math.min(dayEnd, r.end));
+
+      if (cStart > currentMarker) {
+        const gapMins = cStart - currentMarker;
+        const gapPct = ((gapMins / dayTotal) * 100).toFixed(1);
+        const isLunch = (currentMarker >= 760 && cStart <= 860);
+        ganttSlotsHtml += `
+          <div class="h-full ${isLunch ? 'bg-surface-container-high/60' : 'bg-surface-container/50 hover:bg-surface-container'} rounded flex items-center justify-center text-outline cursor-pointer transition-colors" style="width: ${gapPct}%;" title="${isLunch ? 'Lunch Break (01:00 - 02:00 PM)' : 'Free Period'}">
+            <span class="font-label-sm text-label-sm truncate px-1">${isLunch ? 'Lunch' : 'Free'}</span>
+          </div>
+        `;
+      }
+
+      const durMins = Math.max(15, cEnd - cStart);
+      const slotPct = ((durMins / dayTotal) * 100).toFixed(1);
+      const bgClass = c.type === 'P' ? 'bg-secondary/80 hover:bg-secondary text-on-secondary-fixed-variant' : (c.type === 'T' ? 'bg-secondary-container/90 hover:bg-secondary-container text-on-secondary' : 'bg-primary-container hover:bg-primary text-on-primary');
+
+      ganttSlotsHtml += `
+        <div class="h-full ${bgClass} rounded flex items-center justify-center font-semibold cursor-pointer transition-colors group relative" style="width: ${slotPct}%;" title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'}">
+          <span class="font-code-sm text-code-sm truncate px-1">${c.code || c.cleanSubject || 'Class'}</span>
+        </div>
+      `;
+
+      currentMarker = Math.max(currentMarker, cEnd);
     }
 
-    // Subtle class tick markers on the progress rail
-    const classDotsHtml = classes.map(c => {
-      const r = this.parseTimeRange(c.time);
-      if (!r) return '';
-      const leftPct = Math.max(0, Math.min(100, ((r.start - dayStart) / dayTotal) * 100));
-      const color = c.type === 'L' ? '#3b82f6' : (c.type === 'P' ? '#10b981' : '#f59e0b');
-      return `<div class="timeline-class-dot" style="left: ${leftPct}%; background: ${color};" title="${c.cleanSubject || c.subject} (${c.time})"></div>`;
-    }).join('');
+    if (currentMarker < dayEnd) {
+      const remPct = (((dayEnd - currentMarker) / dayTotal) * 100).toFixed(1);
+      ganttSlotsHtml += `
+        <div class="h-full bg-surface-container/50 hover:bg-surface-container rounded flex items-center justify-center text-outline cursor-pointer transition-colors" style="width: ${remPct}%;" title="Campus Leisure">
+          <span class="font-label-sm text-label-sm truncate px-1">Free</span>
+        </div>
+      `;
+    }
 
     trackerContainer.innerHTML = `
-      <div class="live-period-ticker" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; margin-bottom: 12px; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-          <span class="pulse-indicator" style="flex-shrink: 0;"></span>
-          <span style="font-size: 0.86rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${statusText}</span>
+      <div class="space-y-1.5 pt-space-xs">
+        <div class="flex justify-between font-code-sm text-code-sm text-outline px-1">
+          <span>09:00 AM</span>
+          <span>11:00 AM</span>
+          <span>01:00 PM</span>
+          <span>03:00 PM</span>
+          <span>05:00 PM</span>
+          <span>06:00 PM</span>
+        </div>
+        <div class="h-8 w-full bg-surface-container-lowest rounded-lg p-1 flex gap-1 relative overflow-hidden border border-outline-variant/20">
+          ${ganttSlotsHtml}
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2 h-2 rounded-full ${isToday ? (liveClass ? 'bg-primary animate-ping' : 'bg-secondary') : 'bg-outline'} flex-shrink-0"></span>
+          <span class="font-label-sm text-label-sm text-on-surface truncate">${statusText}</span>
         </div>
         ${(liveClass || nextClass) ? `
-          <button type="button" class="btn-micro" id="btn-jump-period" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; flex-shrink: 0; background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); cursor: pointer;">
+          <button type="button" class="btn-micro px-space-sm py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-label-sm font-medium transition-colors cursor-pointer border border-outline-variant/30 flex-shrink-0" id="btn-jump-period">
             Jump to Class →
           </button>
         ` : ''}
@@ -973,7 +997,7 @@ const TimetableController = {
     const jumpBtn = document.getElementById('btn-jump-period');
     if (jumpBtn) {
       jumpBtn.addEventListener('click', () => {
-        const target = document.querySelector('.class-card.is-live-now') || document.querySelector('.class-card.is-next-up');
+        const target = document.querySelector('.bg-surface-container-low.ring-1') || document.querySelector('[data-venue]');
         if (target) {
           target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -1395,10 +1419,12 @@ const TimetableController = {
 
     if (isSunday) {
       previewContainer.innerHTML = `
-        <div class="empty-state-card" style="padding: 24px; text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🌄</div>
-          <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 4px;">Sunday • Campus Weekend Leisure</h3>
-          <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">
+        <div class="rounded-xl bg-surface-container-low p-space-xl text-center border border-outline-variant/20">
+          <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-space-sm text-secondary">
+            <span class="material-symbols-outlined text-[24px]">weekend</span>
+          </div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-1">Sunday • Campus Weekend Leisure</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mx-auto mb-space-sm">
             No regular lectures scheduled today. Annapurna mess is serving weekend meals and LRC reading room is open.
           </p>
           <div class="font-label-sm text-label-sm text-secondary font-medium">
@@ -1411,10 +1437,12 @@ const TimetableController = {
 
     if (todayClasses.length === 0) {
       previewContainer.innerHTML = `
-        <div class="empty-state-card" style="padding: 24px; text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🎉</div>
-          <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 4px;">No Classes Scheduled for Today</h3>
-          <p style="color: var(--text-secondary); font-size: 0.85rem;">
+        <div class="rounded-xl bg-surface-container-low p-space-xl text-center border border-outline-variant/20">
+          <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-space-sm text-secondary">
+            <span class="material-symbols-outlined text-[24px]">celebration</span>
+          </div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-1">No Classes Scheduled for Today</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mx-auto">
             Enjoy your free day or work on project assignments in LRC.
           </p>
         </div>
@@ -1437,33 +1465,25 @@ const TimetableController = {
 
       const subjName = this.getCleanSubjectName(c.code, c.subject);
       const typeLabel = c.type === 'P' ? 'Lab' : (c.type === 'T' ? 'Tutorial' : 'Lecture');
-      const badgeColor = c.type === 'P' ? '#10b981' : (c.type === 'T' ? '#f59e0b' : '#38bdf8');
-      const badgeBg = c.type === 'P' ? 'rgba(16, 185, 129, 0.15)' : (c.type === 'T' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(56, 189, 248, 0.15)');
-      
       const startTime = c.time.split(/[-–—]/)[0].trim();
-      const statusChip = isDone
-        ? '<span class="sched-status-chip done">Completed</span>'
-        : (isLive ? '<span class="sched-status-chip live">In Progress</span>' : '<span class="sched-status-chip upcoming">Upcoming</span>');
 
       return `
-        <div class="dash-schedule-row">
-          <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
-            <div class="sched-check-circle ${isLive ? 'live' : ''}">
-              ${isDone ? '✓' : (isLive ? '⚡' : '🕒')}
+        <div class="group rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center justify-between gap-space-md transition-all shadow-sm border border-outline-variant/15">
+          <div class="flex items-center gap-space-md min-w-0">
+            <div class="w-8 h-8 rounded-full ${isDone ? 'bg-surface-container-high text-secondary' : (isLive ? 'bg-primary/20 text-primary' : 'bg-surface-container-high text-outline')} flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-[18px]">${isDone ? 'check' : (isLive ? 'play_arrow' : 'schedule')}</span>
             </div>
-            <div style="min-width: 0;">
-              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span style="font-weight: 700; font-size: 0.92rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${subjName}</span>
-                <span class="sched-badge-pill" style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeColor}40;">${typeLabel}</span>
+            <div class="min-w-0">
+              <div class="flex items-center gap-space-sm flex-wrap">
+                <span class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">${subjName}</span>
+                <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">${typeLabel}</span>
               </div>
-              <div style="font-size: 0.74rem; color: #8e9ba9; margin-top: 2px;">
-                ${c.venue ? `Room ${c.venue}` : 'Campus Venue'} • ${c.venueDetails?.buildingName || 'Academic Block 1'}
-              </div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 truncate">${c.venue ? `Room ${c.venue}` : 'Campus Venue'} • ${c.venueDetails?.buildingName || 'Department Block'}</p>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
-            <span style="font-family: var(--font-mono); font-size: 0.82rem; color: #dfe2f1; font-weight: 600;">${startTime}</span>
-            ${statusChip}
+          <div class="flex flex-col items-end flex-shrink-0">
+            <span class="font-label-md text-label-md text-on-surface font-mono font-medium">${startTime}</span>
+            <span class="font-label-sm text-label-sm ${isDone ? 'text-secondary' : (isLive ? 'text-primary font-semibold' : 'text-outline')}">${isDone ? 'Completed' : (isLive ? 'In Progress' : 'Upcoming')}</span>
           </div>
         </div>
       `;

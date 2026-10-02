@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#0c0f17",
+        surface: "#0c0f17",
+        "surface-card": "#131722",
+        "surface-card-subtle": "#171c2b",
+        "primary": "#c0c1ff",
+        "primary-dim": "#9ea2e6",
+        "accent": "#7bd0ff",
+        "muted": "#7e8499",
+        "border-subtle": "rgba(255, 255, 255, 0.06)",
+        "border-card": "rgba(255, 255, 255, 0.08)"
+      },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"]
+      }
+    }
+  }
+}
+</script></head><body class="bg-[#0c0f17] text-[#e1e3ec] font-sans antialiased min-h-screen flex flex-col selection:bg-primary/20"><header class="fixed top-0 w-full z-50 pt-safe bg-[#0c0f17]/90 backdrop-blur-md border-b border-border-subtle"><div class="h-14 px-5 flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-lg bg-surface-card flex items-center justify-center border border-border-card text-primary font-semibold text-xs tracking-tight">JU</div><div class="flex flex-col"><div class="flex items-center gap-1.5"><span class="text-[14px] font-semibold tracking-tight text-white">JUIT Student Hub</span><span class="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-white/[0.04] text-muted border border-border-subtle tracking-wide">ODD '26</span></div></div></div><div class="flex items-center gap-2"><button aria-label="Notifications" class="w-8 h-8 rounded-full flex items-center justify-center text-muted hover:text-white transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary"></span></button><div class="w-7 h-7 rounded-full bg-surface-card border border-border-card flex items-center justify-center text-muted"><span class="material-symbols-outlined text-[16px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-14 pb-24 min-h-screen"><div class="flex flex-col w-full px-5 pt-5 pb-6 space-y-6">
+<!-- Compact Quiet Header -->
+<div class="flex items-end justify-between pt-1">
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5 text-muted text-[11px] font-mono tracking-wide uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400/80"></span>
+      Waknaghat • 1,550m
+    </div>
+<h1 class="text-xl font-medium tracking-tight text-white">
+      Good evening, <span class="font-semibold text-primary">Scholar</span>
+</h1>
+</div>
+<div class="text-right">
+<span class="text-[11px] font-mono text-muted block">Autumn Term</span>
+<span class="text-xs font-medium text-slate-300">Tue, 22 Sep</span>
+</div>
+</div>
+<!-- Streamlined Stats Bar (Minimalist Row with delicate dividers) -->
+<div class="grid grid-cols-3 rounded-xl bg-surface-card border border-border-subtle p-3.5 divide-x divide-white/[0.05]">
+<div class="flex flex-col items-center justify-center px-2">
+<span class="text-lg font-semibold text-white tracking-tight">5</span>
+<span class="text-[10px] uppercase font-mono tracking-wider text-muted mt-0.5">Classes</span>
+</div>
+<div class="flex flex-col items-center justify-center px-2">
+<span class="text-lg font-semibold text-accent tracking-tight">Odd</span>
+<span class="text-[10px] uppercase font-mono tracking-wider text-muted mt-0.5">Term '26</span>
+</div>
+<div class="flex flex-col items-center justify-center px-2">
+<span class="text-lg font-semibold text-white tracking-tight">100%</span>
+<span class="text-[10px] uppercase font-mono tracking-wider text-muted mt-0.5">Attended</span>
+</div>
+</div>
+<!-- Academic Milestone Alert (Refined Minimalist Accent Card) -->
+<div class="rounded-xl bg-surface-card border border-border-card p-4 relative overflow-hidden flex items-center justify-between group">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-white/[0.03] border border-border-card flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">event_note</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-mono font-medium text-accent tracking-wider uppercase">In 14 Days</span>
+<span class="text-[11px] text-muted">• T-2 Exams</span>
+</div>
+<span class="text-sm font-medium text-white truncate mt-0.5">Mid-Semester Examinations</span>
+</div>
+</div>
+<button aria-label="Open Schedule" class="w-7 h-7 rounded-full flex items-center justify-center text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<!-- Today's Status Banner (Quiet, Elegant Delight State) -->
+<div class="rounded-xl bg-surface-card border border-border-card p-4 flex flex-col space-y-3">
+<div class="flex items-center justify-between text-xs">
+<span class="font-mono text-[11px] text-muted uppercase tracking-wider">Status Overview</span>
+<span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+      Day completed
+    </span>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[13px] font-medium text-white">All scheduled sessions finished</p>
+<p class="text-xs text-muted leading-relaxed mt-0.5">5 of 5 lectures and tutorials attended today. No further academic duties queued.</p>
+</div>
+</div>
+</div>
+<!-- Schedule List -->
+<div class="space-y-2.5">
+<div class="flex items-center justify-between px-0.5">
+<h2 class="text-xs font-mono uppercase tracking-wider text-muted font-medium">Today's Timeline</h2>
+<span class="text-[11px] font-mono text-muted">5 Classes</span>
+</div>
+<div class="rounded-xl bg-surface-card border border-border-card divide-y divide-white/[0.04] overflow-hidden">
+<!-- Item 1 -->
+<div class="p-3.5 flex items-center justify-between hover:bg-white/[0.015] transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-emerald-400/90 flex-shrink-0">check_circle</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-white truncate">English</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/[0.04] text-muted border border-border-subtle">Lec</span>
+</div>
+<span class="text-xs text-muted truncate mt-0.5">CR02 • HSS Dept</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 pl-2">
+<span class="text-xs font-mono font-medium text-slate-300">09:00 AM</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-3.5 flex items-center justify-between hover:bg-white/[0.015] transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-emerald-400/90 flex-shrink-0">check_circle</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-white truncate">SDF</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/[0.04] text-muted border border-border-subtle">Lec</span>
+</div>
+<span class="text-xs text-muted truncate mt-0.5">CR09 • CSE Wing</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 pl-2">
+<span class="text-xs font-mono font-medium text-slate-300">10:00 AM</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-3.5 flex items-center justify-between hover:bg-white/[0.015] transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-emerald-400/90 flex-shrink-0">check_circle</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-white truncate">English</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/[0.04] text-muted border border-border-subtle">Tut</span>
+</div>
+<span class="text-xs text-muted truncate mt-0.5">LANGULAB • Block A</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 pl-2">
+<span class="text-xs font-mono font-medium text-slate-300">11:00 AM</span>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-3.5 flex items-center justify-between hover:bg-white/[0.015] transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-emerald-400/90 flex-shrink-0">check_circle</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-white truncate">SDF</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/[0.04] text-muted border border-border-subtle">Lec</span>
+</div>
+<span class="text-xs text-muted truncate mt-0.5">DLC, CR01 • Core Hall</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 pl-2">
+<span class="text-xs font-mono font-medium text-slate-300">03:00 PM</span>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="p-3.5 flex items-center justify-between hover:bg-white/[0.015] transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<span class="material-symbols-outlined text-[18px] text-emerald-400/90 flex-shrink-0">check_circle</span>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium text-white truncate">Mathematics</span>
+<span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/[0.04] text-muted border border-border-subtle">Lec</span>
+</div>
+<span class="text-xs text-muted truncate mt-0.5">CR01 • Main Wing</span>
+</div>
+</div>
+<div class="text-right flex-shrink-0 pl-2">
+<span class="text-xs font-mono font-medium text-slate-300">04:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Utility Actions (Understated Stroke Icons) -->
+<div class="space-y-2.5">
+<h2 class="text-xs font-mono uppercase tracking-wider text-muted font-medium px-0.5">Quick Actions</h2>
+<div class="grid grid-cols-4 gap-2.5">
+<button class="flex flex-col items-center justify-center py-3 px-2 rounded-xl bg-surface-card border border-border-subtle hover:border-border-card active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-slate-300">near_me</span>
+<span class="text-[11px] font-medium text-slate-300 mt-2">Campus</span>
+</button>
+<button class="flex flex-col items-center justify-center py-3 px-2 rounded-xl bg-surface-card border border-border-subtle hover:border-border-card active:scale-[0.98] transition-all relative">
+<span class="absolute top-2 right-3 w-1.5 h-1.5 rounded-full bg-accent"></span>
+<span class="material-symbols-outlined text-[20px] text-slate-300">campaign</span>
+<span class="text-[11px] font-medium text-slate-300 mt-2">Notices</span>
+</button>
+<button class="flex flex-col items-center justify-center py-3 px-2 rounded-xl bg-surface-card border border-border-subtle hover:border-border-card active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-slate-300">calculate</span>
+<span class="text-[11px] font-medium text-slate-300 mt-2">CGPA</span>
+</button>
+<button class="flex flex-col items-center justify-center py-3 px-2 rounded-xl bg-surface-card border border-border-subtle hover:border-border-card active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-slate-300">restaurant</span>
+<span class="text-[11px] font-medium text-slate-300 mt-2">Mess</span>
+</button>
+</div>
+</div>
+<!-- Weather / Campus Microclimate (Refined Minimalist Pill/Card) -->
+<div class="rounded-xl bg-surface-card border border-border-subtle px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-muted">nights_stay</span>
+<div class="flex items-center gap-2">
+<span class="text-xs font-medium text-white">Solan Campus</span>
+<span class="text-[11px] text-muted">• 17°C, Clear night</span>
+</div>
+</div>
+<span class="text-[10px] font-mono text-muted tracking-wider">OPTIMAL</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Refined, Minimalist Bar) -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#0c0f17]/95 backdrop-blur-md border-t border-border-subtle"><div class="flex items-center justify-around h-14 px-2"><a aria-current="page" class="flex flex-col items-center justify-center flex-1 h-full text-white transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] text-primary">dashboard</span><span class="text-[10px] font-medium mt-0.5 text-primary">Home</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-muted hover:text-white transition-colors" data-path="timetable" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="text-[10px] font-medium mt-0.5">Timetable</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-muted hover:text-white transition-colors" data-path="campus-map" href="#"><span class="material-symbols-outlined text-[20px]">near_me</span><span class="text-[10px] font-medium mt-0.5">Campus</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-muted hover:text-white transition-colors" data-path="resources" href="#"><span class="material-symbols-outlined text-[20px]">book_2</span><span class="text-[10px] font-medium mt-0.5">Library</span></a><a class="flex flex-col items-center justify-center flex-1 h-full text-muted hover:text-white transition-colors" data-path="utilities" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="text-[10px] font-medium mt-0.5">More</span></a></div></nav>
+</body></html>

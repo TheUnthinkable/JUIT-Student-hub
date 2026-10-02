@@ -42,10 +42,10 @@ const ResourcesController = {
       const isActive = (s.id === this.activeSubject);
       const itemsCount = this.getResources().filter(r => s.id === 'all' || r.subject === s.id).length;
       return `
-        <button type="button" class="category-pill ${isActive ? 'active' : ''}" data-subject="${s.id}">
-          <span class="material-symbols-outlined text-[16px]">${s.icon}</span>
+        <button type="button" class="category-pill ${isActive ? 'active bg-surface-container-high text-primary font-medium shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} flex items-center gap-1.5 px-space-md py-1.5 rounded-full font-label-md text-label-md transition-all flex-shrink-0 cursor-pointer" data-subject="${s.id}">
+          <span class="material-symbols-outlined text-[15px]">${s.icon}</span>
           <span>${s.label}</span>
-          <span class="pill-count-badge">${itemsCount}</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant'}">${itemsCount}</span>
         </button>
       `;
     }).join('');
@@ -75,14 +75,14 @@ const ResourcesController = {
     typeContainer.innerHTML = types.map(t => {
       const isActive = (t.id === this.activeType);
       return `
-        <button type="button" class="map-filter-chip ${isActive ? 'active' : ''}" data-type="${t.id}">
+        <button type="button" class="category-pill ${isActive ? 'active bg-primary text-on-primary font-medium shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm transition-all flex-shrink-0 cursor-pointer" data-type="${t.id}">
           <span class="material-symbols-outlined text-[15px]">${t.icon}</span>
           <span>${t.label}</span>
         </button>
       `;
     }).join('');
 
-    typeContainer.querySelectorAll('.map-filter-chip').forEach(btn => {
+    typeContainer.querySelectorAll('.category-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeType = btn.dataset.type;
         this.renderTypeFilters();
@@ -138,43 +138,43 @@ const ResourcesController = {
       ];
 
       featuredShelfHtml = `
-        <div class="featured-tutorials-shelf col-span-12" style="grid-column: 1 / -1; margin-bottom: 22px;">
-          <div class="featured-shelf-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div class="shelf-header-icon" style="width: 36px; height: 36px; border-radius: 8px; background: rgba(59, 130, 246, 0.12); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
-                <span class="material-symbols-outlined" style="font-size: 20px;">memory</span>
+        <div class="featured-tutorials-shelf col-span-1 md:col-span-2 xl:col-span-4 mb-space-lg">
+          <div class="flex items-center justify-between mb-space-md flex-wrap gap-space-sm bg-surface-container-low p-space-md rounded-xl border border-outline-variant/15 shadow-sm">
+            <div class="flex items-center gap-space-sm">
+              <div class="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[22px]">memory</span>
               </div>
               <div>
-                <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-primary);">Basic Electronics — Tutorial Problem Sets (Tutorials 1 to 5)</h3>
-                <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 2px 0 0;">Department of ECE • 25B11EC111 • Complete verified assignment problem sheets for view & download</p>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Basic Electronics — Tutorial Problem Sets (1 to 5)</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Department of ECE • 25B11EC111 • Verified assignment problem sheets</p>
               </div>
             </div>
-            <a href="vault/Basic_Electronics_All_Tutorials_Bundle.pdf" download="Basic_Electronics_All_Tutorials_Bundle.pdf" class="btn-primary" style="font-size: 0.82rem; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-              <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+            <a href="vault/Basic_Electronics_All_Tutorials_Bundle.pdf" download="Basic_Electronics_All_Tutorials_Bundle.pdf" class="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">download</span>
               <span>Download All (18 Pages PDF)</span>
             </a>
           </div>
 
-          <div class="featured-shelf-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md">
             ${elecTutorials.map(t => `
-              <div class="featured-tutorial-card ${t.isBundle ? 'is-bundle' : ''}" style="background: var(--bg-card); border: 1px solid ${t.isBundle ? 'rgba(59, 130, 246, 0.4)' : 'var(--border-subtle)'}; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.15s ease, border-color 0.15s ease;">
+              <div class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/15 transition-all duration-200 shadow-sm">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: ${t.isBundle ? 'rgba(59, 130, 246, 0.2)' : 'rgba(245, 158, 11, 0.15)'}; color: ${t.isBundle ? '#3b82f6' : '#f59e0b'};">
+                  <div class="flex items-center justify-between mb-space-xs">
+                    <span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded ${t.isBundle ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-high text-primary font-medium'}">
                       ${t.isBundle ? 'FULL COMPILATION' : `TUTORIAL ${t.num}`}
                     </span>
-                    <span style="font-size: 0.72rem; color: var(--text-muted);">${t.size} • PDF</span>
+                    <span class="font-code-sm text-code-sm text-outline">${t.size} • PDF</span>
                   </div>
-                  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin: 0 0 6px; line-height: 1.35;">${t.title}</h4>
-                  <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">${t.desc}</p>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold text-sm line-clamp-2 mb-1 group-hover:text-primary transition-colors">${t.title}</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant text-xs line-clamp-2 leading-relaxed">${t.desc}</p>
                 </div>
-                <div style="display: flex; gap: 8px; pt-2; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
-                  <button type="button" class="btn-preview-resource" data-link="${t.file}" data-title="${t.title}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 10px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-subtle); cursor: pointer;">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">visibility</span>
+                <div class="flex items-center gap-2 pt-space-sm mt-space-sm border-t border-outline-variant/10">
+                  <button type="button" class="btn-preview-resource flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm text-xs transition-colors" data-link="${t.file}" data-title="${t.title}">
+                    <span class="material-symbols-outlined text-[15px]">visibility</span>
                     <span>View PDF</span>
                   </button>
-                  <a href="${t.file}" download="${t.file.split('/').pop()}" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; background: #2563eb; color: #ffffff; text-decoration: none;">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
+                  <a href="${t.file}" download="${t.file.split('/').pop()}" class="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm text-xs font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[15px]">download</span>
                     <span>Download</span>
                   </a>
                 </div>
@@ -193,43 +193,43 @@ const ResourcesController = {
       ];
 
       featuredShelfHtml = `
-        <div class="featured-tutorials-shelf col-span-12" style="grid-column: 1 / -1; margin-bottom: 22px;">
-          <div class="featured-shelf-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div class="shelf-header-icon" style="width: 36px; height: 36px; border-radius: 8px; background: rgba(2, 132, 199, 0.12); color: #0284c7; display: flex; align-items: center; justify-content: center;">
-                <span class="material-symbols-outlined" style="font-size: 20px;">functions</span>
+        <div class="featured-tutorials-shelf col-span-1 md:col-span-2 xl:col-span-4 mb-space-lg">
+          <div class="flex items-center justify-between mb-space-md flex-wrap gap-space-sm bg-surface-container-low p-space-md rounded-xl border border-outline-variant/15 shadow-sm">
+            <div class="flex items-center gap-space-sm">
+              <div class="w-10 h-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[22px]">functions</span>
               </div>
               <div>
-                <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0; color: var(--text-primary);">Mathematics I — Tutorial Problem Sets (Sheets 1 to 4)</h3>
-                <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 2px 0 0;">Department of Mathematics • 25B11MA113 • Official verified assignment sheets for view & download</p>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Mathematics I — Tutorial Problem Sets (Sheets 1 to 4)</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Department of Mathematics • 25B11MA113 • Official verified assignment sheets</p>
               </div>
             </div>
-            <a href="vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" download="Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" class="btn-primary" style="font-size: 0.82rem; padding: 7px 14px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
-              <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+            <a href="vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" download="Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" class="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">download</span>
               <span>Download All (8 Pages PDF)</span>
             </a>
           </div>
 
-          <div class="featured-shelf-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-md">
             ${mathTutorials.map(t => `
-              <div class="featured-tutorial-card ${t.isBundle ? 'is-bundle' : ''}" style="background: var(--bg-card); border: 1px solid ${t.isBundle ? 'rgba(2, 132, 199, 0.4)' : 'var(--border-subtle)'}; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: transform 0.15s ease, border-color 0.15s ease;">
+              <div class="group flex flex-col justify-between p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/15 transition-all duration-200 shadow-sm">
                 <div>
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: ${t.isBundle ? 'rgba(2, 132, 199, 0.2)' : 'rgba(2, 132, 199, 0.15)'}; color: ${t.isBundle ? '#38bdf8' : '#0284c7'};">
+                  <div class="flex items-center justify-between mb-space-xs">
+                    <span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded ${t.isBundle ? 'bg-secondary text-on-secondary font-bold' : 'bg-surface-container-high text-secondary font-medium'}">
                       ${t.isBundle ? 'FULL COMPILATION' : `SHEET ${t.num}`}
                     </span>
-                    <span style="font-size: 0.72rem; color: var(--text-muted);">${t.size} • PDF</span>
+                    <span class="font-code-sm text-code-sm text-outline">${t.size} • PDF</span>
                   </div>
-                  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin: 0 0 6px; line-height: 1.35;">${t.title}</h4>
-                  <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">${t.desc}</p>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold text-sm line-clamp-2 mb-1 group-hover:text-secondary transition-colors">${t.title}</h4>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant text-xs line-clamp-2 leading-relaxed">${t.desc}</p>
                 </div>
-                <div style="display: flex; gap: 8px; pt-2; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
-                  <button type="button" class="btn-preview-resource" data-link="${t.file}" data-title="${t.title}" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 10px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border-subtle); cursor: pointer;">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">visibility</span>
+                <div class="flex items-center gap-2 pt-space-sm mt-space-sm border-t border-outline-variant/10">
+                  <button type="button" class="btn-preview-resource flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm text-xs transition-colors" data-link="${t.file}" data-title="${t.title}">
+                    <span class="material-symbols-outlined text-[15px]">visibility</span>
                     <span>View PDF</span>
                   </button>
-                  <a href="${t.file}" download="${t.file.split('/').pop()}" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 7px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; background: #0284c7; color: #ffffff; text-decoration: none;">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
+                  <a href="${t.file}" download="${t.file.split('/').pop()}" class="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm text-xs font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[15px]">download</span>
                     <span>Download</span>
                   </a>
                 </div>
@@ -242,13 +242,13 @@ const ResourcesController = {
 
     if (items.length === 0) {
       container.innerHTML = featuredShelfHtml + `
-        <div class="empty-state-card col-span-12" style="padding: 40px; text-align: center; grid-column: 1 / -1;">
-          <div style="font-size: 2.5rem; margin-bottom: 12px;">📂</div>
-          <h3 style="font-size: 1.25rem; margin-bottom: 6px; color: var(--text-primary);">No Additional Resources Found</h3>
-          <p style="color: var(--text-secondary); max-width: 450px; margin: 0 auto 16px;">
+        <div class="col-span-1 md:col-span-2 xl:col-span-4 bg-surface-container-low rounded-xl p-space-xl text-center border border-outline-variant/15">
+          <div class="text-4xl mb-space-sm">📂</div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-1">No Additional Resources Found</h3>
+          <p class="font-body-sm text-body-sm text-on-surface-variant max-w-md mx-auto mb-space-md">
             No materials found matching your selected filters.
           </p>
-          <button type="button" class="btn-primary" onclick="ResourcesController.resetFilters()">
+          <button type="button" class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm" onclick="ResourcesController.resetFilters()">
             Reset All Filters
           </button>
         </div>
@@ -264,67 +264,79 @@ const ResourcesController = {
 
     const cardsHtml = items.map(r => {
       let icon = 'description';
-      if (r.type === 'PYQ') icon = 'quiz';
-      if (r.type === 'Lab Manual') icon = 'biotech';
-      if (r.type === 'Book') icon = 'menu_book';
-      if (r.type === 'Tutorial') icon = 'edit_note';
+      let typeLabel = r.type || 'Notes';
+      let typeColor = 'text-primary';
+      let typeBg = 'bg-primary/10';
+      if (r.type === 'PYQ') {
+        icon = 'quiz';
+        typeColor = 'text-error';
+        typeBg = 'bg-error-container/20';
+      } else if (r.type === 'Lab Manual') {
+        icon = 'biotech';
+        typeColor = 'text-secondary';
+        typeBg = 'bg-secondary/15';
+      } else if (r.type === 'Book') {
+        icon = 'menu_book';
+        typeColor = 'text-tertiary';
+        typeBg = 'bg-tertiary/15';
+      } else if (r.type === 'Tutorial') {
+        icon = 'edit_note';
+        typeColor = 'text-secondary';
+        typeBg = 'bg-secondary/15';
+      }
 
-      const subjectColor = r.subject === 'SDF' ? '#3b82f6' : (r.subject === 'English' ? '#8b5cf6' : (r.subject === 'Physics' ? '#10b981' : (r.subject === 'Basic Electronics' ? '#f59e0b' : (r.subject === 'Mathematics' ? '#00e5ff' : '#3b82f6'))));
       const hasDownload = (r.link && r.link !== '#');
       const filename = hasDownload ? r.link.split('/').pop() : `${r.title}.pdf`;
 
       return `
-        <div class="dash-card resource-card" data-subject="${r.subject || 'Gen'}" data-category="${r.type}">
+        <div class="resource-card group flex flex-col justify-between p-space-lg rounded-xl bg-surface-container-low hover:bg-surface-container transition-all duration-200 shadow-sm border border-outline-variant/15" data-category="${r.type}" data-semester="sem-${r.semester}">
           <div>
             <!-- Card Header Meta -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="resource-badge-icon" style="background: ${subjectColor}20; color: ${subjectColor};">
-                  <span class="material-symbols-outlined text-[16px]">${icon}</span>
+            <div class="flex items-center justify-between gap-space-xs mb-space-sm">
+              <div class="flex items-center gap-1.5 min-w-0">
+                <div class="w-6 h-6 rounded ${typeBg} flex items-center justify-center flex-shrink-0 ${typeColor}">
+                  <span class="material-symbols-outlined text-[15px]">${icon}</span>
                 </div>
-                <div>
-                  <span class="resource-subject-badge" style="color: ${subjectColor}; font-weight: 700;">${r.subject || r.type}</span>
-                  <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 6px;">Sem ${r.semester} • ${r.code || 'Gen'}</span>
-                </div>
+                <span class="font-label-md text-label-md font-medium truncate ${typeColor}">${typeLabel}</span>
+                <span class="w-1 h-1 rounded-full bg-outline flex-shrink-0"></span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant truncate">Sem ${r.semester} • ${r.code || r.subject || 'Gen'}</span>
               </div>
-              <span class="kbd-shortcut" style="font-size: 0.72rem; padding: 2px 6px;">
-                ${r.size || 'PDF'}
-              </span>
+              <span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant flex-shrink-0">${r.size || 'PDF'}</span>
             </div>
 
             <!-- Title -->
-            <h4 class="resource-card-title">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-space-xs">
               ${r.title}
-            </h4>
+            </h3>
 
             <!-- Description -->
-            <p class="resource-card-desc">
+            <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-3 mb-space-md">
               ${r.description || ''}
             </p>
           </div>
 
-          <!-- Card Footer with Scope & Actions -->
-          <div class="resource-card-footer">
-            <div style="display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%;">
-              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Scope:</span>
-              <span style="font-size: 0.75rem; color: var(--text-primary); font-weight: 600;" title="${r.unit || 'All Units'}">${r.unit || 'All Units'}</span>
+          <!-- Card Footer -->
+          <div class="pt-space-sm flex items-center justify-between bg-surface-container-lowest/40 -mx-space-lg -mb-space-lg px-space-lg py-space-sm rounded-b-xl border-t border-outline-variant/10">
+            <div class="flex items-center gap-1 min-w-0 max-w-[50%]">
+              <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider flex-shrink-0">Scope:</span>
+              <span class="font-label-sm text-label-sm text-on-surface truncate" title="${r.unit || 'All Units'}">${r.unit || 'All Units'}</span>
             </div>
-            
-            <div style="display: flex; align-items: center; gap: 8px;">
+
+            <div class="flex items-center gap-2">
               ${hasDownload ? `
-                <button type="button" class="btn-preview-resource" data-link="${r.link}" data-title="${r.title}">
-                  <span class="material-symbols-outlined text-[15px]">visibility</span>
+                <button type="button" class="btn-preview-resource flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" data-link="${r.link}" data-title="${r.title}">
+                  <span class="material-symbols-outlined text-[14px]">visibility</span>
                   <span>View</span>
                 </button>
-                <a href="${r.link}" download="${filename}" class="download-trigger">
+                <a href="${r.link}" download="${filename}" class="download-trigger flex items-center gap-1 font-label-md text-label-md text-secondary hover:text-secondary-fixed transition-colors">
                   <span>Download</span>
-                  <span class="material-symbols-outlined text-[15px]">download</span>
+                  <span class="material-symbols-outlined text-[15px] group-hover:translate-x-0.5 transition-transform">north_east</span>
                 </a>
               ` : `
-                <button type="button" class="download-trigger disabled" style="opacity: 0.6; cursor: default;">
-                  <span>In Repository</span>
-                  <span class="material-symbols-outlined text-[15px]">verified</span>
-                </button>
+                <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px]">verified</span>
+                  <span>Verified</span>
+                </span>
               `}
             </div>
           </div>

@@ -1,0 +1,474 @@
+/* ==========================================================================
+   JUIT Student Hub - Official Stitch Design System & Theme Styles
+   Directly derived from Stitch Antigravity Hub specifications
+   ========================================================================== */
+
+:root {
+  /* Stitch Material Design 3 Palette Tokens */
+  --bg-background: #10131a;
+  --bg-surface: #10131a;
+  --bg-surface-dim: #10131a;
+  --bg-surface-container-lowest: #0b0e15;
+  --bg-surface-container-low: #191b23;
+  --bg-surface-container: #1d1f27;
+  --bg-surface-container-high: #272a32;
+  --bg-surface-container-highest: #32353d;
+  --bg-surface-bright: #363941;
+
+  --color-on-background: #e1e2ec;
+  --color-on-surface: #e1e2ec;
+  --color-on-surface-variant: #c7c4d7;
+  --color-outline: #908fa0;
+  --color-outline-variant: #464554;
+
+  --color-primary: #c0c1ff;
+  --color-primary-container: #8083ff;
+  --color-primary-fixed: #e1e0ff;
+  --color-primary-fixed-dim: #c0c1ff;
+  --color-on-primary: #1000a9;
+  --color-on-primary-container: #0d0096;
+
+  --color-secondary: #7bd0ff;
+  --color-secondary-container: #00a6e0;
+  --color-secondary-fixed: #c4e7ff;
+  --color-secondary-fixed-dim: #7bd0ff;
+  --color-on-secondary: #00354a;
+  --color-on-secondary-container: #00374d;
+
+  --color-tertiary: #bdc2ff;
+  --color-tertiary-container: #7c87f3;
+  --color-tertiary-fixed: #e0e0ff;
+  --color-tertiary-fixed-dim: #bdc2ff;
+  --color-on-tertiary: #131e8c;
+  --color-on-tertiary-container: #081486;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  /* Aliases for legacy component compatibility */
+  --bg-primary: var(--bg-background);
+  --bg-secondary: var(--bg-surface-container-lowest);
+  --bg-card: var(--bg-surface-container-low);
+  --bg-card-hover: var(--bg-surface-container);
+  --bg-elevated: var(--bg-surface-container-high);
+  --bg-glass: rgba(25, 27, 35, 0.85);
+
+  --border-subtle: #272a32;
+  --border-focus: rgba(192, 193, 255, 0.5);
+  --border-active: var(--color-primary);
+
+  --text-primary: var(--color-on-surface);
+  --text-secondary: var(--color-on-surface-variant);
+  --text-muted: var(--color-outline);
+  --text-inverse: var(--bg-background);
+
+  --accent-primary: var(--color-primary);
+  --accent-secondary: var(--color-secondary);
+  --accent-tertiary: var(--color-tertiary);
+  --accent-glow: rgba(192, 193, 255, 0.2);
+  --accent-gradient: linear-gradient(135deg, #c0c1ff 0%, #7bd0ff 100%);
+
+  --color-lecture: #8083ff;
+  --color-lecture-bg: rgba(128, 131, 255, 0.15);
+  --color-lecture-border: rgba(128, 131, 255, 0.35);
+
+  --color-lab: #7bd0ff;
+  --color-lab-bg: rgba(123, 208, 255, 0.15);
+  --color-lab-border: rgba(123, 208, 255, 0.35);
+
+  --color-tutorial: #00a6e0;
+  --color-tutorial-bg: rgba(0, 166, 224, 0.15);
+  --color-tutorial-border: rgba(0, 166, 224, 0.35);
+
+  --color-practical: #7c87f3;
+  --color-practical-bg: rgba(124, 135, 243, 0.15);
+  --color-practical-border: rgba(124, 135, 243, 0.35);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Inter', 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Light Mode Overrides */
+html:not(.dark)[data-theme-mode="light"],
+body[data-theme-mode="light"] {
+  --bg-background: #f7f9fc;
+  --bg-surface: #ffffff;
+  --bg-surface-dim: #ebedf2;
+  --bg-surface-container-lowest: #ffffff;
+  --bg-surface-container-low: #f1f4f9;
+  --bg-surface-container: #e8ecf4;
+  --bg-surface-container-high: #dee3ee;
+  --bg-surface-container-highest: #d3d9e6;
+  --bg-surface-bright: #ffffff;
+
+  --color-on-background: #191c20;
+  --color-on-surface: #191c20;
+  --color-on-surface-variant: #44474f;
+  --color-outline: #74777f;
+  --color-outline-variant: #c4c7d0;
+
+  --color-primary: #4f55cc;
+  --color-primary-container: #e0e0ff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #08006b;
+
+  --color-secondary: #00668b;
+  --color-secondary-container: #c4e7ff;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #001e2c;
+
+  --border-subtle: #dee3ee;
+  --border-focus: rgba(79, 85, 204, 0.5);
+  --border-active: var(--color-primary);
+
+  --text-primary: #191c20;
+  --text-secondary: #44474f;
+  --text-muted: #74777f;
+  --text-inverse: #ffffff;
+}
+
+/* Base Body Application Reset */
+body.app-body-layout {
+  background-color: var(--bg-background) !important;
+  color: var(--color-on-surface) !important;
+  font-family: var(--font-sans) !important;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Shell Layout */
+.app-shell-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-background);
+}
+
+/* Desktop Sidebar Styling (Pixel-Match with Stitch) */
+.desktop-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16rem; /* w-64 */
+  background-color: var(--bg-surface-container-lowest) !important;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+  border-right: 1px solid rgba(70, 69, 84, 0.25);
+}
+
+.desktop-sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+  transition: all 0.15s ease;
+}
+
+.desktop-sidebar .nav-link:hover {
+  background-color: var(--bg-surface-container);
+  color: var(--color-on-surface);
+}
+
+.desktop-sidebar .nav-link.active {
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-primary) !important;
+  font-weight: 500 !important;
+}
+
+.desktop-sidebar .nav-link .material-symbols-outlined {
+  font-size: 18px !important;
+}
+
+/* Main Viewport Container */
+.app-main-viewport {
+  margin-left: 16rem;
+  flex: 1;
+  min-height: 100vh;
+  background-color: var(--bg-background);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1023px) {
+  .desktop-sidebar {
+    display: none;
+  }
+  .app-main-viewport {
+    margin-left: 0 !important;
+    padding-bottom: 5rem;
+  }
+}
+
+/* Top App Header (Stitch Spec) */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 16rem;
+  right: 0;
+  height: 3.5rem; /* h-14 */
+  z-index: 40;
+  background-color: rgba(16, 19, 26, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(70, 69, 84, 0.25);
+}
+
+@media (max-width: 1023px) {
+  .app-header {
+    left: 0 !important;
+  }
+}
+
+/* Main Viewport Content */
+.app-main-content {
+  margin-top: 3.5rem;
+  padding: 1.5rem 2rem 3rem;
+  min-height: calc(100vh - 3.5rem);
+  background-color: var(--bg-background);
+}
+
+@media (max-width: 768px) {
+  .app-main-content {
+    padding: 1rem 0.75rem 4rem;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface-container-lowest);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-surface-container-high);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-surface-container-highest);
+}
+
+/* View Visibility Switching */
+.app-view-panel {
+  display: none !important;
+}
+.app-view-panel.active {
+  display: block !important;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility Card Hover States */
+.stitch-card {
+  background-color: var(--bg-surface-container-low);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(70, 69, 84, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stitch-card:hover {
+  background-color: var(--bg-surface-container);
+  border-color: rgba(123, 208, 255, 0.3);
+}
+
+/* Floating Badges & Tooltips */
+.badge-lecture {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary);
+}
+.badge-lab {
+  background-color: var(--color-secondary);
+  color: #001e2c;
+}
+.badge-tutorial {
+  background-color: var(--color-secondary-container);
+  color: #ffffff;
+}
+.badge-practical {
+  background-color: var(--color-tertiary-container);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Stitch Unified Theme Overrides for Core Hub Views & Cards
+   ========================================================================== */
+
+/* Universal Cards & Containers */
+.mess-hero-card,
+.milk-distribution-card,
+.bus-hero-banner,
+.bus-table-card,
+.calendar-controls-card,
+.calendar-list-card,
+.announcement-card,
+.academics-hero-card,
+.subject-attendance-card,
+.grade-target-card,
+.event-card,
+.club-card,
+.portal-service-card,
+.utility-card,
+.settings-section-card,
+.admin-card,
+.term-switcher {
+  background-color: var(--bg-surface-container-low) !important;
+  border: 1px solid rgba(70, 69, 84, 0.25) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+  color: var(--color-on-surface);
+}
+
+.mess-meal-card {
+  background-color: var(--bg-surface-container-low) !important;
+  border: 1px solid rgba(70, 69, 84, 0.25) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mess-meal-card:hover {
+  background-color: var(--bg-surface-container) !important;
+  border-color: rgba(123, 208, 255, 0.3) !important;
+}
+
+/* Universal Buttons & Filter Pills */
+.mess-day-pill,
+.term-btn,
+.announcement-filter-btn {
+  background-color: var(--bg-surface-container) !important;
+  color: var(--color-on-surface-variant) !important;
+  border: 1px solid rgba(70, 69, 84, 0.2) !important;
+  border-radius: 0.5rem !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  padding: 6px 14px !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mess-day-pill:hover,
+.term-btn:hover,
+.announcement-filter-btn:hover {
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-on-surface) !important;
+}
+
+.mess-day-pill.active,
+.term-btn.active,
+.announcement-filter-btn.active {
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border-color: var(--color-primary) !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 4px rgba(192, 193, 255, 0.25);
+}
+
+/* Input Fields & Selects */
+.select-styled,
+select.select-styled,
+input[type="text"].select-styled {
+  background-color: var(--bg-surface-container-lowest) !important;
+  color: var(--color-on-surface) !important;
+  border: 1px solid rgba(70, 69, 84, 0.25) !important;
+  border-radius: 0.5rem !important;
+  font-family: var(--font-sans) !important;
+  font-size: 13px !important;
+  padding: 8px 12px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.select-styled:focus,
+select.select-styled:focus,
+input[type="text"].select-styled:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 1px var(--color-primary) !important;
+  outline: none;
+}
+
+/* Tables in Stitch Styling */
+.milk-table,
+.bus-schedule-table,
+.academic-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.milk-table th,
+.bus-schedule-table th,
+.academic-table th {
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-on-surface-variant) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 14px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(70, 69, 84, 0.25);
+}
+
+.milk-table td,
+.bus-schedule-table td,
+.academic-table td {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--color-on-surface);
+  border-bottom: 1px solid rgba(70, 69, 84, 0.15);
+  background-color: transparent;
+}
+
+.milk-table tr:hover td,
+.bus-schedule-table tr:hover td,
+.academic-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Modals */
+.modal-backdrop {
+  background-color: rgba(11, 14, 21, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.modal-card {
+  background-color: var(--bg-surface-container-high) !important;
+  border: 1px solid rgba(70, 69, 84, 0.3) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6) !important;
+  color: var(--color-on-surface) !important;
+}
+

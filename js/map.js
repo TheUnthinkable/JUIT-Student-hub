@@ -206,22 +206,25 @@ const CampusMap = {
     if (!container) return;
 
     const categories = [
-      { id: 'all', label: 'All Locations', icon: 'apps' },
+      { id: 'all', label: 'All Locations', icon: 'domain' },
       { id: 'academic', label: 'Academic & Classrooms', icon: 'school' },
-      { id: 'mess', label: 'Annapurna & Dining', icon: 'restaurant' },
-      { id: 'hostel', label: 'Hostel Bhawans', icon: 'apartment' },
+      { id: 'mess', label: 'Annapurna & Food', icon: 'restaurant' },
+      { id: 'hostel', label: 'Hostels', icon: 'hotel' },
       { id: 'library', label: 'LRC Library & Admin', icon: 'local_library' },
-      { id: 'sports', label: 'Sports & Facilities', icon: 'sports_basketball' }
+      { id: 'sports', label: 'Sports & Facilities', icon: 'fitness_center' }
     ];
 
-    container.innerHTML = categories.map(c => `
-      <button type="button" class="map-filter-chip ${c.id === this.activeCategory ? 'active' : ''}" data-cat="${c.id}">
-        <span class="material-symbols-outlined" style="font-size: 15px;">${c.icon}</span>
-        <span>${c.label}</span>
-      </button>
-    `).join('');
+    container.innerHTML = categories.map(c => {
+      const isActive = (c.id === this.activeCategory);
+      return `
+        <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm ${isActive ? 'bg-primary text-on-primary font-medium shadow-sm' : 'bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'} transition-all flex-shrink-0" data-cat="${c.id}">
+          <span class="material-symbols-outlined text-[16px]">${c.icon}</span>
+          <span>${c.label}</span>
+        </button>
+      `;
+    }).join('');
 
-    container.querySelectorAll('.map-filter-chip').forEach(btn => {
+    container.querySelectorAll('.category-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeCategory = btn.dataset.cat;
         this.renderCategoryFilters();

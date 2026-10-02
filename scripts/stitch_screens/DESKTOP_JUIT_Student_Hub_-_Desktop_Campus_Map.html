@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#e1e2ec","secondary":"#7bd0ff","primary-fixed-dim":"#c0c1ff","surface-tint":"#c0c1ff","surface-dim":"#10131a","on-secondary-fixed-variant":"#004c69","surface":"#10131a","on-tertiary-fixed-variant":"#2f3aa3","error-container":"#93000a","on-primary":"#1000a9","inverse-surface":"#e1e2ec","surface-container":"#1d1f27","on-tertiary-fixed":"#000767","secondary-fixed":"#c4e7ff","surface-container-lowest":"#0b0e15","primary-fixed":"#e1e0ff","tertiary-fixed-dim":"#bdc2ff","on-surface":"#e1e2ec","on-secondary-container":"#00374d","inverse-on-surface":"#2d3038","on-surface-variant":"#c7c4d7","on-primary-fixed-variant":"#2f2ebe","outline":"#908fa0","on-tertiary-container":"#081486","on-tertiary":"#131e8c","surface-container-high":"#272a32","surface-container-low":"#191b23","tertiary-container":"#7c87f3","on-error-container":"#ffdad6","inverse-primary":"#494bd6","on-secondary-fixed":"#001e2c","outline-variant":"#464554","surface-variant":"#32353d","primary-container":"#8083ff","background":"#10131a","on-error":"#690005","error":"#ffb4ab","primary":"#c0c1ff","surface-container-highest":"#32353d","surface-bright":"#363941","tertiary-fixed":"#e0e0ff","secondary-fixed-dim":"#7bd0ff","tertiary":"#bdc2ff","on-primary-fixed":"#07006c","on-primary-container":"#0d0096","on-secondary":"#00354a","secondary-container":"#00a6e0"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-desktop":"3rem","space-xs":"0.25rem","margin":"1rem","space-sm":"0.5rem","margin-tablet":"2rem","space-md":"1rem","space-lg":"1.5rem","gutter-desktop":"1.5rem","gutter":"1.25rem","space-xl":"2.5rem"},"fontFamily":{"display-lg":["Inter"],"body-md":["Inter"],"label-md":["JetBrains Mono"],"body-lg":["Inter"],"label-sm":["JetBrains Mono"],"headline-md":["Inter"],"headline-sm":["Inter"],"body-sm":["Inter"],"headline-lg":["Inter"],"headline-lg-mobile":["Inter"],"code-sm":["JetBrains Mono"]},"fontSize":{"display-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.03em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"-0.005em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"500"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"500"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.025em","fontWeight":"600"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"code-sm":["12px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}]}}}}</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest z-50 flex flex-col justify-between overflow-hidden shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col h-full overflow-hidden"><div class="px-space-md pt-space-lg pb-space-md"><div class="flex items-center justify-between mb-space-xs"><div class="flex items-center gap-space-sm"><div class="w-7 h-7 rounded bg-primary flex items-center justify-center"><span class="font-label-md text-label-md text-on-primary font-bold tracking-wider">J</span></div><span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">JUIT Hub</span></div><span class="px-space-xs py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-secondary">Solan</span></div><p class="font-label-sm text-label-sm text-on-surface-variant">Your campus, organized.</p></div><div class="flex-1 overflow-y-auto px-space-sm space-y-space-md"><nav class="flex flex-col space-y-0.5" data-active-classes="bg-surface-container-high text-primary font-medium rounded"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[18px]">grid_view</span><span class="font-body-sm text-body-sm">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="timetable" href="#"><span class="material-symbols-outlined text-[18px]">calendar_view_week</span><span class="font-body-sm text-body-sm">Timetable</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="academic-calendar" href="#"><span class="material-symbols-outlined text-[18px]">date_range</span><span class="font-body-sm text-body-sm">Academic Calendar</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="annapurna-mess" href="#"><span class="material-symbols-outlined text-[18px]">restaurant</span><span class="font-body-sm text-body-sm">Annapurna Mess</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 transition-colors bg-surface-container-high text-primary font-medium rounded" data-path="campus-map-&amp;-finder" href="#"><span class="material-symbols-outlined text-[18px]">explore</span><span class="font-body-sm text-body-sm">Campus Map &amp; Finder</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="announcements" href="#"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-body-sm text-body-sm">Announcements</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="academics-&amp;-attendance" href="#"><span class="material-symbols-outlined text-[18px]">school</span><span class="font-body-sm text-body-sm">Academics &amp; Attendance</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="resource-hub" href="#"><span class="material-symbols-outlined text-[18px]">library_books</span><span class="font-body-sm text-body-sm">Resource Hub</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="events-&amp;-clubs" href="#"><span class="material-symbols-outlined text-[18px]">groups</span><span class="font-body-sm text-body-sm">Events &amp; Clubs</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="useful-links" href="#"><span class="material-symbols-outlined text-[18px]">link</span><span class="font-body-sm text-body-sm">Useful Links</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="student-utilities" href="#"><span class="material-symbols-outlined text-[18px]">apps</span><span class="font-body-sm text-body-sm">Student Utilities</span></a></nav><div class="pt-space-xs"><div class="px-space-sm pb-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">System &amp; Admin</span></div><nav class="flex flex-col space-y-0.5" data-active-classes="bg-surface-container-high text-primary font-medium rounded"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="settings-&amp;-theme" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-sm text-body-sm">Settings &amp; Theme</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="admin-&amp;-excel-importer" href="#"><span class="material-symbols-outlined text-[18px]">terminal</span><span class="font-body-sm text-body-sm">Admin &amp; Excel Importer</span></a></nav></div></div><div class="p-space-sm m-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0 flex-1"><p class="font-body-sm text-body-sm text-on-surface font-medium truncate">JUIT Scholar</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">B.Tech Sem 1 • 26BT16</p></div></div><a class="w-6 h-6 flex items-center justify-center rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" data-path="profile-settings" href="#"><span class="material-symbols-outlined text-[16px]">edit</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 z-40 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant">09:47:08 PM • Tuesday, 22 September 2026</span></div><div class="flex items-center gap-space-md flex-1 max-w-md mx-space-lg"><div class="w-full flex items-center gap-space-sm px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-body-sm text-body-sm flex-1 text-outline">Search Hub...</span><kbd class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-outline">Ctrl K</kbd></div></div><div class="flex items-center gap-space-sm"><button class="relative w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary"></span></button><button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">dark_mode</span></button><div class="h-4 w-px bg-surface-container mx-space-xs"></div><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></div></div></div></header><main class="w-full pt-14 bg-background min-h-screen px-gutter-desktop py-space-lg"><div class="flex flex-col w-full space-y-space-md">
+<!-- Interactive Header Bar with Filter Pills and Search -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-sm flex flex-col xl:flex-row items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-space-xs overflow-x-auto w-full xl:w-auto scrollbar-none py-1">
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-cat="all">
+<span class="material-symbols-outlined text-[16px]">domain</span>
+<span>All Locations</span>
+</button>
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="academic">
+<span class="material-symbols-outlined text-[16px]">school</span>
+<span>Academic &amp; Classrooms</span>
+</button>
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="food">
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+<span>Annapurna &amp; Food</span>
+</button>
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="hostel">
+<span class="material-symbols-outlined text-[16px]">hotel</span>
+<span>Hostels</span>
+</button>
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="lrc">
+<span class="material-symbols-outlined text-[16px]">local_library</span>
+<span>LRC Library &amp; Admin</span>
+</button>
+<button class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="sports">
+<span class="material-symbols-outlined text-[16px]">fitness_center</span>
+<span>Sports &amp; Facilities</span>
+</button>
+</div>
+<div class="relative w-full xl:w-96 flex items-center">
+<div class="w-full flex items-center gap-space-sm px-space-md py-2 rounded-lg bg-surface-container-lowest text-on-surface-variant focus-within:ring-1 focus-within:ring-primary">
+<span class="material-symbols-outlined text-[18px] text-secondary">search</span>
+<input class="bg-transparent text-on-surface font-body-sm text-body-sm w-full outline-none placeholder:text-outline" id="campus-room-search" placeholder="Search room e.g. CR01, LT3, CL52, Mess..." type="text"/>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-outline">Ctrl K</span>
+</div>
+</div>
+</div>
+<!-- Interactive Campus Map Canvas Container -->
+<div class="relative w-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-xl" id="map-viewport" style="height: 580px;">
+<!-- Topographic & Nature Accent Map SVG -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none select-none" preserveaspectratio="none" viewbox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialgradient cx="50%" cy="50%" id="mountain-glow" r="50%">
+<stop offset="0%" stop-color="#1d2436" stop-opacity="0.6"></stop>
+<stop offset="100%" stop-color="#0b0e15" stop-opacity="0"></stop>
+</radialgradient>
+<lineargradient id="road-gradient" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#32353d" stop-opacity="0.3"></stop>
+<stop offset="50%" stop-color="#464554" stop-opacity="0.8"></stop>
+<stop offset="100%" stop-color="#32353d" stop-opacity="0.2"></stop>
+</lineargradient>
+</defs>
+<!-- Mountain Silhouettes / Contours -->
+<path d="M 0,380 Q 240,320 480,360 T 960,330 T 1200,380 L 1200,600 L 0,600 Z" fill="#131722" opacity="0.4"></path>
+<path d="M 0,440 Q 300,410 650,430 T 1200,420 L 1200,600 L 0,600 Z" fill="#10141f" opacity="0.8"></path>
+<!-- Waknaghat Mountain Ridge Lines -->
+<path d="M 50,180 Q 200,120 420,160 T 850,130 Q 1050,160 1180,220" fill="none" opacity="0.6" stroke="#272a32" stroke-dasharray="4,6" stroke-width="1.5"></path>
+<path d="M 120,240 Q 380,210 680,230 T 1150,260" fill="none" opacity="0.4" stroke="#272a32" stroke-dasharray="6,8" stroke-width="1"></path>
+<!-- Stylized Pine Tree clusters (Solan Himalayan flora) -->
+<g fill="#1b2825" opacity="0.7">
+<polygon points="410,185 418,203 402,203"></polygon>
+<polygon points="410,195 422,216 398,216"></polygon>
+<polygon points="450,165 457,180 443,180"></polygon>
+<polygon points="450,175 460,192 440,192"></polygon>
+<polygon points="780,180 787,196 773,196"></polygon>
+<polygon points="780,190 790,208 770,208"></polygon>
+<polygon points="900,200 908,216 892,216"></polygon>
+<polygon points="900,210 911,230 889,230"></polygon>
+<polygon points="380,330 388,348 372,348"></polygon>
+<polygon points="380,342 391,362 369,362"></polygon>
+<polygon points="760,420 768,438 752,438"></polygon>
+</g>
+<!-- Spine Winding Main Campus Road -->
+<path d="M 370,210 C 500,240 680,220 980,240" fill="none" stroke="url(#road-gradient)" stroke-linecap="round" stroke-width="18"></path>
+<path d="M 370,210 C 500,240 680,220 980,240" fill="none" opacity="0.6" stroke="#908fa0" stroke-dasharray="8,8" stroke-width="2"></path>
+<!-- Inter-block Connector Walkways -->
+<path d="M 520,330 L 780,330 L 780,410 L 520,410 Z" fill="none" opacity="0.5" stroke="#272a32" stroke-width="3"></path>
+<path d="M 640,270 L 640,330" fill="none" opacity="0.5" stroke="#272a32" stroke-width="3"></path>
+<path d="M 440,380 L 520,380" fill="none" opacity="0.5" stroke="#272a32" stroke-width="3"></path>
+<path d="M 780,395 L 850,395" fill="none" opacity="0.5" stroke="#272a32" stroke-width="3"></path>
+<path d="M 640,410 L 640,470" fill="none" opacity="0.5" stroke="#272a32" stroke-width="3"></path>
+</svg>
+<!-- Map Canvas Interactive Buildings Node Layer -->
+<div class="relative w-full h-full transform transition-transform duration-300 origin-center" id="map-interactive-layer">
+<!-- Main Entrance Gate -->
+<div class="map-node absolute cursor-pointer group" data-node-type="admin" style="top: 23%; left: 35%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[130px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-medium">Gate</span>
+<span class="font-label-sm text-label-sm text-outline">1 Floor</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Main Entrance Gate</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Security &amp; Shuttle</p>
+</div>
+</div>
+<!-- Administrative Block -->
+<div class="map-node absolute cursor-pointer group" data-node-type="lrc" style="top: 25%; left: 45%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[135px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-surface-container-highest text-secondary font-medium">Admin</span>
+<span class="font-label-sm text-label-sm text-outline">3 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Administrative Block</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Registrar &amp; Accounts</p>
+</div>
+</div>
+<!-- LRC - Learning Resource Centre (Hero Highlighted Node) -->
+<div class="map-node absolute cursor-pointer group z-20" data-node-type="lrc" style="top: 21%; left: 54%;">
+<div class="relative bg-gradient-to-b from-[#e69b00] to-[#b37400] text-surface-container-lowest rounded-xl p-space-sm shadow-[0_0_30px_rgba(230,155,0,0.45)] transition-all hover:scale-105 min-w-[150px]">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-surface-container-lowest/40 text-on-surface font-semibold">LRC</span>
+<span class="font-label-sm text-label-sm text-on-surface/90 font-medium">3 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-surface-container-lowest font-bold text-sm leading-tight">Learning Resource</p>
+<p class="font-label-sm text-label-sm text-surface-container-lowest/80 mt-0.5 font-medium">Central Library &amp; Repro</p>
+<div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-[#b37400]"></div>
+</div>
+</div>
+<!-- Helipad & Shivalik View -->
+<div class="map-node absolute cursor-pointer group" data-node-type="sports" style="top: 22%; left: 68%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[140px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-semibold">View</span>
+<span class="font-label-sm text-label-sm text-outline">Ground</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Helipad &amp; Shivalik</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Valley Panorama Point</p>
+</div>
+</div>
+<!-- Girls Hostels (GH Complex) -->
+<div class="map-node absolute cursor-pointer group" data-node-type="hostel" style="top: 28%; left: 78%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[130px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-semibold">GH</span>
+<span class="font-label-sm text-label-sm text-outline">5 Blocks</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Girls Hostels</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Geeta, Sharda &amp; Ganga</p>
+</div>
+</div>
+<!-- Dispensary & Health Centre -->
+<div class="map-node absolute cursor-pointer group" data-node-type="admin" style="top: 45%; left: 41%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[135px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-semibold">Health</span>
+<span class="font-label-sm text-label-sm text-outline">1 Floor</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Dispensary &amp; Health</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">24x7 Medical Officer</p>
+</div>
+</div>
+<!-- Academic Block 1 (AB1) -->
+<div class="map-node absolute cursor-pointer group z-10" data-node-type="academic" style="top: 48%; left: 49%;">
+<div class="bg-primary/20 hover:bg-primary/30 rounded-xl p-space-sm shadow-lg transition-all hover:scale-105 min-w-[145px] backdrop-blur-md">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-primary text-on-primary font-bold">AB1</span>
+<span class="font-label-sm text-label-sm text-primary-fixed-dim">4 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Academic Block 1</p>
+<p class="font-label-sm text-label-sm text-primary mt-0.5">CR01-10 • Physics Lab</p>
+</div>
+</div>
+<!-- Academic Block 2 (AB2) -->
+<div class="map-node absolute cursor-pointer group z-10" data-node-type="academic" style="top: 45%; left: 60%;">
+<div class="bg-tertiary-container/30 hover:bg-tertiary-container/45 rounded-xl p-space-sm shadow-lg transition-all hover:scale-105 min-w-[145px] backdrop-blur-md">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-tertiary text-on-tertiary font-bold">AB2</span>
+<span class="font-label-sm text-label-sm text-tertiary-fixed-dim">4 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Academic Block 2</p>
+<p class="font-label-sm text-label-sm text-tertiary mt-0.5">LT1-LT3 • CC Labs</p>
+</div>
+</div>
+<!-- Academic Block 3 (AB3) -->
+<div class="map-node absolute cursor-pointer group z-10" data-node-type="academic" style="top: 48%; left: 71%;">
+<div class="bg-[#004d40]/40 hover:bg-[#004d40]/60 rounded-xl p-space-sm shadow-lg transition-all hover:scale-105 min-w-[145px] backdrop-blur-md">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary font-bold">AB3</span>
+<span class="font-label-sm text-label-sm text-secondary-fixed">4 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Academic Block 3</p>
+<p class="font-label-sm text-label-sm text-secondary mt-0.5">Biotech &amp; Civil Wings</p>
+</div>
+</div>
+<!-- Open Air Theatre (OAT) -->
+<div class="map-node absolute cursor-pointer group" data-node-type="lrc" style="top: 61%; left: 56%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl px-space-sm py-1.5 shadow-md transition-all hover:scale-105 min-w-[125px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-0.5">
+<span class="font-label-sm text-label-sm uppercase px-1 py-0.2 rounded bg-tertiary text-on-tertiary font-bold">OAT</span>
+<span class="font-label-sm text-label-sm text-outline">Tiered</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-[11px] leading-tight">Open Air Theatre</p>
+</div>
+</div>
+<!-- Boys Hostels (BH Complex) -->
+<div class="map-node absolute cursor-pointer group" data-node-type="hostel" style="top: 67%; left: 38%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[130px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary font-semibold">BH</span>
+<span class="font-label-sm text-label-sm text-outline">1-4 Blocks</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Boys Hostels</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Parmar, Tagore, Azad</p>
+</div>
+</div>
+<!-- Annapurna Dining Mess - Hall A -->
+<div class="map-node absolute cursor-pointer group" data-node-type="food" style="top: 69%; left: 51%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[135px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-semibold">Mess-A</span>
+<span class="font-label-sm text-label-sm text-outline">1 Floor</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Annapurna Dining A</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Vegetarian Cafeteria</p>
+</div>
+</div>
+<!-- Annapurna Dining Mess - Hall B -->
+<div class="map-node absolute cursor-pointer group" data-node-type="food" style="top: 69%; left: 63%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[135px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-[#b35e00] text-surface-container-lowest font-semibold">Mess-B</span>
+<span class="font-label-sm text-label-sm text-outline">2 Floors</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Annapurna Dining B</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Senior Dining &amp; Snacks</p>
+</div>
+</div>
+<!-- Sports Arena & Gym -->
+<div class="map-node absolute cursor-pointer group" data-node-type="sports" style="top: 67%; left: 74%;">
+<div class="bg-surface-container-high/90 hover:bg-surface-bright rounded-xl p-space-sm shadow-md transition-all hover:scale-105 min-w-[140px] backdrop-blur-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm uppercase px-1.5 py-0.5 rounded bg-secondary text-on-secondary font-semibold">Sports</span>
+<span class="font-label-sm text-label-sm text-outline">Indoor</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-xs leading-tight">Sports Arena &amp; Gym</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Badminton, TT, Weight Rm</p>
+</div>
+</div>
+</div>
+<!-- Map Floating Compass & Navigation Stats -->
+<div class="absolute top-space-md left-space-md bg-surface-container-low/80 backdrop-blur-md px-space-md py-space-xs rounded-xl flex items-center gap-space-sm shadow-sm">
+<div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Waknaghat Campus</span>
+<span class="font-label-sm text-label-sm text-outline">Elev. 1,600m • Solan, HP</span>
+</div>
+</div>
+<!-- Map Zoom & Control Buttons (Right Corner) -->
+<div class="absolute bottom-space-md right-space-md flex flex-col gap-1.5 bg-surface-container-low/90 backdrop-blur-md p-1.5 rounded-xl shadow-lg">
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="zoom-in-btn" title="Zoom in">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="zoom-out-btn" title="Zoom out">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="reset-zoom-btn" title="Reset View">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+<!-- Active Building Detail Floating Inspector Card -->
+<div class="absolute bottom-space-md left-space-md bg-surface-container/95 backdrop-blur-md p-space-md rounded-xl shadow-2xl max-w-sm hidden transition-all z-30" id="quick-inspector">
+<div class="flex items-start justify-between gap-space-sm mb-1.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-primary text-on-primary font-bold" id="inspect-tag">AB1</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="inspect-title">Academic Block 1</h4>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface" id="close-inspector">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm" id="inspect-desc">Contains foundational lecture classrooms, Applied Physics research laboratories, and academic counseling cells.</p>
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-label-sm text-label-sm text-secondary" id="inspect-floors">Level 1 - 4 Available</span>
+<button class="px-space-sm py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary font-body-sm text-body-sm flex items-center gap-1">
+<span>Explore Floors</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Academic & Infrastructure Detail Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- Block AB1 Card -->
+<div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm transition-all duration-200 cursor-pointer group flex flex-col justify-between" onclick="focusBlock('AB1')">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-semibold tracking-wider uppercase">Instructional Wing</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-[20px]">near_me</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-primary transition-colors">Academic Block 1 (AB1)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Classrooms CR01–CR10, Tutorial Rooms TR1–TR7, DLC Auditorium, Physics Labs, Electronics Labs &amp; Language Lab.</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">4 Floors • 18 Rooms</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-primary">Open Now</span>
+</div>
+</div>
+<!-- Block AB2 Card -->
+<div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm transition-all duration-200 cursor-pointer group flex flex-col justify-between" onclick="focusBlock('AB2')">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-tertiary font-semibold tracking-wider uppercase">Computing &amp; Theatres</span>
+<span class="material-symbols-outlined text-outline group-hover:text-tertiary transition-colors text-[20px]">near_me</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-tertiary transition-colors">Academic Block 2 (AB2)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Lecture Theatres LT1, LT2, LT3, Main Computer Centre (CL01–CL52), Advanced AI &amp; High-Performance Computing Labs.</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">4 Floors • 3 Theatres</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-tertiary">Active Sessions</span>
+</div>
+</div>
+<!-- Block AB3 Card -->
+<div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm transition-all duration-200 cursor-pointer group flex flex-col justify-between" onclick="focusBlock('AB3')">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-secondary font-semibold tracking-wider uppercase">Research &amp; Engineering</span>
+<span class="material-symbols-outlined text-outline group-hover:text-secondary transition-colors text-[20px]">near_me</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-secondary transition-colors">Academic Block 3 (AB3)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Classrooms CR11–CR20, TR8–TR10, Bioinformatics Lab (BIL), Genomics Lab, Civil Engineering Heavy Structures Lab.</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">4 Floors • 12 Research Units</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-secondary">Labs Open</span>
+</div>
+</div>
+<!-- LRC Library & Messes Card -->
+<div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm transition-all duration-200 cursor-pointer group flex flex-col justify-between" onclick="focusBlock('LRC')">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-[#e69b00] font-semibold tracking-wider uppercase">Campus Core</span>
+<span class="material-symbols-outlined text-outline group-hover:text-[#e69b00] transition-colors text-[20px]">near_me</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-[#e69b00] transition-colors">LRC Library &amp; Messes</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">3-Floor Central Library, Annapurna Dining Halls A &amp; B, Peach Tree Cafeteria, Open Air Theatre (OAT), Medical Dispensary.</p>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">Dining &amp; Study</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-[#e69b00]">Open Till 11 PM</span>
+</div>
+</div>
+</div>
+<!-- Campus Quick Landmarks Directory Preview -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-lg flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[28px]">directions_walk</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Need turn-by-turn indoor route assistance?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Access staircase shortcuts, ramp pathways for accessibility, and elevator status across all blocks.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm w-full xl:w-auto">
+<button class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high font-body-sm text-body-sm text-on-surface transition-colors flex items-center gap-2 flex-1 xl:flex-none justify-center">
+<span class="material-symbols-outlined text-[18px]">accessible</span>
+<span>Accessible Paths</span>
+</button>
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 flex-1 xl:flex-none justify-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+<span>Find Shortest Path</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Campus Map Interactive Controller
+  (function() {
+    let currentScale = 1;
+    const maxScale = 1.6;
+    const minScale = 0.85;
+    const layer = document.getElementById('map-interactive-layer');
+    const nodes = document.querySelectorAll('.map-node');
+    const pills = document.querySelectorAll('.category-pill');
+    const inspector = document.getElementById('quick-inspector');
+    const inspectTag = document.getElementById('inspect-tag');
+    const inspectTitle = document.getElementById('inspect-title');
+    const inspectDesc = document.getElementById('inspect-desc');
+    const searchInput = document.getElementById('campus-room-search');
+
+    // Zoom Controls
+    document.getElementById('zoom-in-btn').addEventListener('click', () => {
+      if (currentScale < maxScale) {
+        currentScale += 0.15;
+        applyTransform();
+      }
+    });
+
+    document.getElementById('zoom-out-btn').addEventListener('click', () => {
+      if (currentScale > minScale) {
+        currentScale -= 0.15;
+        applyTransform();
+      }
+    });
+
+    document.getElementById('reset-zoom-btn').addEventListener('click', () => {
+      currentScale = 1;
+      applyTransform();
+    });
+
+    function applyTransform() {
+      layer.style.transform = `scale(${currentScale})`;
+    }
+
+    // Category Filter Interactions
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => {
+          p.classList.remove('bg-primary', 'text-on-primary');
+          p.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        pill.classList.add('bg-primary', 'text-on-primary');
+        pill.classList.remove('bg-surface-container', 'text-on-surface-variant');
+
+        const cat = pill.getAttribute('data-cat');
+        nodes.forEach(node => {
+          const type = node.getAttribute('data-node-type');
+          if (cat === 'all' || type === cat) {
+            node.style.opacity = '1';
+            node.style.pointerEvents = 'auto';
+          } else {
+            node.style.opacity = '0.25';
+            node.style.pointerEvents = 'none';
+          }
+        });
+      });
+    });
+
+    // Inspector modal on map node clicks
+    const buildingData = {
+      'AB1': {
+        tag: 'AB1',
+        title: 'Academic Block 1',
+        desc: 'Home to CR01–CR10, Tutorial Rooms TR1–TR7, Physics, and Electronics Laboratories.',
+        floors: 'Ground + 3 Floors'
+      },
+      'AB2': {
+        tag: 'AB2',
+        title: 'Academic Block 2',
+        desc: 'Lecture Theatres LT1–LT3, Central Computing Center CL01–CL52, and High Performance Computing labs.',
+        floors: 'Ground + 3 Floors'
+      },
+      'AB3': {
+        tag: 'AB3',
+        title: 'Academic Block 3',
+        desc: 'Houses Civil Engineering, Structural testing bays, and modern Bioinformatics analytical suites.',
+        floors: 'Ground + 3 Floors'
+      },
+      'LRC': {
+        tag: 'LRC',
+        title: 'Learning Resource Centre',
+        desc: '3-story Central University Library with reading halls, IEEE digital repository, and silent study chambers.',
+        floors: 'Levels 1 - 3'
+      }
+    };
+
+    window.focusBlock = function(key) {
+      if (buildingData[key]) {
+        const d = buildingData[key];
+        inspectTag.textContent = d.tag;
+        inspectTitle.textContent = d.title;
+        inspectDesc.textContent = d.desc;
+        document.getElementById('inspect-floors').textContent = d.floors;
+        inspector.classList.remove('hidden');
+      }
+    };
+
+    document.getElementById('close-inspector').addEventListener('click', () => {
+      inspector.classList.add('hidden');
+    });
+
+    // Interactive node selection
+    nodes.forEach(node => {
+      node.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const textElem = node.querySelector('.font-headline-sm');
+        const title = textElem ? textElem.textContent : 'Campus Location';
+        const tagElem = node.querySelector('.font-label-sm.uppercase');
+        const tag = tagElem ? tagElem.textContent : 'LOC';
+        
+        inspectTag.textContent = tag;
+        inspectTitle.textContent = title;
+        inspectDesc.textContent = `Direct map pointer at ${title}. Tap to check indoor layout and room directory.`;
+        inspector.classList.remove('hidden');
+      });
+    });
+
+    // Quick search input filtering
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      nodes.forEach(node => {
+        const text = node.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          node.style.opacity = '1';
+          node.style.transform = q ? 'scale(1.1)' : '';
+        } else {
+          node.style.opacity = '0.2';
+          node.style.transform = '';
+        }
+      });
+    });
+  })();
+</script></main></div></body></html>

@@ -420,27 +420,32 @@ const App = {
     ];
 
     container.innerHTML = featuredDownloads.map(item => `
-      <div class="fast-download-card">
+      <div class="rounded-xl bg-surface-container-high hover:bg-surface-bright p-space-md flex flex-col justify-between transition-all shadow-sm border border-outline-variant/20 group">
         <div>
-          <div class="fast-card-header">
-            <span class="fast-card-subject-pill" style="background: ${item.color}20; color: ${item.color};">
+          <div class="flex items-center justify-between gap-space-xs mb-space-sm">
+            <span class="px-space-xs py-0.5 rounded font-label-sm text-label-sm font-semibold" style="background: ${item.color}20; color: ${item.color};">
               ${item.subject} • ${item.type}
             </span>
-            <span class="kbd-shortcut" style="font-size: 0.72rem; padding: 2px 6px;">
+            <span class="font-code-sm text-code-sm px-1.5 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant">
               ${item.size}
             </span>
           </div>
-          <h4 class="fast-card-title">${item.title}</h4>
-          <div class="fast-card-scope">${item.scope}</div>
+          <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-space-xs">
+            ${item.title}
+          </h4>
+          <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mb-space-md">
+            ${item.scope}
+          </p>
         </div>
-        <div class="fast-card-actions">
-          <a href="${item.link}" download class="btn-fast-dl-action primary" title="Download ${item.title}">
-            <span class="material-symbols-outlined text-[17px]">download</span>
-            <span>Download</span>
-          </a>
-          <button type="button" class="btn-fast-dl-action secondary btn-preview-fast-doc" data-link="${item.link}" data-title="${item.title}" title="Preview Document">
-            <span class="material-symbols-outlined text-[17px]">visibility</span>
+        <div class="pt-space-sm flex items-center justify-between border-t border-outline-variant/20 -mx-space-md -mb-space-md px-space-md py-space-sm rounded-b-xl bg-surface-container-lowest/40">
+          <button type="button" class="btn-preview-fast-doc inline-flex items-center gap-1 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-link="${item.link}" data-title="${item.title}">
+            <span class="material-symbols-outlined text-[16px]">visibility</span>
+            <span>View</span>
           </button>
+          <a href="${item.link}" download class="inline-flex items-center gap-1 font-label-md text-label-md text-secondary hover:text-secondary-fixed transition-colors font-medium">
+            <span>Download</span>
+            <span class="material-symbols-outlined text-[16px]">download</span>
+          </a>
         </div>
       </div>
     `).join('');
@@ -460,11 +465,11 @@ const App = {
     const p = window.JUIT_PROFILE || { programme: 'B.Tech', branch: 'CSE', semester: '1', batch: '26BT16' };
     const label = document.getElementById('sidebar-user-batch-label');
     if (label) {
-      label.textContent = `${p.programme} Sem ${p.semester} • ${p.batch || p.branch}`;
+      label.textContent = `${p.programme || 'B.Tech'} Sem ${p.semester || '1'} • ${p.batch || p.branch || '26BT16'}`;
     }
     const nameEl = document.getElementById('sidebar-user-name');
     if (nameEl) {
-      nameEl.textContent = p.name || 'Scholar';
+      nameEl.textContent = p.name || 'JUIT Scholar';
     }
   },
 
@@ -480,28 +485,28 @@ const App = {
 
     if (isSunday) {
       heroCard.innerHTML = `
-        <div class="hero-status-card sunday-mode">
-          <div class="hero-status-icon">
+        <div class="rounded-xl bg-surface-container-low p-space-xl flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden min-h-[340px] border border-outline-variant/20">
+          <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-space-md text-secondary shadow-inner">
             <span class="material-symbols-outlined text-[32px]">weekend</span>
           </div>
-          <h3 class="hero-status-title">Sunday • Campus Weekend</h3>
-          <p class="hero-status-desc">
+          <h3 class="font-headline-md text-headline-md text-on-surface font-semibold mb-space-xs">Sunday • Campus Weekend</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-space-lg">
             No regular lectures scheduled today. Annapurna dining hall is serving weekend specials and LRC study halls are open.
           </p>
-          <div class="hero-ribbon">
-            <div class="ribbon-item">
-              <span class="ribbon-label">Dining Halls</span>
-              <span class="ribbon-val">Annapurna Open</span>
+          <div class="w-full max-w-sm rounded-lg bg-surface-container p-space-sm flex items-center justify-around text-center">
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">Dining Halls</p>
+              <p class="font-headline-sm text-headline-sm text-on-surface font-semibold">Annapurna Open</p>
             </div>
-            <div class="ribbon-divider"></div>
-            <div class="ribbon-item">
-              <span class="ribbon-label">LRC Library</span>
-              <span class="ribbon-val" style="color: var(--accent-primary);">24x7 Reading</span>
+            <div class="h-6 w-px bg-surface-container-high"></div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">LRC Library</p>
+              <p class="font-headline-sm text-headline-sm text-primary font-semibold">24x7 Reading</p>
             </div>
-            <div class="ribbon-divider"></div>
-            <div class="ribbon-item">
-              <span class="ribbon-label">First Class</span>
-              <span class="ribbon-val" style="color: var(--accent-secondary);">Mon 09:00 AM</span>
+            <div class="h-6 w-px bg-surface-container-high"></div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">First Class</p>
+              <p class="font-headline-sm text-headline-sm text-secondary font-semibold">Mon 09:00 AM</p>
             </div>
           </div>
         </div>
@@ -511,12 +516,14 @@ const App = {
 
     if (dayClasses.length === 0) {
       heroCard.innerHTML = `
-        <div class="hero-status-card">
-          <div class="hero-status-icon">
+        <div class="rounded-xl bg-surface-container-low p-space-xl flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden min-h-[340px] border border-outline-variant/20">
+          <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-space-md text-secondary shadow-inner">
             <span class="material-symbols-outlined text-[32px]">celebration</span>
           </div>
-          <h3 class="hero-status-title">No Classes Today</h3>
-          <p class="hero-status-desc">Enjoy your free academic day or study at LRC Library!</p>
+          <h3 class="font-headline-md text-headline-md text-on-surface font-semibold mb-space-xs">No Classes Scheduled Today</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-space-lg">
+            Enjoy your free academic day or study at LRC Central Library.
+          </p>
         </div>
       `;
       return;
@@ -543,43 +550,57 @@ const App = {
     if (activeClass) {
       const minsLeft = activeClass.range.end - nowMins;
       heroCard.innerHTML = `
-        <div class="live-class-hero live-now">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="live-now-badge">
-                <span class="pulse-indicator"></span>
-                LIVE NOW
-              </span>
-              <span class="badge-${activeClass.type === 'P' ? 'lab' : (activeClass.type === 'T' ? 'tutorial' : 'lecture')}">
-                ${activeClass.typeName || 'Lecture'}
-              </span>
+        <div class="rounded-xl bg-surface-container-low p-space-lg flex flex-col justify-between shadow-sm relative overflow-hidden min-h-[340px] border border-primary/40">
+          <div class="space-y-space-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-xs">
+                <span class="inline-flex items-center gap-1.5 px-space-xs py-0.5 rounded bg-primary/20 text-primary font-label-sm text-label-sm font-semibold">
+                  <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+                  LIVE NOW
+                </span>
+                <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                  ${activeClass.typeName || 'Lecture'}
+                </span>
+              </div>
+              <span class="font-code-sm text-code-sm text-primary font-medium">Ends in ${minsLeft}m</span>
             </div>
-            <span class="kbd-shortcut" style="color: var(--accent-primary);">Ends in ${minsLeft}m</span>
+
+            <div class="pt-2">
+              <div class="font-label-sm text-label-sm text-outline font-mono mb-1">${activeClass.code || ''}</div>
+              <h3 class="font-headline-md text-headline-md text-on-surface font-bold leading-tight">
+                ${window.TimetableController.getCleanSubjectName(activeClass.code, activeClass.subject)}
+              </h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-space-xs pt-2">
+              <div class="p-space-sm rounded bg-surface-container">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Timing</span>
+                <span class="font-body-sm text-body-sm text-on-surface font-semibold">${activeClass.time}</span>
+              </div>
+              <div class="p-space-sm rounded bg-surface-container">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Venue</span>
+                <span class="font-body-sm text-body-sm text-secondary font-semibold">${activeClass.venue}</span>
+              </div>
+              <div class="p-space-sm rounded bg-surface-container col-span-2">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Faculty</span>
+                <span class="font-body-sm text-body-sm text-on-surface font-medium">${activeClass.faculty || 'Department Faculty'}</span>
+              </div>
+            </div>
           </div>
 
-          <h3 style="font-size: 1.35rem; font-weight: 800; margin: 4px 0 6px;">
-            ${window.TimetableController.getCleanSubjectName(activeClass.code, activeClass.subject)}
-          </h3>
-
-          <div style="display: flex; gap: 6px 10px; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px; flex-wrap: wrap; align-items: center;">
-            <span>⏰ <strong>${activeClass.time}</strong></span>
-            <span>•</span>
-            <span>📍 <strong>${activeClass.venue}</strong></span>
-            <span>•</span>
-            <span>👨‍🏫 <strong>${activeClass.faculty || 'Dept'}</strong></span>
-          </div>
-
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-primary btn-locate-room" data-room="${activeClass.venue}">
-              📍 Locate Classroom
+          <div class="pt-space-md flex flex-wrap items-center gap-space-sm">
+            <button type="button" class="btn-locate-room px-space-md py-2 rounded-lg bg-primary hover:bg-primary-fixed text-on-primary font-body-sm text-body-sm font-medium transition-colors flex items-center gap-1.5" data-room="${activeClass.venue}">
+              <span class="material-symbols-outlined text-[16px]">location_on</span>
+              <span>Locate Classroom</span>
             </button>
-            <button type="button" class="btn-secondary btn-room-directions" data-room="${activeClass.venue}">
-              Walking Guide
+            <button type="button" class="btn-room-directions px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1.5" data-room="${activeClass.venue}">
+              <span class="material-symbols-outlined text-[16px]">directions_walk</span>
+              <span>Walking Guide</span>
             </button>
             ${(() => {
               const res = this.getVaultResourceForClass(activeClass.subject, activeClass.code, activeClass.type);
               return res ? `
-                <a href="${res.link}" download class="btn-class-download" title="Download ${res.title}">
+                <a href="${res.link}" download class="inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-label-md transition-colors border border-outline-variant/30" title="Download ${res.title}">
                   <span class="material-symbols-outlined text-[16px]">download</span>
                   <span>${res.shortTitle || res.title}</span>
                 </a>
@@ -595,42 +616,56 @@ const App = {
       const timeStr = (hrs > 0) ? `${hrs}h ${remMins}m` : `${remMins}m`;
 
       heroCard.innerHTML = `
-        <div class="live-class-hero next-upcoming">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="hub-badge" style="background: rgba(0, 229, 255, 0.15); color: var(--accent-primary); border-color: rgba(0, 229, 255, 0.3);">
-                NEXT UP
-              </span>
-              <span class="badge-${nextClass.type === 'P' ? 'lab' : (nextClass.type === 'T' ? 'tutorial' : 'lecture')}">
-                ${nextClass.typeName || 'Lecture'}
-              </span>
+        <div class="rounded-xl bg-surface-container-low p-space-lg flex flex-col justify-between shadow-sm relative overflow-hidden min-h-[340px] border border-secondary/30">
+          <div class="space-y-space-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-space-xs">
+                <span class="inline-flex items-center gap-1 px-space-xs py-0.5 rounded bg-secondary/20 text-secondary font-label-sm text-label-sm font-semibold">
+                  NEXT UP
+                </span>
+                <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                  ${nextClass.typeName || 'Lecture'}
+                </span>
+              </div>
+              <span class="font-code-sm text-code-sm text-secondary font-medium">Starts in ${timeStr}</span>
             </div>
-            <span class="kbd-shortcut" style="color: var(--accent-primary);">Starts in ${timeStr}</span>
+
+            <div class="pt-2">
+              <div class="font-label-sm text-label-sm text-outline font-mono mb-1">${nextClass.code || ''}</div>
+              <h3 class="font-headline-md text-headline-md text-on-surface font-bold leading-tight">
+                ${window.TimetableController.getCleanSubjectName(nextClass.code, nextClass.subject)}
+              </h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-space-xs pt-2">
+              <div class="p-space-sm rounded bg-surface-container">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Timing</span>
+                <span class="font-body-sm text-body-sm text-on-surface font-semibold">${nextClass.time}</span>
+              </div>
+              <div class="p-space-sm rounded bg-surface-container">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Venue</span>
+                <span class="font-body-sm text-body-sm text-secondary font-semibold">${nextClass.venue}</span>
+              </div>
+              <div class="p-space-sm rounded bg-surface-container col-span-2">
+                <span class="font-label-sm text-label-sm text-on-surface-variant block">Faculty</span>
+                <span class="font-body-sm text-body-sm text-on-surface font-medium">${nextClass.faculty || 'Department Faculty'}</span>
+              </div>
+            </div>
           </div>
 
-          <h3 style="font-size: 1.35rem; font-weight: 800; margin: 4px 0 6px;">
-            ${window.TimetableController.getCleanSubjectName(nextClass.code, nextClass.subject)}
-          </h3>
-
-          <div style="display: flex; gap: 6px 10px; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 14px; flex-wrap: wrap; align-items: center;">
-            <span>⏰ <strong>${nextClass.time}</strong></span>
-            <span>•</span>
-            <span>📍 <strong>${nextClass.venue}</strong></span>
-            <span>•</span>
-            <span>👨‍🏫 <strong>${nextClass.faculty || 'Dept'}</strong></span>
-          </div>
-
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-primary btn-locate-room" data-room="${nextClass.venue}">
-              📍 Locate Classroom
+          <div class="pt-space-md flex flex-wrap items-center gap-space-sm">
+            <button type="button" class="btn-locate-room px-space-md py-2 rounded-lg bg-primary hover:bg-primary-fixed text-on-primary font-body-sm text-body-sm font-medium transition-colors flex items-center gap-1.5" data-room="${nextClass.venue}">
+              <span class="material-symbols-outlined text-[16px]">location_on</span>
+              <span>Locate Classroom</span>
             </button>
-            <button type="button" class="btn-secondary btn-room-directions" data-room="${nextClass.venue}">
-              Walking Guide
+            <button type="button" class="btn-room-directions px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-colors flex items-center gap-1.5" data-room="${nextClass.venue}">
+              <span class="material-symbols-outlined text-[16px]">directions_walk</span>
+              <span>Walking Guide</span>
             </button>
             ${(() => {
               const res = this.getVaultResourceForClass(nextClass.subject, nextClass.code, nextClass.type);
               return res ? `
-                <a href="${res.link}" download class="btn-class-download" title="Download ${res.title}">
+                <a href="${res.link}" download class="inline-flex items-center gap-1 px-space-md py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-label-md transition-colors border border-outline-variant/30" title="Download ${res.title}">
                   <span class="material-symbols-outlined text-[16px]">download</span>
                   <span>${res.shortTitle || res.title}</span>
                 </a>
@@ -653,31 +688,28 @@ const App = {
       const firstSubjShort = nextFirstSubj.length > 13 ? nextFirstSubj.slice(0, 13) + '...' : nextFirstSubj;
 
       heroCard.innerHTML = `
-        <div class="dash-completed-hero">
-          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 6px;">
-            <div class="completed-sparkle-box">
-              <span class="material-symbols-outlined text-[24px]">auto_awesome</span>
-            </div>
-            <div>
-              <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin: 0;">All Classes Completed Today</h3>
-              <p style="font-size: 0.8rem; color: #8e9ba9; margin: 2px 0 0;">
-                Great job! You have completed all scheduled lectures and labs for today.
-              </p>
-            </div>
+        <div class="rounded-xl bg-surface-container-low p-space-xl flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden min-h-[340px] border border-outline-variant/20">
+          <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-space-md text-secondary shadow-inner">
+            <span class="material-symbols-outlined text-[32px]">auto_awesome</span>
           </div>
-
-          <div class="completed-stats-row">
-            <div class="completed-stat-card">
-              <div class="completed-stat-label">Attended</div>
-              <div class="completed-stat-val">${attendedCount}/${dayClasses.length}</div>
+          <h3 class="font-headline-md text-headline-md text-on-surface font-semibold mb-space-xs">All Classes Completed Today</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-space-lg">
+            Great job! You have completed all scheduled lectures and laboratory sessions for today.
+          </p>
+          <div class="w-full max-w-sm rounded-lg bg-surface-container p-space-sm flex items-center justify-around text-center border border-outline-variant/10">
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">Attended</p>
+              <p class="font-headline-sm text-headline-sm text-on-surface font-semibold">${attendedCount} / ${dayClasses.length}</p>
             </div>
-            <div class="completed-stat-card">
-              <div class="completed-stat-label">Up Next</div>
-              <div class="completed-stat-val">${nextDayCode} ${nextFirstTime}</div>
+            <div class="h-6 w-px bg-surface-container-high"></div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">Up Next</p>
+              <p class="font-headline-sm text-headline-sm text-primary font-semibold">${nextDayCode} ${nextFirstTime}</p>
             </div>
-            <div class="completed-stat-card">
-              <div class="completed-stat-label">First Lecture</div>
-              <div class="completed-stat-val" title="${nextFirstSubj}">${firstSubjShort}</div>
+            <div class="h-6 w-px bg-surface-container-high"></div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">First Lecture</p>
+              <p class="font-headline-sm text-headline-sm text-secondary font-semibold" title="${nextFirstSubj}">${firstSubjShort}</p>
             </div>
           </div>
         </div>
@@ -774,28 +806,23 @@ const App = {
     if (!banner) return;
 
     banner.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-        <div style="display: flex; align-items: center; gap: 14px;">
-          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
-            🎯
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-md min-w-0">
+          <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary flex-shrink-0">
+            <span class="material-symbols-outlined text-[24px]">crisis_alert</span>
           </div>
-          <div>
-            <div style="font-weight: 800; font-size: 0.98rem; color: var(--text-primary);">
-              T-2 Mid-Semester Examinations <span style="font-weight: 500; color: var(--text-muted); font-size: 0.85rem;">(Major Academic Milestone)</span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-space-xs flex-wrap">
+              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Next University Milestone: T-2 Mid-Semester Examinations</span>
+              <span class="px-space-xs py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-secondary font-medium">18 Days Left</span>
             </div>
-            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
-              Odd Semester 2026 • Starts across AB1 & AB3 Examination Halls
-            </div>
+            <p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 truncate">Academic Session 2026–27 • Solan Campus Examination Halls &amp; Centers</p>
           </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 9999px;">
-            18 Days Left
-          </span>
-          <a href="#calendar" onclick="if(window.App) App.switchView('calendar')" class="break-action-link">
-            Academic Calendar →
-          </a>
-        </div>
+        <a class="inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:text-primary-fixed font-medium whitespace-nowrap group" href="#calendar" onclick="if(window.App) App.switchView('calendar')">
+          <span>Academic Calendar</span>
+          <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+        </a>
       </div>
     `;
   },

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-theme-mode="dark" data-accent="blue">
+<html class="dark" lang="en" data-theme="dark" data-theme-mode="dark" data-accent="blue">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="shell-type" content="web_dashboard" />
   <title>JUIT Student Hub | Your Campus, Organized</title>
   <meta name="description"
     content="All-in-one companion for Jaypee University of Information Technology (JUIT), Solan: Authentic timetable, Annapurna mess menu, interactive campus map & room finder, academic calendar, attendance tracker, and student utilities." />
+  
   <!-- App Favicons & Icons -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="alternate icon" type="image/x-icon" href="favicon.ico" />
@@ -16,28 +18,119 @@
 
   <!-- PWA Web App Manifest -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0a101f" />
+  <meta name="theme-color" content="#10131a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="JUIT Hub" />
 
-  <!-- SheetJS for Client-Side Excel Timetable Parsing (Local & Fast) -->
-  <script src="js/libs/xlsx.full.min.js" defer></script>
-
-  <!-- Google Fonts: Plus Jakarta Sans, Outfit & JetBrains Mono -->
+  <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <!-- Google Material Symbols Outlined for Modern High-Tech HUD Icons -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Google Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 
-  <!-- Master Stylesheet -->
+  <!-- Tailwind CSS Engine with Official Stitch Tokens -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-background": "#e1e2ec",
+            "secondary": "#7bd0ff",
+            "primary-fixed-dim": "#c0c1ff",
+            "surface-tint": "#c0c1ff",
+            "surface-dim": "#10131a",
+            "on-secondary-fixed-variant": "#004c69",
+            "surface": "#10131a",
+            "on-tertiary-fixed-variant": "#2f3aa3",
+            "error-container": "#93000a",
+            "on-primary": "#1000a9",
+            "inverse-surface": "#e1e2ec",
+            "surface-container": "#1d1f27",
+            "on-tertiary-fixed": "#000767",
+            "secondary-fixed": "#c4e7ff",
+            "surface-container-lowest": "#0b0e15",
+            "primary-fixed": "#e1e0ff",
+            "tertiary-fixed-dim": "#bdc2ff",
+            "on-surface": "#e1e2ec",
+            "on-secondary-container": "#00374d",
+            "inverse-on-surface": "#2d3038",
+            "on-surface-variant": "#c7c4d7",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "outline": "#908fa0",
+            "on-tertiary-container": "#081486",
+            "on-tertiary": "#131e8c",
+            "surface-container-high": "#272a32",
+            "surface-container-low": "#191b23",
+            "tertiary-container": "#7c87f3",
+            "on-error-container": "#ffdad6",
+            "inverse-primary": "#494bd6",
+            "on-secondary-fixed": "#001e2c",
+            "outline-variant": "#464554",
+            "surface-variant": "#32353d",
+            "primary-container": "#8083ff",
+            "background": "#10131a",
+            "on-error": "#690005",
+            "error": "#ffb4ab",
+            "primary": "#c0c1ff",
+            "surface-container-highest": "#32353d",
+            "surface-bright": "#363941",
+            "tertiary-fixed": "#e0e0ff",
+            "secondary-fixed-dim": "#7bd0ff",
+            "tertiary": "#bdc2ff",
+            "on-primary-fixed": "#07006c",
+            "on-primary-container": "#0d0096",
+            "on-secondary": "#00354a",
+            "secondary-container": "#00a6e0"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin-desktop": "3rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-tablet": "2rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter-desktop": "1.5rem",
+            "gutter": "1.25rem",
+            "space-xl": "2.5rem"
+          },
+          fontFamily: {
+            "display-lg": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "label-md": ["JetBrains Mono", "monospace"],
+            "body-lg": ["Inter", "sans-serif"],
+            "label-sm": ["JetBrains Mono", "monospace"],
+            "headline-md": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "headline-lg": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "headline-lg-mobile": ["Inter", "Plus Jakarta Sans", "sans-serif"],
+            "code-sm": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- SheetJS for Client-Side Excel Timetable Parsing -->
+  <script src="js/libs/xlsx.full.min.js" defer></script>
+
+  <!-- Master Stylesheets: Legacy Base Styles + Official Stitch Theme Foundation -->
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/stitch-theme.css" />
 </head>
+
 
 <body class="app-body-layout">
 
@@ -50,150 +143,168 @@
   <div class="app-shell-layout" id="app-shell-layout">
 
     <!-- ================= DESKTOP SIDEBAR ================= -->
-    <aside class="desktop-sidebar" id="desktop-sidebar">
-      <!-- Sidebar Brand: JUIT Hub SoLan -->
-      <div class="sidebar-brand-block">
-        <a href="#dash" class="sidebar-brand-row" id="brand-logo-link" title="JUIT Hub - Your campus, organized.">
-          <div class="sidebar-logo-j">J</div>
-          <div class="sidebar-brand-text">
-            <span class="sidebar-brand-name">JUIT Hub</span>
-            <span class="sidebar-solan-badge">SoLan</span>
+    <aside class="desktop-sidebar fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest z-50 flex flex-col justify-between overflow-hidden shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-outline-variant/20" id="desktop-sidebar">
+      <div class="flex flex-col h-full overflow-hidden">
+        <!-- Sidebar Brand: JUIT Hub Solan -->
+        <div class="px-space-md pt-space-lg pb-space-md">
+          <div class="flex items-center justify-between mb-space-xs">
+            <a href="#dash" class="flex items-center gap-space-sm group" id="brand-logo-link" title="JUIT Hub - Your campus, organized.">
+              <div class="w-7 h-7 rounded bg-primary flex items-center justify-center shadow-sm">
+                <span class="font-label-md text-label-md text-on-primary font-bold tracking-wider">J</span>
+              </div>
+              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">JUIT Hub</span>
+            </a>
+            <span class="px-space-xs py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-secondary font-medium">Solan</span>
           </div>
-        </a>
-        <div class="sidebar-tagline">Your campus, organized.</div>
-      </div>
-
-      <!-- Campus Navigation Links -->
-      <nav class="sidebar-nav-list">
-        <a href="#dash" class="nav-link active" data-view="dash">
-          <span class="material-symbols-outlined nav-icon">dashboard</span>
-          <span>Dashboard</span>
-        </a>
-        <a href="#timetable" class="nav-link" data-view="timetable">
-          <span class="material-symbols-outlined nav-icon">calendar_today</span>
-          <span>Timetable</span>
-        </a>
-        <a href="#calendar" class="nav-link" data-view="calendar">
-          <span class="material-symbols-outlined nav-icon">event_note</span>
-          <span>Academic Calendar</span>
-        </a>
-        <a href="#mess" class="nav-link" data-view="mess">
-          <span class="material-symbols-outlined nav-icon">restaurant</span>
-          <span>Annapurna Mess</span>
-        </a>
-        <a href="#campus" class="nav-link" data-view="campus">
-          <span class="material-symbols-outlined nav-icon">map</span>
-          <span>Campus Map & Finder</span>
-        </a>
-        <a href="#bus" class="nav-link" data-view="bus">
-          <span class="material-symbols-outlined nav-icon">directions_bus</span>
-          <span>Bus Travel Guide</span>
-        </a>
-        <a href="#announcements" class="nav-link" data-view="announcements">
-          <span class="material-symbols-outlined nav-icon">campaign</span>
-          <span>Announcements</span>
-        </a>
-        <a href="#academics" class="nav-link" data-view="academics">
-          <span class="material-symbols-outlined nav-icon">school</span>
-          <span>Academics & Attendance</span>
-        </a>
-        <a href="#resources" class="nav-link" data-view="resources">
-          <span class="material-symbols-outlined nav-icon">folder_zip</span>
-          <span>Resource Hub</span>
-        </a>
-        <a href="#events-clubs" class="nav-link" data-view="events-clubs">
-          <span class="material-symbols-outlined nav-icon">groups</span>
-          <span>Events & Clubs</span>
-        </a>
-        <a href="#portals" class="nav-link" data-view="portals">
-          <span class="material-symbols-outlined nav-icon">link</span>
-          <span>Useful Links</span>
-        </a>
-        <a href="#utilities" class="nav-link" data-view="utilities">
-          <span class="material-symbols-outlined nav-icon">apps</span>
-          <span>Student Utilities</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-section-title">SYSTEM & ADMIN</div>
-      <nav class="sidebar-nav-list">
-        <a href="#settings" class="nav-link" data-view="settings">
-          <span class="material-symbols-outlined nav-icon">tune</span>
-          <span>Settings & Theme</span>
-        </a>
-        <a href="#admin" class="nav-link" data-view="admin">
-          <span class="material-symbols-outlined nav-icon">admin_panel_settings</span>
-          <span>Admin & Excel Importer</span>
-        </a>
-      </nav>
-
-      <!-- Scholar Info Card at Sidebar Footer -->
-      <div class="sidebar-user-card" id="sidebar-user-card" title="Click to edit Scholar Profile">
-        <div class="avatar-circle">
-          <span class="material-symbols-outlined text-[18px]">person</span>
+          <p class="font-label-sm text-label-sm text-on-surface-variant">Your campus, organized.</p>
         </div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name" id="sidebar-user-name">JUIT Scholar</div>
-          <div class="sidebar-user-batch" id="sidebar-user-batch-label">B.Tech Sem 1 • 26BT16</div>
+
+        <!-- Campus Navigation Links -->
+        <div class="flex-1 overflow-y-auto px-space-sm space-y-space-md custom-scrollbar">
+          <nav class="sidebar-nav-list flex flex-col space-y-0.5" data-active-classes="bg-surface-container-high text-primary font-medium rounded">
+            <a href="#dash" class="nav-link active flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="dash">
+              <span class="material-symbols-outlined text-[18px]">grid_view</span>
+              <span class="font-body-sm text-body-sm">Dashboard</span>
+            </a>
+            <a href="#timetable" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="timetable">
+              <span class="material-symbols-outlined text-[18px]">calendar_view_week</span>
+              <span class="font-body-sm text-body-sm">Timetable</span>
+            </a>
+            <a href="#calendar" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="calendar">
+              <span class="material-symbols-outlined text-[18px]">date_range</span>
+              <span class="font-body-sm text-body-sm">Academic Calendar</span>
+            </a>
+            <a href="#mess" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="mess">
+              <span class="material-symbols-outlined text-[18px]">restaurant</span>
+              <span class="font-body-sm text-body-sm">Annapurna Mess</span>
+            </a>
+            <a href="#campus" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="campus">
+              <span class="material-symbols-outlined text-[18px]">explore</span>
+              <span class="font-body-sm text-body-sm">Campus Map & Finder</span>
+            </a>
+            <a href="#bus" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="bus">
+              <span class="material-symbols-outlined text-[18px]">directions_bus</span>
+              <span class="font-body-sm text-body-sm">Bus Travel Guide</span>
+            </a>
+            <a href="#announcements" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="announcements">
+              <span class="material-symbols-outlined text-[18px]">campaign</span>
+              <span class="font-body-sm text-body-sm">Announcements</span>
+            </a>
+            <a href="#academics" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="academics">
+              <span class="material-symbols-outlined text-[18px]">school</span>
+              <span class="font-body-sm text-body-sm">Academics & Attendance</span>
+            </a>
+            <a href="#resources" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="resources">
+              <span class="material-symbols-outlined text-[18px]">library_books</span>
+              <span class="font-body-sm text-body-sm">Resource Hub</span>
+            </a>
+            <a href="#events-clubs" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="events-clubs">
+              <span class="material-symbols-outlined text-[18px]">groups</span>
+              <span class="font-body-sm text-body-sm">Events & Clubs</span>
+            </a>
+            <a href="#portals" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="portals">
+              <span class="material-symbols-outlined text-[18px]">link</span>
+              <span class="font-body-sm text-body-sm">Useful Links</span>
+            </a>
+            <a href="#utilities" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="utilities">
+              <span class="material-symbols-outlined text-[18px]">apps</span>
+              <span class="font-body-sm text-body-sm">Student Utilities</span>
+            </a>
+          </nav>
+
+          <div class="pt-space-xs">
+            <div class="px-space-sm pb-space-xs">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">System & Admin</span>
+            </div>
+            <nav class="sidebar-nav-list flex flex-col space-y-0.5">
+              <a href="#settings" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="settings">
+                <span class="material-symbols-outlined text-[18px]">tune</span>
+                <span class="font-body-sm text-body-sm">Settings & Theme</span>
+              </a>
+              <a href="#admin" class="nav-link flex items-center gap-space-sm px-space-sm py-2 rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-view="admin">
+                <span class="material-symbols-outlined text-[18px]">terminal</span>
+                <span class="font-body-sm text-body-sm">Admin & Excel Importer</span>
+              </a>
+            </nav>
+          </div>
         </div>
-        <span class="material-symbols-outlined sidebar-user-edit">edit</span>
+
+        <!-- Scholar Info Card at Sidebar Footer -->
+        <div class="sidebar-user-card p-space-sm m-space-sm rounded-xl bg-surface-container-low flex items-center justify-between gap-space-xs cursor-pointer hover:bg-surface-container transition-colors border border-outline-variant/20" id="sidebar-user-card" title="Click to edit Scholar Profile">
+          <div class="flex items-center gap-space-sm min-w-0">
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="font-body-sm text-body-sm text-on-surface font-medium truncate" id="sidebar-user-name">JUIT Scholar</p>
+              <p class="font-label-sm text-label-sm text-on-surface-variant truncate" id="sidebar-user-batch-label">B.Tech Sem 1 • 26BT16</p>
+            </div>
+          </div>
+          <button type="button" class="w-6 h-6 flex items-center justify-center rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Edit Profile">
+            <span class="material-symbols-outlined text-[16px]">edit</span>
+          </button>
+        </div>
       </div>
     </aside>
 
     <!-- ================= RIGHT COLUMN: TOP HEADER + MAIN VIEW CONTENT ================= -->
     <div class="app-main-viewport">
       <!-- TOP APP BAR -->
-      <header class="app-header">
-        <div class="header-inner">
+      <header class="app-header fixed top-0 left-0 lg:left-64 right-0 z-40 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-surface-container h-14">
+        <div class="h-14 w-full px-4 lg:px-gutter-desktop flex items-center justify-between gap-space-md">
           <!-- Mobile Menu Toggle Button (shown on mobile) -->
-          <button type="button" class="btn-mobile-menu" id="btn-mobile-menu-toggle" aria-label="Toggle Mobile Menu">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
+          <div class="flex items-center gap-space-sm">
+            <button type="button" class="lg:hidden w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="btn-mobile-menu-toggle" aria-label="Toggle Mobile Menu">
+              <span class="material-symbols-outlined text-[20px]">menu</span>
+            </button>
 
-          <!-- Mobile Brand Logo Chip -->
-          <a href="#dash" class="mobile-header-brand" id="mobile-brand-link">
-            <div class="sidebar-logo-j" style="width: 28px; height: 28px; font-size: 14px; border-radius: 6px;">J</div>
-            <span class="mobile-brand-name">JUIT Hub</span>
-          </a>
+            <!-- Mobile Brand Logo Chip -->
+            <a href="#dash" class="lg:hidden flex items-center gap-2" id="mobile-brand-link">
+              <div class="w-7 h-7 rounded bg-primary flex items-center justify-center text-on-primary font-bold text-xs">J</div>
+              <span class="font-headline-sm text-sm font-semibold text-on-surface">JUIT Hub</span>
+            </a>
 
-          <!-- Left: Live Clock & Date -->
-          <div class="header-clock-section">
-            <div class="live-clock-pill">
-              <span class="pulse-indicator"></span>
-              <span id="live-clock-time">09:47:08 PM</span>
-              <span class="clock-sep">•</span>
-              <span id="live-clock-date">Tuesday, 22 September 2026</span>
+            <!-- Left: Live Clock & Date with Pulsing Indicator -->
+            <div class="hidden sm:flex items-center gap-space-sm">
+              <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant">
+                <span id="live-clock-time">09:47:08 PM</span>
+                <span class="mx-1 text-outline">•</span>
+                <span id="live-clock-date">Tuesday, 22 September 2026</span>
+              </span>
             </div>
           </div>
 
-          <!-- Right: Search, Notifications, Theme, Profile -->
-          <div class="header-actions">
-            <!-- Universal Search Trigger -->
-            <button type="button" class="btn-cmd-search" id="btn-open-search" title="Search Hub (Ctrl+K)">
-              <span class="material-symbols-outlined text-[17px]">search</span>
-              <span class="search-text-label">Search Hub...</span>
-              <span class="kbd-shortcut">Ctrl K</span>
+          <!-- Center: Universal Search Hub Bar -->
+          <div class="flex items-center gap-space-md flex-1 max-w-md mx-space-sm sm:mx-space-lg">
+            <button type="button" class="w-full flex items-center gap-space-sm px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer border border-outline-variant/30 text-left" id="btn-open-search" title="Search Hub (Ctrl+K)">
+              <span class="material-symbols-outlined text-[18px] text-outline">search</span>
+              <span class="font-body-sm text-body-sm flex-1 text-outline">Search Hub...</span>
+              <kbd class="hidden sm:inline-block font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-outline border border-outline-variant/40">Ctrl K</kbd>
             </button>
+          </div>
 
+          <!-- Right: Search, Notifications, Theme, Profile -->
+          <div class="flex items-center gap-space-sm">
             <!-- Notification Bell -->
-            <button type="button" class="btn-icon-header" id="btn-open-notifications" title="Notifications & Announcements"
-              aria-label="Notifications">
-              <span class="material-symbols-outlined text-[19px]">notifications</span>
-              <span class="notif-badge-counter" id="notif-badge-counter" style="display: none;">3</span>
+            <button type="button" class="relative w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="btn-open-notifications" title="Notifications & Announcements" aria-label="Notifications">
+              <span class="material-symbols-outlined text-[20px]">notifications</span>
+              <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" id="notif-badge-counter"></span>
             </button>
 
             <!-- Quick Theme Mode Toggle -->
-            <button type="button" class="btn-icon-header" id="btn-quick-theme-toggle" title="Toggle Dark/Light Mode"
-              aria-label="Toggle Theme">
-              <span class="material-symbols-outlined text-[19px]">dark_mode</span>
+            <button type="button" class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="btn-quick-theme-toggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+              <span class="material-symbols-outlined text-[20px]">dark_mode</span>
             </button>
 
+            <div class="h-4 w-px bg-surface-container mx-space-xs hidden sm:block"></div>
+
             <!-- Profile Avatar / Onboarding Trigger -->
-            <button type="button" class="user-profile-header-btn" id="btn-open-profile-settings"
-              title="Student Settings & Onboarding">
-              <div class="avatar-circle">
-                <span class="material-symbols-outlined text-[16px]">person</span>
+            <button type="button" class="flex items-center gap-space-sm pl-space-xs cursor-pointer rounded p-1 hover:bg-surface-container transition-colors" id="btn-open-profile-settings" title="Student Settings & Onboarding" aria-label="Profile Settings">
+              <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
               </div>
+              <span class="material-symbols-outlined text-on-surface-variant text-[16px] hidden sm:block">expand_more</span>
             </button>
           </div>
         </div>
@@ -203,340 +314,321 @@
       <main class="app-main-content">
 
         <!-- ================= VIEW 1: DASHBOARD ================= -->
-        <section class="app-view-panel active" id="view-dash">
-          <!-- Hero Greeting Banner -->
-          <div class="dash-card dash-hero-banner" style="margin-bottom: 20px;">
-            <div>
-              <div class="hero-welcome-badge">
-                <span class="material-symbols-outlined text-[15px]">school</span>
-                <span>JUIT WAKNAGHAT • SOLAN CAMPUS</span>
+        <section class="app-view-panel active flex flex-col w-full space-y-space-lg" id="view-dash">
+          <!-- Hero Greeting Panel -->
+          <div class="relative w-full rounded-xl bg-surface-container-low p-space-lg shadow-sm overflow-hidden border border-outline-variant/20">
+            <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent blur-3xl pointer-events-none"></div>
+            <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+              <!-- Left Column: Branding & Greeting -->
+              <div class="space-y-space-sm">
+                <div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-high text-primary">
+                  <span class="material-symbols-outlined text-[15px]">school</span>
+                  <span class="font-label-sm text-label-sm tracking-wide font-medium">JAYPEE UNIVERSITY OF INFORMATION TECHNOLOGY • WAKNAGHAT, SOLAN</span>
+                </div>
+                <div class="pt-1">
+                  <h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight" id="dash-live-greeting">
+                    Good evening 👋 <span class="text-primary font-bold">Scholar</span>
+                  </h1>
+                  <p class="font-body-md text-body-md text-secondary font-medium" id="dash-current-date-heading">Tuesday, 22 September</p>
+                </div>
               </div>
-              <h1 class="hero-title" id="dash-live-greeting">Hi, JUIT Scholar 👋</h1>
-              <div class="dash-date-heading" id="dash-current-date-heading"
-                style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
-                Here's your live academic briefing & campus overview for today.
-              </div>
-            </div>
-            <div class="hero-quick-stats">
-              <div class="stat-chip">
-                <span class="stat-number" id="dash-today-classes-count">--</span>
-                <span class="stat-label">Classes Today</span>
-              </div>
-              <div class="stat-chip">
-                <span class="stat-number" style="color: #10b981;">Odd</span>
-                <span class="stat-label">Term 2026</span>
-              </div>
-              <div class="stat-chip">
-                <span class="stat-number" style="color: #00e5ff;">1,550m</span>
-                <span class="stat-label">Solan Hills</span>
+              <!-- Right Column: Micro Metric Stat Badges -->
+              <div class="flex flex-wrap items-center gap-space-md">
+                <div class="flex flex-col items-center justify-center min-w-[110px] px-space-md py-space-sm rounded-lg bg-surface-container text-center transition-transform hover:-translate-y-0.5">
+                  <span class="font-display-lg text-display-lg text-on-surface font-bold leading-none mb-1" id="dash-today-classes-count">--</span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Classes Today</span>
+                </div>
+                <div class="flex flex-col items-center justify-center min-w-[110px] px-space-md py-space-sm rounded-lg bg-surface-container text-center transition-transform hover:-translate-y-0.5">
+                  <span class="font-headline-lg text-headline-lg text-secondary font-bold leading-none mb-1">Odd</span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Term 2026</span>
+                </div>
+                <div class="flex flex-col items-center justify-center min-w-[110px] px-space-md py-space-sm rounded-lg bg-surface-container text-center transition-transform hover:-translate-y-0.5">
+                  <span class="font-headline-lg text-headline-lg text-primary-fixed-dim font-bold leading-none mb-1">1,550m</span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Solan Hills</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="dashboard-grid">
-            <!-- Campus Utilities & Immediate Links (Top Priority - Instant 1-Tap Access) -->
-            <div class="dash-card col-span-12" style="padding: 16px 20px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="font-size: 0.74rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; font-family: var(--font-mono);">
-                  QUICK CAMPUS LAUNCHPAD
-                </div>
-                <span style="font-size: 0.75rem; color: #38bdf8; font-weight: 600; font-family: var(--font-mono);">
-                  Direct Access
-                </span>
-              </div>
-
-              <div class="campus-utilities-grid">
-                <!-- Utility 1: Timetable -->
-                <a href="#timetable" data-action-view="timetable" class="utility-card">
-                  <div class="utility-icon-box" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
-                    <span class="material-symbols-outlined">calendar_month</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Today's Schedule</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub">Classes, Times & Venues</div>
-                  </div>
-                </a>
-
-                <!-- Utility 2: Attendance & Academics -->
-                <a href="#academics" data-action-view="academics" class="utility-card">
-                  <div class="utility-icon-box attendance-icon">
-                    <span class="material-symbols-outlined">how_to_reg</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Attendance</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub" id="dash-util-att-sub">Overall 89.4% • Safe</div>
-                  </div>
-                </a>
-
-                <!-- Utility 3: Annapurna Mess -->
-                <a href="#mess" data-action-view="mess" class="utility-card">
-                  <div class="utility-icon-box mess-icon">
-                    <span class="material-symbols-outlined">restaurant</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Annapurna Mess</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub" id="dash-util-mess-sub">Cycle: October 2026</div>
-                  </div>
-                </a>
-
-                <!-- Utility 4: Resource Hub Vault -->
-                <a href="#resources" data-action-view="resources" class="utility-card">
-                  <div class="utility-icon-box" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
-                    <span class="material-symbols-outlined">folder_zip</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Resource Hub</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub">PYQs, Notes & Vault</div>
-                  </div>
-                </a>
-
-                <!-- Utility 5: Bus Travel Guide -->
-                <a href="#bus" data-action-view="bus" class="utility-card">
-                  <div class="utility-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
-                    <span class="material-symbols-outlined">directions_bus</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Bus Travel Guide</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub">Waknaghat Routes & Tips</div>
-                  </div>
-                </a>
-
-                <!-- Utility 6: Campus Finder -->
-                <a href="#campus" data-action-view="campus" class="utility-card">
-                  <div class="utility-icon-box campus-icon">
-                    <span class="material-symbols-outlined">explore</span>
-                  </div>
-                  <div class="utility-content">
-                    <div class="utility-title-row">
-                      <span class="utility-title">Campus Map</span>
-                      <span class="utility-arrow">›</span>
-                    </div>
-                    <div class="utility-sub">14 Landmarks & Venues</div>
-                  </div>
-                </a>
-              </div>
+          <!-- Milestone Advisory Alert Banner -->
+          <div class="w-full rounded-xl bg-surface-container-low p-space-md px-space-lg shadow-sm border border-outline-variant/20" id="dash-milestone-banner-container">
+            <div id="dash-milestone-countdown">
+              <!-- Dynamically populated by App.updateDashboardMilestone() with Stitch alert styling -->
             </div>
+          </div>
 
-            <!-- Upcoming Milestone Advisory Alert -->
-            <div class="dash-card col-span-12" style="padding: 14px 20px;">
-              <div id="dash-milestone-countdown" class="countdown-box" style="margin: 0;"></div>
-            </div>
-
-            <!-- Left Column: Live/Next Class -->
-            <div class="dash-card col-span-6">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span class="material-symbols-outlined" style="color: var(--accent-primary); font-size: 22px;">schedule</span>
-                  <h2 style="font-size: 1.2rem; color: var(--text-primary); margin: 0;">Live & Next Class</h2>
+          <!-- Two-Column Operational Core -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+            <!-- Left Column: Live Class & Current State (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col space-y-space-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-space-sm">
+                  <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+                  <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Live & Next Class</h2>
                 </div>
-                <a href="#timetable" data-action-view="timetable" class="kbd-shortcut" style="color: var(--accent-primary); text-decoration: none;">
-                  Full Timetable →
+                <a class="font-label-sm text-label-sm text-primary hover:text-primary-fixed font-medium flex items-center gap-0.5" href="#timetable" data-action-view="timetable">
+                  <span>Full Timetable</span>
+                  <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
                 </a>
               </div>
+
+              <!-- State Card: Hero Container for Live/Upcoming/Finished -->
               <div id="dash-next-class-hero">
-                <div style="padding: 24px; text-align: center; color: var(--text-muted);">
-                  Calculating real-time class schedule...
+                <!-- Dynamically populated by App.updateDashboardLiveClassCard() -->
+              </div>
+
+              <!-- Mountain Microclimate & Night Pulse Widget -->
+              <div class="rounded-xl bg-surface-container-low p-space-md shadow-sm border border-outline-variant/20">
+                <div class="flex items-center justify-between mb-space-sm">
+                  <div class="flex items-center gap-space-xs">
+                    <span class="material-symbols-outlined text-secondary text-[20px]">cloudy_snowing</span>
+                    <span class="font-label-md text-label-md text-on-surface font-medium">Waknaghat Microclimate</span>
+                  </div>
+                  <span class="font-label-sm text-label-sm text-secondary font-medium">17°C • Clear Solan Sky</span>
+                </div>
+                <div class="grid grid-cols-3 gap-space-xs text-center">
+                  <div class="p-2 rounded bg-surface-container">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Humidity</span>
+                    <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">68%</span>
+                  </div>
+                  <div class="p-2 rounded bg-surface-container">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Wind</span>
+                    <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">4 km/h NW</span>
+                  </div>
+                  <div class="p-2 rounded bg-surface-container">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant block">Air Quality</span>
+                    <span class="font-headline-sm text-headline-sm text-secondary font-semibold">AQI 28 Good</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Right Column: Today's Schedule Snapshot -->
-            <div class="dash-card col-span-6">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <!-- Right Column: Today's Full Schedule Timeline (7 cols) -->
+            <div class="lg:col-span-7 flex flex-col space-y-space-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-space-sm">
+                  <span class="material-symbols-outlined text-[20px] text-secondary">calendar_today</span>
+                  <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Today's Schedule</h2>
+                </div>
+                <div class="flex items-center gap-space-xs" id="dash-schedule-status-header-wrap">
+                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant" id="dash-today-schedule-sub">Timeline: Active</span>
+                </div>
+              </div>
+
+              <!-- Schedule Cards Stack Container -->
+              <div class="space-y-space-xs" id="dash-upcoming-classes-preview">
+                <!-- Dynamically populated by TimetableController.updateDashboardToday() -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Fast-Access Hub & Solan Campus Tools -->
+          <section class="space-y-space-sm pt-space-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Campus Utilities & Immediate Links</span>
+              <span class="font-label-sm text-label-sm text-secondary font-medium">Direct Access</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+              <!-- Fast Action 1: Annapurna Mess -->
+              <a class="rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center gap-space-md transition-all shadow-sm group border border-outline-variant/20" href="#mess" data-action-view="mess">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors flex-shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">restaurant</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-body-md text-body-md font-semibold text-on-surface">Annapurna Mess</span>
+                    <span class="material-symbols-outlined text-outline text-[16px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                  </div>
+                  <p class="font-label-sm text-label-sm text-on-surface-variant truncate" id="dash-fast-mess-hint">High-protein menu & milk timings</p>
+                </div>
+              </a>
+
+              <!-- Fast Action 2: Campus Map & Finder -->
+              <a class="rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center gap-space-md transition-all shadow-sm group border border-outline-variant/20" href="#campus" data-action-view="campus">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-colors flex-shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">explore</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-body-md text-body-md font-semibold text-on-surface">Campus Finder</span>
+                    <span class="material-symbols-outlined text-outline text-[16px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                  </div>
+                  <p class="font-label-sm text-label-sm text-on-surface-variant truncate">AB1, AB2, AB3 & LRC Navigator</p>
+                </div>
+              </a>
+
+              <!-- Fast Action 3: Bus Travel Guide -->
+              <a class="rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center gap-space-md transition-all shadow-sm group border border-outline-variant/20" href="#bus" data-action-view="bus">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary-container group-hover:bg-secondary-container group-hover:text-on-secondary-container transition-colors flex-shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">directions_bus</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-body-md text-body-md font-semibold text-on-surface">Bus Travel Guide</span>
+                    <span class="material-symbols-outlined text-outline text-[16px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                  </div>
+                  <p class="font-label-sm text-label-sm text-on-surface-variant truncate">Waknaghat, Shimla & Solan Routes</p>
+                </div>
+              </a>
+
+              <!-- Fast Action 4: Resource Hub -->
+              <a class="rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center gap-space-md transition-all shadow-sm group border border-outline-variant/20" href="#resources" data-action-view="resources">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
+                  <span class="material-symbols-outlined text-[20px]">library_books</span>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-body-md text-body-md font-semibold text-on-surface">Resource Hub</span>
+                    <span class="material-symbols-outlined text-outline text-[16px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                  </div>
+                  <p class="font-label-sm text-label-sm text-on-surface-variant truncate">SDF, Math, Physics Notes & PYQs</p>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <!-- Featured Academic Downloads & Fast Vault -->
+          <div class="rounded-xl bg-surface-container-low p-space-lg shadow-sm border border-outline-variant/20 space-y-space-md">
+            <div class="flex items-center justify-between flex-wrap gap-space-sm">
+              <div class="flex items-center gap-space-sm">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[22px]">download_for_offline</span>
+                </div>
                 <div>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="color: #38bdf8; font-size: 22px;">calendar_month</span>
-                    <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Today's Schedule</h2>
-                  </div>
-                  <div id="dash-today-schedule-sub" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
-                    Wednesday, 23 Sep • 5 periods
-                  </div>
+                  <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Academic Downloads & Fast Vault</h2>
+                  <p class="font-label-sm text-label-sm text-on-surface-variant">Official lecture notes, solved PYQs, lab manuals & derivation handbooks</p>
                 </div>
-                <span class="sched-status-chip done" id="dash-schedule-status-header">Completed</span>
               </div>
-              <div id="dash-upcoming-classes-preview" style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading today's classes...</div>
-              </div>
+              <a href="#resources" data-action-view="resources" class="font-label-sm text-label-sm text-primary hover:text-primary-fixed font-medium flex items-center gap-0.5">
+                <span>All Vault Materials</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </a>
             </div>
 
-            <!-- Annapurna Today's Meals Snapshot (col-span-6) -->
-            <div class="dash-card col-span-6">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span class="material-symbols-outlined" style="color: #f97316; font-size: 22px;">restaurant</span>
-                  <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Annapurna Dining Highlights</h2>
-                </div>
-                <a href="#mess" data-action-view="mess" class="kbd-shortcut" style="color: #f97316; text-decoration: none;">
-                  Full Menu →
-                </a>
-              </div>
-              <div id="dash-next-meal-preview">
-                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading today's meal highlights...</div>
-              </div>
-            </div>
-
-            <!-- Campus Notices Snapshot (col-span-6) -->
-            <div class="dash-card col-span-6">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span class="material-symbols-outlined" style="color: #10b981; font-size: 22px;">campaign</span>
-                  <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Campus Notices</h2>
-                </div>
-                <a href="#announcements" data-action-view="announcements" class="kbd-shortcut" style="color: #10b981; text-decoration: none;">
-                  All Circulars →
-                </a>
-              </div>
-              <div id="dash-announcements-preview" style="display: flex; flex-direction: column; gap: 6px;">
-                <div style="padding: 24px; text-align: center; color: var(--text-muted);">Loading circulars & notices...</div>
-              </div>
-            </div>
-
-            <!-- Waknaghat Mountain Microclimate & Status (col-span-12) -->
-            <div class="dash-card col-span-12" style="padding: 16px 20px;">
-              <div class="microclimate-widget" style="margin: 0; background: transparent; border: none; padding: 0;">
-                <div class="microclimate-header" style="margin-bottom: 12px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="color: #00e5ff; font-size: 20px;">cloudy_snowing</span>
-                    <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Waknaghat Mountain Microclimate</span>
-                    <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">Elevation ~1,550m Ridge</span>
-                  </div>
-                  <span style="font-size: 0.78rem; color: #00e5ff; font-weight: 700; background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.25); padding: 3px 10px; border-radius: 9999px;">
-                    17°C • Clear Solan Sky
-                  </span>
-                </div>
-                <div class="microclimate-stats-grid">
-                  <div class="microclimate-stat-box">
-                    <span class="microclimate-stat-label">Humidity</span>
-                    <span class="microclimate-stat-val">68%</span>
-                  </div>
-                  <div class="microclimate-stat-box">
-                    <span class="microclimate-stat-label">Wind Velocity</span>
-                    <span class="microclimate-stat-val">4 km/h NW</span>
-                  </div>
-                  <div class="microclimate-stat-box">
-                    <span class="microclimate-stat-label">Air Quality Index</span>
-                    <span class="microclimate-stat-val" style="color: #10b981;">AQI 28 • Pure Alpine</span>
-                  </div>
-                  <div class="microclimate-stat-box">
-                    <span class="microclimate-stat-label">Campus Lighting</span>
-                    <span class="microclimate-stat-val" style="color: #38bdf8;">Optimal Visibility</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Featured Academic Downloads & Fast Vault -->
-            <div class="dash-card col-span-12 dash-vault-downloads-section">
-              <div class="dash-card-header-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <div class="stat-icon-wrapper" style="background: rgba(0, 229, 255, 0.12); color: #00e5ff; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <span class="material-symbols-outlined text-[22px]">download_for_offline</span>
-                  </div>
-                  <div>
-                    <h2 style="font-size: 1.18rem; color: var(--text-primary); margin: 0;">Academic Downloads & Fast Vault</h2>
-                    <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
-                      Official lecture notes, solved PYQs, lab manuals & derivation handbooks (Odd Semester 2026)
-                    </div>
-                  </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <a href="#resources" data-action-view="resources" class="kbd-shortcut" style="color: var(--accent-primary); text-decoration: none;">
-                    All Vault Materials (12) →
-                  </a>
-                </div>
-              </div>
-
-              <!-- Fast Downloads Horizontal / Grid Carousel -->
-              <div class="fast-downloads-carousel" id="dash-fast-downloads-carousel">
-                <!-- Dynamically populated by App.updateDashboardFastDownloads() -->
-              </div>
+            <!-- Fast Downloads Horizontal / Grid Carousel -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md" id="dash-fast-downloads-carousel">
+              <!-- Dynamically populated by App.updateDashboardFastDownloads() -->
             </div>
           </div>
         </section>
 
         <!-- ================= VIEW 2: TIMETABLE ================= -->
-        <section class="app-view-panel" id="view-timetable">
-          <!-- Controls Bar -->
-          <div class="timetable-controls-bar">
-            <div class="controls-left-group">
-              <!-- Semester Selector -->
-              <div class="control-input-wrap">
-                <label class="control-label" for="timetable-sem-select">Academic Session & Semester</label>
-                <select class="select-styled" id="timetable-sem-select" aria-label="Select Semester"></select>
+        <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-timetable">
+          <!-- Top Filter & Control Deck -->
+          <div class="bg-surface-container-low rounded-xl p-space-md shadow-sm space-y-space-md border border-outline-variant/20">
+            <!-- Primary Filter Inputs Bar -->
+            <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-space-md">
+              <div class="flex flex-wrap sm:flex-nowrap items-center gap-space-md flex-1">
+                <!-- Academic Session Selector -->
+                <div class="flex flex-col gap-1 min-w-[240px]">
+                  <label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="timetable-sem-select">Academic Session & Semester</label>
+                  <div class="relative">
+                    <select class="w-full bg-surface-container-lowest text-on-surface font-body-sm text-body-sm px-space-md py-2 pr-8 rounded-lg appearance-none cursor-pointer focus:outline-none focus:bg-surface-container-high transition-colors border border-outline-variant/30" id="timetable-sem-select" aria-label="Select Semester"></select>
+                    <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+
+                <!-- Batch Selector Dropdown -->
+                <div class="flex flex-col gap-1 min-w-[170px]">
+                  <label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="timetable-batch-select">Filter by Batch</label>
+                  <div class="relative">
+                    <select class="w-full bg-surface-container-lowest text-on-surface font-body-sm text-body-sm px-space-md py-2 pr-8 rounded-lg appearance-none cursor-pointer focus:outline-none focus:bg-surface-container-high transition-colors border border-outline-variant/30" id="timetable-batch-select" aria-label="Filter by Batch"></select>
+                    <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-[18px] pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+
+                <!-- Search Timetable Input -->
+                <div class="flex flex-col gap-1 flex-1 min-w-[280px]">
+                  <label class="font-label-sm text-label-sm text-outline uppercase tracking-wider" for="timetable-search-input">Search Timetable (Subject / Code / Room / Faculty)</label>
+                  <div class="relative flex items-center">
+                    <input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm px-space-md py-2 pr-10 rounded-lg focus:outline-none focus:bg-surface-container-high transition-colors border border-outline-variant/30" id="timetable-search-input" placeholder="Type e.g. Physics, CR01, DLR, 25B11CI112..." type="text" />
+                    <button type="button" class="absolute right-2.5 text-outline hover:text-on-surface transition-colors cursor-pointer" id="btn-clear-timetable-search" title="Clear Search">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <!-- Batch Filter -->
-              <div class="control-input-wrap">
-                <label class="control-label" for="timetable-batch-select">Filter by Batch</label>
-                <select class="select-styled" id="timetable-batch-select" aria-label="Filter by Batch"></select>
-              </div>
-
-              <!-- Timetable Search Input -->
-              <div class="control-input-wrap" style="flex: 1; min-width: 220px;">
-                <label class="control-label" for="timetable-search-input">Search Timetable (Subject / Code / Room /
-                  Faculty)</label>
-                <div style="position: relative;">
-                  <input type="text" id="timetable-search-input"
-                    placeholder="Type e.g. Physics, CR01, DLR, 25B11CI112..." class="select-styled"
-                    style="width: 100%; padding-right: 30px;" />
-                  <button type="button" id="btn-clear-timetable-search"
-                    style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer;"
-                    title="Clear Search">✕</button>
+              <!-- Class Type Color Legend -->
+              <div class="flex items-center gap-space-md bg-surface-container-lowest px-space-md py-2.5 rounded-lg flex-shrink-0 self-end border border-outline-variant/20">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Lecture (L)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Lab (P)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Tutorial (T)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-tertiary-container"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Practical</span>
                 </div>
               </div>
             </div>
 
-            <!-- Color Coding Legend -->
-            <div class="schedule-legend">
-              <div class="legend-item"><span class="legend-dot dot-lecture"></span><span>Lecture (L)</span></div>
-              <div class="legend-item"><span class="legend-dot dot-lab"></span><span>Lab (P)</span></div>
-              <div class="legend-item"><span class="legend-dot dot-tutorial"></span><span>Tutorial (T)</span></div>
-              <div class="legend-item"><span class="legend-dot dot-practical"></span><span>Practical</span></div>
-            </div>
-
-            <!-- 1-Click Quick Batch Chips (hidden for minimalism) -->
-            <div class="quick-batch-row" id="quick-batch-container" style="display: none;"></div>
-          </div>
-
-          <!-- View Mode Switcher: Today View / Day View / Week Matrix View -->
-          <div id="timetable-view-mode-tabs" style="margin-top: 14px;"></div>
-
-          <!-- Live Period Tracker & Day Scrubber -->
-          <div id="timetable-live-tracker"></div>
-
-          <!-- Day Selector Pills (MON - SAT) -->
-          <div class="days-pills-row" id="timetable-day-pills"></div>
-
-          <!-- Schedule Header -->
-          <div class="schedule-section-header">
-            <div class="schedule-header-title">
-              <span id="schedule-day-title">Tuesday Schedule</span>
-              <span class="kbd-shortcut" id="schedule-classes-count" style="color: var(--accent-primary);">--
-                classes</span>
-            </div>
-            <div style="font-size: 0.82rem; color: var(--text-muted);">
-              Tip: Click any <span style="color: var(--accent-primary); font-weight: 700;">Venue</span> pill to locate
-              the classroom on the Campus Map.
+            <!-- Quick Batches Carousel Row -->
+            <div class="flex items-center gap-space-sm pt-space-xs overflow-x-auto pb-1" id="quick-batch-container">
+              <!-- Dynamically populated by TimetableController.renderQuickBatchChips() -->
             </div>
           </div>
 
-          <!-- Classes Cards Stack / Matrix -->
-          <div class="classes-stack-list" id="timetable-classes-list"></div>
+          <!-- View Switcher Tabs & Export Button -->
+          <div class="flex items-center justify-between flex-wrap gap-space-sm">
+            <div class="flex items-center gap-space-xs bg-surface-container-lowest p-1 rounded-xl w-fit border border-outline-variant/20" id="timetable-view-mode-tabs">
+              <!-- Dynamically populated by TimetableController.renderViewModeTabs() with Stitch styling -->
+            </div>
+
+            <div class="flex items-center gap-space-sm">
+              <button type="button" class="btn-export-ics flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-body-sm text-body-sm transition-colors border border-outline-variant/30 cursor-pointer" id="btn-export-ics-main" title="Export this semester's schedule to Google Calendar / Apple Calendar">
+                <span class="material-symbols-outlined text-[16px] text-secondary">event</span>
+                <span>Export iCal (.ics)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Horizontal Schedule Timeline Block -->
+          <div class="bg-surface-container-low rounded-xl p-space-lg shadow-sm space-y-space-md relative overflow-hidden border border-outline-variant/20" id="timetable-timeline-wrapper">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+                <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="timetable-timeline-heading">Viewing Schedule Timeline</h2>
+              </div>
+              <div class="px-space-sm py-1 rounded bg-surface-container-lowest font-code-sm text-code-sm text-secondary flex items-center gap-1.5 border border-outline-variant/20">
+                <span class="material-symbols-outlined text-[15px]">schedule</span>
+                <span id="timetable-live-clock-badge">Clock: Real Time</span>
+              </div>
+            </div>
+
+            <!-- Interactive track container -->
+            <div id="timetable-live-tracker">
+              <!-- Dynamically populated by TimetableController.renderPeriodTracker() -->
+            </div>
+          </div>
+
+          <!-- Day Selector Strip (MON - SAT) -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-space-sm" id="timetable-day-pills">
+            <!-- Dynamically populated by TimetableController.renderDayPills() -->
+          </div>
+
+          <!-- Schedule Header & Interactive Hint -->
+          <div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs">
+            <div class="flex items-center gap-space-sm">
+              <h3 class="font-headline-md text-headline-md font-semibold text-on-surface" id="schedule-day-title">Today's Schedule</h3>
+              <span class="px-2.5 py-0.5 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-medium" id="schedule-classes-count">-- classes</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+              <span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+              <span>Tip: Click any <span class="text-secondary font-medium">Venue pill</span> to locate the classroom on the Campus Map.</span>
+            </div>
+          </div>
+
+          <!-- Detailed Class Cards Stack -->
+          <div class="space-y-space-sm" id="timetable-classes-list"></div>
         </section>
 
         <!-- ================= VIEW 3: ANNAPURNA MESS MENU ================= -->
@@ -601,156 +693,193 @@
         </section>
 
         <!-- ================= VIEW 4: CAMPUS MAP & ROOM FINDER ================= -->
-        <section class="app-view-panel" id="view-campus">
-          <div class="campus-map-wrapper">
-            <!-- Sleek Unified Toolbar -->
-            <div class="map-toolbar">
-              <div class="map-toolbar-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; flex-wrap: wrap;">
-                <!-- Search Box with Autocomplete -->
-                <div class="map-search-container" style="position: relative; flex: 1; max-width: 440px;">
-                  <input type="text" id="map-search-input" placeholder="Search room e.g. CR01, LT1, CL52, Mess, LRC..."
-                    class="select-styled" style="width: 100%; padding-left: 36px; height: 38px; font-size: 0.86rem; border-radius: 8px;" autocomplete="off" />
-                  <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.55; font-size: 14px;">🔍</span>
-                  <button type="button" id="map-search-clear" class="btn-micro" style="display: none; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 2px 6px;">✕</button>
-                  <div class="map-search-dropdown" id="map-search-dropdown" style="display: none;"></div>
+        <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-campus">
+          <!-- Interactive Header Bar with Filter Pills and Search -->
+          <div class="w-full bg-surface-container-low rounded-xl p-space-sm flex flex-col xl:flex-row items-center justify-between gap-space-md shadow-sm border border-outline-variant/15">
+            <div class="flex items-center gap-space-xs overflow-x-auto w-full xl:w-auto scrollbar-none py-1" id="map-category-filters">
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-primary text-on-primary font-medium shadow-sm transition-all" data-cat="all">
+                <span class="material-symbols-outlined text-[16px]">domain</span>
+                <span>All Locations</span>
+              </button>
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="academic">
+                <span class="material-symbols-outlined text-[16px]">school</span>
+                <span>Academic &amp; Classrooms</span>
+              </button>
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="mess">
+                <span class="material-symbols-outlined text-[16px]">restaurant</span>
+                <span>Annapurna &amp; Food</span>
+              </button>
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="hostel">
+                <span class="material-symbols-outlined text-[16px]">hotel</span>
+                <span>Hostels</span>
+              </button>
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="library">
+                <span class="material-symbols-outlined text-[16px]">local_library</span>
+                <span>LRC Library &amp; Admin</span>
+              </button>
+              <button type="button" class="category-pill flex items-center gap-1.5 px-space-md py-1.5 rounded-lg font-body-sm text-body-sm bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-cat="sports">
+                <span class="material-symbols-outlined text-[16px]">fitness_center</span>
+                <span>Sports &amp; Facilities</span>
+              </button>
+            </div>
+
+            <!-- Mode Switcher & Search Bar -->
+            <div class="flex items-center gap-space-sm w-full xl:w-auto">
+              <!-- Mode Switcher in Header -->
+              <div class="hidden sm:flex items-center bg-surface-container-lowest p-1 rounded-lg border border-outline-variant/15" id="map-header-mode-bar">
+                <button type="button" class="map-mode-pill active px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 text-on-surface transition-colors" data-mode="blueprint" title="CAD Architectural Blueprint">
+                  <span class="material-symbols-outlined text-[14px]">architecture</span>
+                  <span>Blueprint</span>
+                </button>
+                <button type="button" class="map-mode-pill px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-mode="walkways" title="Pedestrian Spine & Accessible Ramps">
+                  <span class="material-symbols-outlined text-[14px]">alt_route</span>
+                  <span>Walkways</span>
+                </button>
+                <button type="button" class="map-mode-pill px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors" data-mode="night" title="Evening Ambient Illumination">
+                  <span class="material-symbols-outlined text-[14px]">bedtime</span>
+                  <span>Night</span>
+                </button>
+              </div>
+
+              <!-- Search Box with Autocomplete -->
+              <div class="relative w-full xl:w-80 flex items-center">
+                <div class="w-full flex items-center gap-space-sm px-space-md py-2 rounded-lg bg-surface-container-lowest text-on-surface-variant border border-outline-variant/15 focus-within:ring-1 focus-within:ring-primary">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">search</span>
+                  <input class="bg-transparent text-on-surface font-body-sm text-body-sm w-full outline-none placeholder:text-outline" id="map-search-input" placeholder="Search room e.g. CR01, LT3, CL52, Mess..." type="text" autocomplete="off" />
+                  <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-outline">Ctrl K</span>
+                  <button type="button" id="map-search-clear" class="text-outline hover:text-on-surface text-xs ml-1" style="display: none;">✕</button>
                 </div>
-
-                <!-- Mode Switcher in Header -->
-                <div class="map-mode-switcher-bar" id="map-header-mode-bar">
-                  <button type="button" class="map-mode-pill active" data-mode="blueprint" title="CAD Architectural Blueprint">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">architecture</span>
-                    <span>Blueprint</span>
-                  </button>
-                  <button type="button" class="map-mode-pill" data-mode="walkways" title="Pedestrian Spine & Accessible Ramps">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">alt_route</span>
-                    <span>Walkways</span>
-                  </button>
-                  <button type="button" class="map-mode-pill" data-mode="night" title="Evening Ambient Illumination">
-                    <span class="material-symbols-outlined" style="font-size: 15px;">bedtime</span>
-                    <span>Night Glow</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Category Filters Row -->
-              <div class="map-filters-row" id="map-category-filters" style="margin-top: 10px; width: 100%;"></div>
-            </div>
-
-            <!-- SVG Vector Canvas Box with Pan/Zoom & Flyout Drawer -->
-            <div class="map-viewport-box" id="map-viewport-box">
-              <svg class="map-svg-canvas" id="campus-vector-svg" viewBox="0 0 1000 680"></svg>
-              
-              <!-- Map Zoom & Centering Controls -->
-              <div class="map-zoom-controls">
-                <button type="button" class="btn-zoom" id="btn-map-zoom-in" title="Zoom In">+</button>
-                <button type="button" class="btn-zoom" id="btn-map-zoom-out" title="Zoom Out">−</button>
-                <button type="button" class="btn-zoom" id="btn-map-reset" title="Reset View" style="font-size: 14px;">↺</button>
-              </div>
-
-              <!-- Sleek Flyout Building Venue Drawer -->
-              <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer"></aside>
-            </div>
-          </div>
-
-          <!-- 4 Campus Building Cards Matching Screenshot 3 -->
-          <div class="campus-bldg-cards-grid">
-            <!-- Card 1: AB1 -->
-            <div class="bldg-detail-card" data-bldg="block1">
-              <div class="bldg-wing-label">
-                <span>INSTRUCTIONAL WING</span>
-                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
-              </div>
-              <h3 class="bldg-name">Academic Block 1 (AB1)</h3>
-              <p class="bldg-desc">
-                Classrooms CR01–CR10, Tutorial Rooms TR1–TR7, DLC Auditorium, Physics Labs, Electronics Labs & Language
-                Lab.
-              </p>
-              <div class="bldg-footer-chips">
-                <span class="chip-metric">4 Floors • 18 Rooms</span>
-                <span class="chip-status status-open">Open Now</span>
-              </div>
-            </div>
-
-            <!-- Card 2: AB2 -->
-            <div class="bldg-detail-card" data-bldg="block2">
-              <div class="bldg-wing-label">
-                <span>COMPUTING & THEATRES</span>
-                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
-              </div>
-              <h3 class="bldg-name">Academic Block 2 (AB2)</h3>
-              <p class="bldg-desc">
-                Lecture Theatres LT1, LT2, LT3, Main Computer Centre (CL01–CL52), Advanced AI & High-Performance
-                Computing Labs.
-              </p>
-              <div class="bldg-footer-chips">
-                <span class="chip-metric">4 Floors • 3 Theatres</span>
-                <span class="chip-status status-active">Active Sessions</span>
-              </div>
-            </div>
-
-            <!-- Card 3: AB3 -->
-            <div class="bldg-detail-card" data-bldg="block3">
-              <div class="bldg-wing-label">
-                <span>RESEARCH & ENGINEERING</span>
-                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
-              </div>
-              <h3 class="bldg-name">Academic Block 3 (AB3)</h3>
-              <p class="bldg-desc">
-                Classrooms CR11–CR20, TR8–TR10, Bioinformatics Lab (BIL), Genomics Lab, Civil Engineering Heavy
-                Structures Lab.
-              </p>
-              <div class="bldg-footer-chips">
-                <span class="chip-metric">4 Floors • 12 Research Units</span>
-                <span class="chip-status status-active">Labs Open</span>
-              </div>
-            </div>
-
-            <!-- Card 4: LRC & Messes -->
-            <div class="bldg-detail-card" data-bldg="lrc">
-              <div class="bldg-wing-label">
-                <span>CAMPUS CORE</span>
-                <span class="material-symbols-outlined wing-arrow">arrow_drop_down</span>
-              </div>
-              <h3 class="bldg-name">LRC Library & Messes</h3>
-              <p class="bldg-desc">
-                3-Floor Central Library, Annapurna Dining Halls A & B, Peach Tree Cafeteria, Open Air Theatre (OAT),
-                Medical Dispensary.
-              </p>
-              <div class="bldg-footer-chips">
-                <span class="chip-metric">Dining & Study</span>
-                <span class="chip-status status-open">Open Till 11 PM</span>
+                <div class="map-search-dropdown absolute top-full left-0 right-0 mt-1 bg-surface-container-high rounded-xl shadow-xl border border-outline-variant/20 z-50 overflow-hidden" id="map-search-dropdown" style="display: none;"></div>
               </div>
             </div>
           </div>
 
-          <!-- Turn-by-Turn Indoor Route Assistance Banner Matching Screenshot 3 -->
-          <div class="campus-turn-by-turn-card">
-            <div class="turn-by-turn-left">
-              <div class="walking-avatar-circle">
-                <span class="material-symbols-outlined">directions_walk</span>
+          <!-- Interactive Campus Map Canvas Container -->
+          <div class="relative w-full rounded-2xl bg-surface-container-lowest overflow-hidden shadow-xl border border-outline-variant/15" id="map-viewport-box" style="height: 580px;">
+            <!-- Campus Map SVG Vector Canvas -->
+            <svg class="map-svg-canvas w-full h-full cursor-grab active:cursor-grabbing" id="campus-vector-svg" viewBox="0 0 1000 680"></svg>
+
+            <!-- Map Floating Compass & Navigation Stats -->
+            <div class="absolute top-space-md left-space-md bg-surface-container-low/85 backdrop-blur-md px-space-md py-space-xs rounded-xl flex items-center gap-space-sm shadow-md border border-outline-variant/15 pointer-events-none z-20">
+              <div class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[16px]">navigation</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="font-label-sm text-label-sm text-on-surface font-semibold">Waknaghat Campus</span>
+                <span class="font-label-sm text-label-sm text-outline">Elev. 1,600m • Solan, HP</span>
+              </div>
+            </div>
+
+            <!-- Map Zoom & Control Buttons (Right Corner) -->
+            <div class="absolute bottom-space-md right-space-md flex flex-col gap-1.5 bg-surface-container-low/90 backdrop-blur-md p-1.5 rounded-xl shadow-lg border border-outline-variant/15 z-20">
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="btn-map-zoom-in" title="Zoom In">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+              </button>
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="btn-map-zoom-out" title="Zoom Out">
+                <span class="material-symbols-outlined text-[20px]">remove</span>
+              </button>
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="btn-map-reset" title="Reset View">
+                <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+              </button>
+            </div>
+
+            <!-- Sleek Flyout Building Venue Drawer -->
+            <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer"></aside>
+          </div>
+
+          <!-- Bottom Academic & Infrastructure Detail Bento Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-space-md">
+            <!-- Block AB1 Card -->
+            <div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm border border-outline-variant/15 transition-all duration-200 cursor-pointer group flex flex-col justify-between bldg-detail-card" data-bldg="block1">
+              <div>
+                <div class="flex items-center justify-between mb-space-sm">
+                  <span class="font-label-sm text-label-sm text-primary font-semibold tracking-wider uppercase">Instructional Wing</span>
+                  <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors text-[20px]">near_me</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-primary transition-colors">Academic Block 1 (AB1)</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Classrooms CR01–CR10, Tutorial Rooms TR1–TR7, DLC Auditorium, Physics Labs, Electronics Labs &amp; Language Lab.</p>
+              </div>
+              <div class="mt-space-md pt-space-sm flex items-center justify-between border-t border-outline-variant/10">
+                <span class="font-label-sm text-label-sm text-outline">4 Floors • 18 Rooms</span>
+                <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-primary font-medium">Open Now</span>
+              </div>
+            </div>
+
+            <!-- Block AB2 Card -->
+            <div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm border border-outline-variant/15 transition-all duration-200 cursor-pointer group flex flex-col justify-between bldg-detail-card" data-bldg="block2">
+              <div>
+                <div class="flex items-center justify-between mb-space-sm">
+                  <span class="font-label-sm text-label-sm text-tertiary font-semibold tracking-wider uppercase">Computing &amp; Theatres</span>
+                  <span class="material-symbols-outlined text-outline group-hover:text-tertiary transition-colors text-[20px]">near_me</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-tertiary transition-colors">Academic Block 2 (AB2)</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Lecture Theatres LT1, LT2, LT3, Main Computer Centre (CL01–CL52), Advanced AI &amp; High-Performance Computing Labs.</p>
+              </div>
+              <div class="mt-space-md pt-space-sm flex items-center justify-between border-t border-outline-variant/10">
+                <span class="font-label-sm text-label-sm text-outline">4 Floors • 3 Theatres</span>
+                <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-tertiary font-medium">Active Sessions</span>
+              </div>
+            </div>
+
+            <!-- Block AB3 Card -->
+            <div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm border border-outline-variant/15 transition-all duration-200 cursor-pointer group flex flex-col justify-between bldg-detail-card" data-bldg="block3">
+              <div>
+                <div class="flex items-center justify-between mb-space-sm">
+                  <span class="font-label-sm text-label-sm text-secondary font-semibold tracking-wider uppercase">Research &amp; Engineering</span>
+                  <span class="material-symbols-outlined text-outline group-hover:text-secondary transition-colors text-[20px]">near_me</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-secondary transition-colors">Academic Block 3 (AB3)</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Classrooms CR11–CR20, TR8–TR10, Bioinformatics Lab (BIL), Genomics Lab, Civil Engineering Heavy Structures Lab.</p>
+              </div>
+              <div class="mt-space-md pt-space-sm flex items-center justify-between border-t border-outline-variant/10">
+                <span class="font-label-sm text-label-sm text-outline">4 Floors • 12 Research Units</span>
+                <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-secondary font-medium">Labs Open</span>
+              </div>
+            </div>
+
+            <!-- LRC Library & Messes Card -->
+            <div class="bg-surface-container-low hover:bg-surface-container rounded-xl p-space-lg shadow-sm border border-outline-variant/15 transition-all duration-200 cursor-pointer group flex flex-col justify-between bldg-detail-card" data-bldg="lrc">
+              <div>
+                <div class="flex items-center justify-between mb-space-sm">
+                  <span class="font-label-sm text-label-sm text-[#e69b00] font-semibold tracking-wider uppercase">Campus Core</span>
+                  <span class="material-symbols-outlined text-outline group-hover:text-[#e69b00] transition-colors text-[20px]">near_me</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs group-hover:text-[#e69b00] transition-colors">LRC Library &amp; Messes</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">3-Floor Central Library, Annapurna Dining Halls A &amp; B, Peach Tree Cafeteria, Open Air Theatre (OAT), Medical Dispensary.</p>
+              </div>
+              <div class="mt-space-md pt-space-sm flex items-center justify-between border-t border-outline-variant/10">
+                <span class="font-label-sm text-label-sm text-outline">Dining &amp; Study</span>
+                <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-[#e69b00] font-medium">Open Till 11 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turn-by-Turn Indoor Route Assistance Banner -->
+          <div class="w-full bg-surface-container-low rounded-xl p-space-lg flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md shadow-sm border border-outline-variant/15">
+            <div class="flex items-center gap-space-md">
+              <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary shrink-0">
+                <span class="material-symbols-outlined text-[28px]">directions_walk</span>
               </div>
               <div>
-                <h3 class="turn-title">Need turn-by-turn indoor route assistance?</h3>
-                <p class="turn-desc">
-                  Access staircase shortcuts, ramp pathways for accessibility, and elevator status across all blocks.
-                </p>
+                <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Need turn-by-turn indoor route assistance?</h4>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Access staircase shortcuts, ramp pathways for accessibility, and elevator status across all blocks.</p>
               </div>
             </div>
-            <div class="turn-by-turn-actions">
-              <button type="button" class="btn-accessible-path" id="btn-accessible-path">
-                <span class="material-symbols-outlined text-[17px]">accessible</span>
+            <div class="flex items-center gap-space-sm w-full xl:w-auto">
+              <button type="button" class="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high font-body-sm text-body-sm text-on-surface transition-colors flex items-center gap-2 flex-1 xl:flex-none justify-center border border-outline-variant/20" id="btn-accessible-path">
+                <span class="material-symbols-outlined text-[18px]">accessible</span>
                 <span>Accessible Paths</span>
               </button>
-              <button type="button" class="btn-shortest-path" id="btn-shortest-path">
-                <span class="material-symbols-outlined text-[17px]">alt_route</span>
+              <button type="button" class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 flex-1 xl:flex-none justify-center shadow-sm" id="btn-shortest-path">
+                <span class="material-symbols-outlined text-[18px]">alt_route</span>
                 <span>Find Shortest Path</span>
               </button>
             </div>
           </div>
 
           <!-- Turn-by-Turn Route Navigation Modal -->
-          <div class="modal-backdrop" id="map-route-modal" style="display: none;">
-            <div class="modal-card route-modal-card" id="map-route-modal-card"></div>
+          <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" id="map-route-modal" style="display: none;">
+            <div class="modal-card route-modal-card bg-surface-container-high rounded-2xl p-space-lg max-w-lg w-full shadow-2xl border border-outline-variant/20" id="map-route-modal-card"></div>
           </div>
         </section>
 
@@ -1099,39 +1228,60 @@
         </section>
 
         <!-- ================= VIEW 8: RESOURCE HUB ================= -->
-        <section class="app-view-panel" id="view-resources">
-          <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-            <div>
-              <h2 style="font-size: 1.5rem; margin: 0 0 4px;">Academic Resource Hub</h2>
-              <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">Lecture slides, previous year
-                question papers (PYQs), lab manuals, and textbook notes.</p>
+        <section class="app-view-panel flex flex-col w-full" id="view-resources">
+          <!-- Header & Control Bar Section -->
+          <div class="flex flex-col gap-space-md mb-space-lg">
+            <!-- Title & Top Row Actions -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+              <div>
+                <div class="flex items-center gap-space-xs mb-1">
+                  <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Archive &amp; Repository</span>
+                  <span class="w-1 h-1 rounded-full bg-outline"></span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Autumn 2026</span>
+                </div>
+                <h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">Academic Resource Hub</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Lecture slides, previous year question papers (PYQs), lab manuals, and textbook notes.</p>
+              </div>
+
+              <!-- Right Controls: Semester Dropdown, Search Input, and Action CTA -->
+              <div class="flex flex-wrap items-center gap-space-sm">
+                <!-- Semester Selector -->
+                <div class="relative min-w-[130px]">
+                  <select class="w-full appearance-none bg-surface-container-low text-on-surface font-body-sm text-body-sm pl-space-md pr-8 py-2 rounded-lg shadow-sm border border-outline-variant/20 focus:outline-none focus:bg-surface-container cursor-pointer transition-colors" id="resource-sem-filter">
+                    <option value="all">All Semesters</option>
+                    <option value="1" selected>Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                    <option value="5">Semester 5</option>
+                    <option value="6">Semester 6</option>
+                  </select>
+                  <span class="material-symbols-outlined absolute right-2 top-2.5 text-[18px] text-on-surface-variant pointer-events-none">expand_more</span>
+                </div>
+
+                <!-- Subject/Unit Search -->
+                <div class="relative flex items-center min-w-[220px]">
+                  <span class="material-symbols-outlined absolute left-2.5 text-[18px] text-outline pointer-events-none">search</span>
+                  <input class="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm pl-9 pr-3 py-2 rounded-lg shadow-sm border border-outline-variant/20 focus:outline-none focus:bg-surface-container transition-colors" id="resource-search-input" placeholder="Search by course/unit..." type="text"/>
+                </div>
+
+                <!-- Upload / Share Button -->
+                <button type="button" class="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm" id="btn-add-resource">
+                  <span class="material-symbols-outlined text-[18px]">add</span>
+                  <span>Share Note</span>
+                </button>
+              </div>
             </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <select class="select-styled" id="resource-sem-filter">
-                <option value="all">All Semesters</option>
-                <option value="1" selected>Semester 1</option>
-                <option value="2">Semester 2</option>
-                <option value="3">Semester 3</option>
-                <option value="5">Semester 5</option>
-              </select>
-              <input type="text" id="resource-search-input" placeholder="Search by course/unit..." class="select-styled"
-                style="width: 200px;" />
-              <button type="button" class="btn-primary" id="btn-add-resource" style="font-size: 0.82rem; padding: 6px 14px;">+ Share
-                Note</button>
-            </div>
+
+            <!-- Subject Filter Pills Row -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none pt-1" id="resource-subject-filters"></div>
+
+            <!-- Document Type Filter Pills Row -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" id="resource-type-filters"></div>
           </div>
 
-          <!-- Academic Vault Subject Filter Tabs (SDF, English, Physics) -->
-          <div class="category-pills-row" id="resource-subject-filters"
-            style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
-
-          <!-- Resource Type Filter Chips -->
-          <div class="map-filters-row" id="resource-type-filters" style="margin-bottom: 16px;"></div>
-
-          <!-- Resources Grid -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px;"
-            id="resources-grid-container"></div>
+          <!-- Resource Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter-desktop" id="resources-grid-container"></div>
         </section>
 
         <!-- ================= VIEW 9: EVENTS & CLUBS ================= -->
