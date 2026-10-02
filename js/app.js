@@ -10,6 +10,9 @@ const App = {
   init() {
     console.log('Initializing JUIT Student Hub...');
 
+    // 0. Load student academic identity & profile from storage
+    this.loadStudentProfile();
+
     // 1. Initialize Theme & Accent Engine
     if (window.ThemeManager) {
       window.ThemeManager.init();
@@ -166,6 +169,8 @@ const App = {
       window.BusGuideController.init();
     } else if (viewId === 'admin' && window.AdminController) {
       window.AdminController.checkAdminStatus();
+    } else if (viewId === 'settings') {
+      this.syncSettingsView();
     }
 
     window.scrollTo(0, 0);
@@ -203,14 +208,17 @@ const App = {
 
     // Profile & Settings quick access
     document.getElementById('btn-open-profile-settings')?.addEventListener('click', () => {
-      this.openOnboardingModal();
+      this.openAccountModal();
     });
     document.getElementById('sidebar-user-card')?.addEventListener('click', () => {
-      this.openOnboardingModal();
+      this.openAccountModal();
     });
     document.getElementById('mobile-sidebar-user-card')?.addEventListener('click', () => {
       this.closeMobileDrawer();
-      this.openOnboardingModal();
+      this.openAccountModal();
+    });
+    document.getElementById('dash-quick-batch-badge')?.addEventListener('click', () => {
+      this.openAccountModal();
     });
   },
 
@@ -226,13 +234,14 @@ const App = {
       const hrs = now.getHours();
 
       // Greeting
-      let greet = 'Good evening 👋';
-      if (hrs < 12) greet = 'Good morning 👋';
-      else if (hrs < 17) greet = 'Good afternoon 👋';
+      let greet = 'Good evening';
+      if (hrs < 12) greet = 'Good morning';
+      else if (hrs < 17) greet = 'Good afternoon';
 
       const scholarName = window.JUIT_PROFILE?.name || 'Scholar';
+      const firstName = (scholarName === 'Scholar' || scholarName === 'JUIT Scholar') ? 'Scholar' : scholarName.split(' ')[0];
       if (greetingDisplay) {
-        greetingDisplay.textContent = `${greet} ${scholarName}`;
+        greetingDisplay.textContent = `${greet}, ${firstName} 👋`;
       }
 
       // Live Time
@@ -481,14 +490,57 @@ const App = {
   },
 
   updateUserProfileBadges() {
-    const p = window.JUIT_PROFILE || { programme: 'B.Tech', branch: 'CSE', semester: '1', batch: '26BT16' };
-    const label = document.getElementById('sidebar-user-batch-label');
-    if (label) {
-      label.textContent = `${p.programme || 'B.Tech'} Sem ${p.semester || '1'} • ${p.batch || p.branch || '26BT16'}`;
+    const p = window.JUIT_PROFILE || { programme: 'B.Tech', branch: 'CSE', semester: '4', batch: 'B1' };
+    const nameStr = p.name && p.name !== 'Scholar' ? p.name : 'JUIT Scholar';
+    const rollStr = p.rollNo || '25B17EC171';
+    const progStr = p.programme || 'B.Tech';
+    const semStr = p.semester || '4';
+    const batchStr = p.batch || 'B1';
+    const hostelStr = p.hostel || 'Hostel Resident';
+
+    // 1. Desktop sidebar
+    const deskBatch = document.getElementById('sidebar-user-batch-label');
+    if (deskBatch) deskBatch.textContent = `${progStr} Sem ${semStr} • Batch ${batchStr}`;
+    const deskName = document.getElementById('sidebar-user-name');
+    if (deskName) deskName.textContent = nameStr;
+
+    // 2. Mobile drawer
+    const mobCard = document.getElementById('mobile-sidebar-user-card');
+    if (mobCard) {
+      const pName = mobCard.querySelector('.font-label-md');
+      if (pName) pName.textContent = nameStr;
+      const pBatch = mobCard.querySelector('.font-label-sm');
+      if (pBatch) pBatch.textContent = `Batch ${batchStr} • Sem ${semStr} · Solan Hills`;
     }
-    const nameEl = document.getElementById('sidebar-user-name');
-    if (nameEl) {
-      nameEl.textContent = p.name || 'JUIT Scholar';
+
+    // 3. Dashboard telemetry chips
+    const dashBatch = document.getElementById('dash-telemetry-batch');
+    if (dashBatch) dashBatch.textContent = `Batch ${batchStr} · Sem ${semStr}`;
+    const dashAtt = document.getElementById('dash-telemetry-att');
+    if (dashAtt) {
+      const attGoal = p.attendanceGoal || '80';
+      dashAtt.textContent = `Attendance Target: ${attGoal}%`;
+    }
+
+    // 4. Settings view card display
+    const setDisplay = document.getElementById('settings-display-name');
+    if (setDisplay) setDisplay.textContent = nameStr;
+    const setRoll = document.getElementById('settings-display-roll');
+    if (setRoll) setRoll.textContent = `Roll No: ${rollStr}`;
+    const setPill = document.getElementById('settings-display-academic-pill');
+    if (setPill) setPill.textContent = `${progStr} ${p.branch || 'CSE'} • Sem ${semStr} • Batch ${batchStr}`;
+    const setResidence = document.getElementById('settings-display-residence-label');
+    if (setResidence) setResidence.textContent = hostelStr;
+
+    // 5. Live greeting update
+    const greetingDisplay = document.getElementById('dash-live-greeting');
+    if (greetingDisplay) {
+      const hrs = new Date().getHours();
+      let greet = 'Good evening';
+      if (hrs < 12) greet = 'Good morning';
+      else if (hrs < 17) greet = 'Good afternoon';
+      const firstName = (nameStr === 'JUIT Scholar' || nameStr === 'Scholar') ? 'Scholar' : nameStr.split(' ')[0];
+      greetingDisplay.textContent = `${greet}, ${firstName} 👋`;
     }
   },
 
@@ -758,49 +810,93 @@ const App = {
     }
   },
 
-  updateDashboardMessSnapshot() {
+  updateDashboardMessSnapshot(selectedMeal = null) {
     const container = document.getElementById('dash-next-meal-preview');
     if (!container) return;
 
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const todayName = days[new Date().getDay()] || 'Tuesday';
+    const now = new Date();
+    const todayName = days[now.getDay()] || 'Tuesday';
     const mess = window.JUIT_DATA?.mess?.weeklyMenu?.[todayName];
 
     if (!mess) {
-      container.innerHTML = `<div style="padding: 16px; color: var(--text-muted);">Menu unavailable.</div>`;
+      container.innerHTML = `<div class="p-3 text-xs text-on-surface-variant">Menu unavailable.</div>`;
       return;
     }
 
+    const hrs = now.getHours();
+    let currentMealKey = selectedMeal;
+    if (!currentMealKey) {
+      if (hrs < 10) currentMealKey = 'breakfast';
+      else if (hrs < 15) currentMealKey = 'lunch';
+      else currentMealKey = 'dinner';
+    }
+
+    const mealConfig = {
+      breakfast: { label: 'Breakfast', icon: 'bakery_dining', time: '07:30 – 09:30 AM', color: 'primary' },
+      lunch: { label: 'Lunch', icon: 'lunch_dining', time: '12:00 – 02:00 PM', color: 'secondary' },
+      dinner: { label: 'Dinner', icon: 'dinner_dining', time: '07:30 – 09:00 PM', color: 'tertiary' }
+    };
+
+    const mealData = mess[currentMealKey] || mess.dinner;
+    const activeCfg = mealConfig[currentMealKey] || mealConfig.dinner;
+    const items = mealData?.items || [];
+    const sweet = mealData?.sweetDish || mealData?.sweet;
+    const fruit = mealData?.fruit;
+
+    // Status label
+    const statusEl = document.getElementById('dash-mess-meal-status');
+    if (statusEl) {
+      statusEl.textContent = `${activeCfg.label} Service (${activeCfg.time})`;
+    }
+
     container.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <div class="dash-mess-meal-pill">
-          <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.88rem; color: var(--color-breakfast); margin-bottom: 2px;">
-            <span>🍳 Breakfast (07:30 – 09:30 AM)</span>
-          </div>
-          <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
-            ${(mess.breakfast?.items || []).slice(0, 4).join(', ')}...
-          </div>
+      <div class="space-y-3">
+        <!-- Meal Switcher Tabs -->
+        <div class="flex gap-1.5 p-1 rounded-xl bg-surface-container-high border border-white/[0.06]">
+          ${['breakfast', 'lunch', 'dinner'].map(m => `
+            <button type="button" class="btn-dash-meal-tab flex-1 py-1 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${m === currentMealKey ? 'bg-primary text-on-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-meal="${m}">
+              ${mealConfig[m].label}
+            </button>
+          `).join('')}
         </div>
 
-        <div class="dash-mess-meal-pill">
-          <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.88rem; color: var(--color-lunch); margin-bottom: 2px;">
-            <span>🍛 Lunch (12:00 – 02:00 PM)</span>
+        <!-- Meal Content Card -->
+        <div class="p-3.5 rounded-xl bg-surface-container border border-white/[0.06] space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono text-primary font-semibold flex items-center gap-1" id="dash-mess-meal-name">
+              <span class="material-symbols-outlined text-[15px]">${activeCfg.icon}</span>
+              <span>${activeCfg.label} Menu</span>
+            </span>
+            <span class="text-[11px] font-mono text-on-surface-variant">${activeCfg.time}</span>
           </div>
-          <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
-            ${(mess.lunch?.items || []).slice(0, 4).join(', ')}...
-          </div>
-        </div>
 
-        <div class="dash-mess-meal-pill">
-          <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.88rem; color: var(--color-dinner); margin-bottom: 2px;">
-            <span>🍲 Dinner (07:30 – 09:00 PM)</span>
+          <!-- Dishes Pill Grid -->
+          <div class="flex flex-wrap gap-1.5" id="dash-mess-dishes">
+            ${items.map(dish => `
+              <span class="px-2 py-0.5 rounded-md bg-surface-container-high text-xs text-on-surface border border-white/[0.04] font-medium">
+                ${dish}
+              </span>
+            `).join('')}
           </div>
-          <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
-            ${(mess.dinner?.items || []).slice(0, 3).join(', ')} • <strong>Sweet: ${mess.dinner?.sweetDish?.split(',')[0] || 'Dessert'}</strong>
-          </div>
+
+          ${sweet || fruit ? `
+            <div class="pt-2 border-t border-white/[0.04] flex items-center justify-between text-xs flex-wrap gap-1">
+              ${sweet ? `<span class="text-secondary font-medium">✨ Sweet: ${sweet.split(',')[0]}</span>` : ''}
+              ${fruit ? `<span class="text-tertiary font-medium">🍎 Fruit: ${fruit}</span>` : ''}
+              <span class="text-[11px] text-on-surface-variant italic">Annapurna Halls 1 & 2</span>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
+
+    container.querySelectorAll('.btn-dash-meal-tab').forEach(b => {
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.updateDashboardMessSnapshot(b.dataset.meal);
+      });
+    });
   },
 
   updateDashboardAnnouncements() {
@@ -809,13 +905,15 @@ const App = {
 
     const items = (window.JUIT_DATA?.announcements || []).slice(0, 3);
     container.innerHTML = items.map(a => `
-      <div style="border-bottom: 1px solid var(--border-subtle); padding: 8px 0;">
-        <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 2px;">
-          ${a.pinned ? '<span class="pinned-tag">📌 Pinned</span>' : ''}
-          <span class="hub-badge" style="font-size: 0.7rem;">${a.category}</span>
-          <span style="font-size: 0.72rem; color: var(--text-muted);">${a.date}</span>
+      <div class="p-3 rounded-xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] transition-colors cursor-pointer group" onclick="if(window.App) App.switchView('announcements')">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <div class="flex items-center gap-1.5">
+            ${a.pinned ? '<span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-semibold font-mono">📌 PINNED</span>' : ''}
+            <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-mono">${a.category || 'Notice'}</span>
+          </div>
+          <span class="text-[11px] font-mono text-on-surface-variant">${a.date || ''}</span>
         </div>
-        <div style="font-weight: 700; font-size: 0.9rem; line-height: 1.3;">${a.title}</div>
+        <div class="font-headline-sm text-sm text-on-surface font-semibold group-hover:text-primary transition-colors line-clamp-2 leading-snug">${a.title}</div>
       </div>
     `).join('');
   },
@@ -825,146 +923,544 @@ const App = {
     if (!banner) return;
 
     banner.innerHTML = `
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
-        <div class="flex items-center gap-space-md min-w-0">
-          <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary flex-shrink-0">
-            <span class="material-symbols-outlined text-[24px]">crisis_alert</span>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center gap-space-xs flex-wrap">
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Next University Milestone: T-2 Mid-Semester Examinations</span>
-              <span class="px-space-xs py-0.5 rounded bg-surface-container font-label-sm text-label-sm text-secondary font-medium">18 Days Left</span>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+              <span class="material-symbols-outlined text-[20px]">crisis_alert</span>
             </div>
-            <p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 truncate">Academic Session 2026–27 • Solan Campus Examination Halls &amp; Centers</p>
+            <div>
+              <span class="font-headline-sm text-sm text-on-surface font-semibold">T-2 Examinations</span>
+              <span class="font-label-sm text-[11px] text-secondary font-mono block">18 Days Remaining</span>
+            </div>
           </div>
+          <a class="inline-flex items-center gap-1 text-xs text-primary hover:text-primary-fixed font-medium group" href="#calendar" onclick="if(window.App) App.switchView('calendar')">
+            <span>Calendar</span>
+            <span class="material-symbols-outlined text-[14px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+          </a>
         </div>
-        <a class="inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:text-primary-fixed font-medium whitespace-nowrap group" href="#calendar" onclick="if(window.App) App.switchView('calendar')">
-          <span>Academic Calendar</span>
-          <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-1">arrow_forward</span>
-        </a>
+        <p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+          Academic Session 2026–27 • Solan Campus Examination Halls &amp; Centers. Revision and tutorial archives available on Vault.
+        </p>
       </div>
     `;
   },
 
-  /* ================= STUDENT ONBOARDING MODAL ================= */
+  /* ================= STUDENT ACCOUNT & PROFILE MANAGEMENT ================= */
   bindOnboardingModal() {
-    const modal = document.getElementById('onboarding-modal-backdrop');
-    const form = document.getElementById('onboarding-profile-form');
-    const closeBtn = document.getElementById('btn-close-onboarding-modal');
+    this.bindAccountModal();
+  },
 
-    if (closeBtn && modal) {
-      closeBtn.addEventListener('click', () => {
-        modal.classList.remove('open');
-        localStorage.setItem('juit_onboarded_v1', 'true');
+  bindAccountModal() {
+    const modal = document.getElementById('student-account-modal') || document.getElementById('onboarding-modal-backdrop');
+    const form = document.getElementById('student-account-form') || document.getElementById('onboarding-profile-form');
+    const closeBtn = document.getElementById('btn-close-account-modal') || document.getElementById('btn-close-onboarding-modal');
+    const cancelBtn = document.getElementById('btn-cancel-account-modal');
+    const resetBtn = document.getElementById('btn-reset-account-data');
+    const modalThemeBtn = document.getElementById('btn-modal-theme-toggle');
+
+    // Close handlers
+    const closeModal = () => this.closeAccountModal();
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
       });
     }
 
-    const progSelect = document.getElementById('onboard-programme-select');
-    const branchSelect = document.getElementById('onboard-branch-select');
-    const semSelect = document.getElementById('onboard-sem-select');
-    const batchSelect = document.getElementById('onboard-batch-select');
+    // Modal elements
+    const nameInput = document.getElementById('account-name-input');
+    const rollInput = document.getElementById('account-roll-input');
+    const progSelect = document.getElementById('account-prog-select') || document.getElementById('onboard-programme-select');
+    const branchSelect = document.getElementById('account-branch-select') || document.getElementById('onboard-branch-select');
+    const semSelect = document.getElementById('account-sem-select') || document.getElementById('onboard-sem-select');
+    const batchSelect = document.getElementById('account-batch-select') || document.getElementById('onboard-batch-select');
+    const hostelSelect = document.getElementById('account-hostel-select');
+    const attGoalSelect = document.getElementById('account-att-goal-select');
 
-    // Dynamic batch updater
-    const updateBatches = () => {
-      if (!batchSelect) return;
-      const sem = semSelect ? semSelect.value : '1';
+    // Digital card preview elements
+    const cardName = document.getElementById('account-display-name');
+    const cardRoll = document.getElementById('account-display-roll');
+    const cardAcademic = document.getElementById('account-display-academic');
+    const cardResidence = document.getElementById('account-display-residence');
+
+    const updateCardPreview = () => {
+      const name = nameInput?.value?.trim() || 'Aarav Sharma';
+      const roll = rollInput?.value?.trim() || '25B17EC171';
+      const prog = progSelect?.value || 'B.Tech';
+      const branch = branchSelect?.value || 'CSE';
+      const sem = semSelect?.value || '4';
+      const batch = batchSelect?.value || 'B1';
+      const hostel = hostelSelect?.value || 'Hostel Resident';
+
+      if (cardName) cardName.textContent = name;
+      if (cardRoll) cardRoll.textContent = `Roll No: ${roll}`;
+      if (cardAcademic) cardAcademic.textContent = `${prog} ${branch} • Sem ${sem} • Batch ${batch}`;
+      if (cardResidence) cardResidence.textContent = hostel;
+    };
+
+    const populateBatches = (selectEl, selectedVal) => {
+      if (!selectEl) return;
+      const sem = semSelect ? semSelect.value : '4';
+      let html = '';
+      
+      // Standard tutorial/practical batch codes
+      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
+        html += `<option value="${b}">Batch ${b}</option>`;
+      });
+
+      // Also support legacy/official 26BT/25BT codes
       let prefix = '26BT';
       if (sem === '3' || sem === '4') prefix = '25BT';
-      if (sem === '5' || sem === '6') prefix = '24BT';
-      if (sem === '7' || sem === '8') prefix = '23BT';
+      else if (sem === '5' || sem === '6') prefix = '24BT';
+      else if (sem === '7' || sem === '8') prefix = '23BT';
 
-      let html = '';
-      for (let i = 1; i <= 30; i++) {
+      for (let i = 1; i <= 20; i++) {
         const code = `${prefix}${String(i).padStart(2, '0')}`;
         html += `<option value="${code}">${code}</option>`;
       }
-      batchSelect.innerHTML = html;
-      if (window.JUIT_PROFILE?.batch) {
-        batchSelect.value = window.JUIT_PROFILE.batch;
-      }
+      selectEl.innerHTML = html;
+      if (selectedVal) selectEl.value = selectedVal;
     };
 
-    if (semSelect) semSelect.addEventListener('change', updateBatches);
-    if (progSelect) progSelect.addEventListener('change', updateBatches);
+    if (semSelect) {
+      semSelect.addEventListener('change', () => {
+        populateBatches(batchSelect, batchSelect?.value);
+        updateCardPreview();
+      });
+    }
+    if (branchSelect) branchSelect.addEventListener('change', updateCardPreview);
+    if (progSelect) progSelect.addEventListener('change', updateCardPreview);
+    if (nameInput) nameInput.addEventListener('input', updateCardPreview);
+    if (rollInput) rollInput.addEventListener('input', updateCardPreview);
+    if (hostelSelect) hostelSelect.addEventListener('change', updateCardPreview);
+    if (batchSelect) batchSelect.addEventListener('change', updateCardPreview);
 
+    // Modal theme toggle button
+    if (modalThemeBtn) {
+      modalThemeBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('frost-light');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('frost-light');
+          const tName = document.getElementById('account-theme-name');
+          if (tName) tName.textContent = 'Frost Light';
+          const tIcon = document.getElementById('modal-theme-icon');
+          if (tIcon) tIcon.textContent = 'light_mode';
+        } else {
+          document.documentElement.classList.remove('frost-light');
+          document.documentElement.classList.add('dark');
+          const tName = document.getElementById('account-theme-name');
+          if (tName) tName.textContent = 'Dark Obsidian';
+          const tIcon = document.getElementById('modal-theme-icon');
+          if (tIcon) tIcon.textContent = 'dark_mode';
+        }
+      });
+    }
+
+    // Reset button
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Reset profile to default JUIT Scholar details?')) {
+          const defaultProfile = {
+            name: 'Aarav Sharma',
+            rollNo: '25B17EC171',
+            programme: 'B.Tech',
+            branch: 'CSE',
+            semester: '4',
+            batch: 'B1',
+            hostel: 'Hostel Resident',
+            attendanceGoal: '80'
+          };
+          window.JUIT_PROFILE = defaultProfile;
+          localStorage.setItem('juit_student_profile', JSON.stringify(defaultProfile));
+          localStorage.setItem('juit_selected_batch', 'B1');
+          this.applyProfileToTimetable(defaultProfile);
+          this.updateUserProfileBadges();
+          this.refreshDashboard();
+          this.closeAccountModal();
+        }
+      });
+    }
+
+    // Submit handler
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const p = window.JUIT_PROFILE || {};
-        p.name = document.getElementById('onboard-name-input')?.value || 'Scholar';
+        p.name = nameInput?.value?.trim() || 'Aarav Sharma';
+        p.rollNo = rollInput?.value?.trim() || '25B17EC171';
         p.programme = progSelect?.value || 'B.Tech';
         p.branch = branchSelect?.value || 'CSE';
-        p.semester = semSelect?.value || '1';
-        p.batch = batchSelect?.value || '26BT16';
-        p.role = document.getElementById('onboard-role-select')?.value || 'Student';
+        p.semester = semSelect?.value || '4';
+        p.batch = batchSelect?.value || 'B1';
+        p.hostel = hostelSelect?.value || 'Hostel Resident';
+        p.attendanceGoal = attGoalSelect?.value || '80';
 
         window.JUIT_PROFILE = p;
         localStorage.setItem('juit_student_profile', JSON.stringify(p));
         localStorage.setItem('juit_selected_batch', p.batch);
         localStorage.setItem('juit_onboarded_v1', 'true');
 
-        if (modal) modal.classList.remove('open');
-
-        // Re-sync Timetable controller with chosen semester and batch
-        if (window.TimetableController) {
-          let semKey = 'odd_btech_1_sem';
-          if (p.semester === '3') semKey = 'odd_btech_3_sem';
-          else if (p.semester === '5') semKey = 'odd_btech_5_sem';
-          else if (p.semester === '7') semKey = 'odd_btech_7_sem';
-          else if (p.semester === '2') semKey = 'even_btech_2_sem';
-          else if (p.semester === '4') semKey = 'even_btech_4_sem';
-          else if (p.semester === '6') semKey = 'even_btech_6_sem';
-          else if (p.semester === '8') semKey = 'even_btech_8_sem';
-
-          window.TimetableController.activeSemesterId = semKey;
-          window.TimetableController.activeBatch = p.batch;
-          window.TimetableController.renderSemesterDropdown();
-          window.TimetableController.populateBatchDropdown();
-          window.TimetableController.renderQuickBatchChips();
-          window.TimetableController.renderDayPills();
-          window.TimetableController.renderSchedule();
-        }
-
+        this.applyProfileToTimetable(p);
+        this.updateUserProfileBadges();
         this.refreshDashboard();
+
+        const feedback = document.getElementById('account-feedback-msg');
+        if (feedback) {
+          feedback.classList.remove('hidden');
+          setTimeout(() => {
+            feedback.classList.add('hidden');
+            this.closeAccountModal();
+          }, 800);
+        } else {
+          this.closeAccountModal();
+        }
+      });
+    }
+
+    // Also wire Settings view handlers
+    this.bindSettingsView();
+  },
+
+  loadStudentProfile() {
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem('juit_student_profile') || 'null');
+    } catch (e) {
+      saved = null;
+    }
+
+    const defaultProfile = {
+      name: 'Aarav Sharma',
+      rollNo: '25B17EC171',
+      programme: 'B.Tech',
+      branch: 'CSE',
+      semester: '4',
+      batch: 'B1',
+      hostel: 'Hostel Resident',
+      attendanceGoal: '80',
+      attendance: {}
+    };
+
+    window.JUIT_PROFILE = Object.assign({}, defaultProfile, window.JUIT_PROFILE || {}, saved || {});
+
+    // Ensure selected batch matches profile
+    if (!localStorage.getItem('juit_selected_batch') && window.JUIT_PROFILE.batch) {
+      localStorage.setItem('juit_selected_batch', window.JUIT_PROFILE.batch);
+    }
+    const storedBatch = localStorage.getItem('juit_selected_batch');
+    if (storedBatch && (!saved || !saved.batch)) {
+      window.JUIT_PROFILE.batch = storedBatch;
+    }
+
+    if (window.TimetableController) {
+      this.applyProfileToTimetable(window.JUIT_PROFILE);
+    }
+  },
+
+  syncSettingsView() {
+    const p = window.JUIT_PROFILE || {};
+    const sName = document.getElementById('settings-name-input');
+    const sRoll = document.getElementById('settings-roll-input');
+    const sProg = document.getElementById('settings-prog-select');
+    const sBranch = document.getElementById('settings-branch-select');
+    const sSem = document.getElementById('settings-sem-select');
+    const sBatch = document.getElementById('settings-batch-select');
+    const sHostel = document.getElementById('settings-hostel-select');
+    const sGoal = document.getElementById('settings-att-goal-select');
+
+    if (sName) sName.value = p.name || 'Aarav Sharma';
+    if (sRoll) sRoll.value = p.rollNo || '25B17EC171';
+    if (sProg && p.programme) sProg.value = p.programme;
+    if (sBranch && p.branch) sBranch.value = p.branch;
+    if (sSem && p.semester) sSem.value = p.semester;
+
+    // Populate batches for active semester
+    if (sBatch) {
+      const sem = sSem ? sSem.value : (p.semester || '4');
+      let html = '';
+      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
+        html += `<option value="${b}">Batch ${b}</option>`;
+      });
+      let prefix = '26BT';
+      if (sem === '3' || sem === '4') prefix = '25BT';
+      else if (sem === '5' || sem === '6') prefix = '24BT';
+      else if (sem === '7' || sem === '8') prefix = '23BT';
+      for (let i = 1; i <= 20; i++) {
+        const code = `${prefix}${String(i).padStart(2, '0')}`;
+        html += `<option value="${code}">${code}</option>`;
+      }
+      sBatch.innerHTML = html;
+      sBatch.value = p.batch || 'B1';
+    }
+
+    if (sHostel && p.hostel) sHostel.value = p.hostel;
+    if (sGoal && p.attendanceGoal) sGoal.value = p.attendanceGoal;
+
+    // Digital pass card inside settings
+    const setDisplay = document.getElementById('settings-display-name');
+    if (setDisplay) setDisplay.textContent = p.name || 'Aarav Sharma';
+    const setRoll = document.getElementById('settings-display-roll');
+    if (setRoll) setRoll.textContent = `Roll No: ${p.rollNo || '25B17EC171'}`;
+    const setPill = document.getElementById('settings-display-academic-pill');
+    if (setPill) setPill.textContent = `${p.programme || 'B.Tech'} ${p.branch || 'CSE'} • Sem ${p.semester || '4'} • Batch ${p.batch || 'B1'}`;
+    const setResidence = document.getElementById('settings-display-residence-label');
+    if (setResidence) setResidence.textContent = p.hostel || 'Hostel Resident';
+
+    // Scholar scratchpad notes
+    const notesArea = document.getElementById('scholar-notes-textarea');
+    if (notesArea && !notesArea.value) {
+      notesArea.value = localStorage.getItem('juit_scholar_notes') || '';
+    }
+  },
+
+  bindSettingsView() {
+    this.syncSettingsView();
+
+    const sName = document.getElementById('settings-name-input');
+    const sRoll = document.getElementById('settings-roll-input');
+    const sProg = document.getElementById('settings-prog-select');
+    const sBranch = document.getElementById('settings-branch-select');
+    const sSem = document.getElementById('settings-sem-select');
+    const sBatch = document.getElementById('settings-batch-select');
+    const sHostel = document.getElementById('settings-hostel-select');
+    const sGoal = document.getElementById('settings-att-goal-select');
+    const btnSave = document.getElementById('btn-save-settings-profile');
+    const feedback = document.getElementById('settings-save-feedback');
+    const themeBtn = document.getElementById('btn-settings-theme-toggle');
+    const clearCacheBtn = document.getElementById('btn-settings-clear-cache');
+    const resetProfileBtn = document.getElementById('btn-settings-reset-profile');
+    const notesArea = document.getElementById('scholar-notes-textarea');
+    const btnSaveNotes = document.getElementById('btn-save-notes');
+    const notesStatus = document.getElementById('notes-save-status');
+
+    const updateSettingsPassPreview = () => {
+      const name = sName?.value?.trim() || 'Aarav Sharma';
+      const roll = sRoll?.value?.trim() || '25B17EC171';
+      const prog = sProg?.value || 'B.Tech';
+      const branch = sBranch?.value || 'CSE';
+      const sem = sSem?.value || '4';
+      const batch = sBatch?.value || 'B1';
+      const hostel = sHostel?.value || 'Hostel Resident';
+
+      const setDisplay = document.getElementById('settings-display-name');
+      if (setDisplay) setDisplay.textContent = name;
+      const setRoll = document.getElementById('settings-display-roll');
+      if (setRoll) setRoll.textContent = `Roll No: ${roll}`;
+      const setPill = document.getElementById('settings-display-academic-pill');
+      if (setPill) setPill.textContent = `${prog} ${branch} • Sem ${sem} • Batch ${batch}`;
+      const setResidence = document.getElementById('settings-display-residence-label');
+      if (setResidence) setResidence.textContent = hostel;
+    };
+
+    if (sSem) {
+      sSem.addEventListener('change', () => {
+        const sem = sSem.value;
+        if (sBatch) {
+          let html = '';
+          ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
+            html += `<option value="${b}">Batch ${b}</option>`;
+          });
+          let prefix = '26BT';
+          if (sem === '3' || sem === '4') prefix = '25BT';
+          else if (sem === '5' || sem === '6') prefix = '24BT';
+          else if (sem === '7' || sem === '8') prefix = '23BT';
+          for (let i = 1; i <= 20; i++) {
+            const code = `${prefix}${String(i).padStart(2, '0')}`;
+            html += `<option value="${code}">${code}</option>`;
+          }
+          sBatch.innerHTML = html;
+        }
+        updateSettingsPassPreview();
+      });
+    }
+
+    [sName, sRoll].forEach(el => el?.addEventListener('input', updateSettingsPassPreview));
+    [sProg, sBranch, sBatch, sHostel, sGoal].forEach(el => el?.addEventListener('change', updateSettingsPassPreview));
+
+    if (btnSave) {
+      btnSave.addEventListener('click', () => {
+        const p = window.JUIT_PROFILE || {};
+        p.name = sName?.value?.trim() || 'Aarav Sharma';
+        p.rollNo = sRoll?.value?.trim() || '25B17EC171';
+        p.programme = sProg?.value || 'B.Tech';
+        p.branch = sBranch?.value || 'CSE';
+        p.semester = sSem?.value || '4';
+        p.batch = sBatch?.value || 'B1';
+        p.hostel = sHostel?.value || 'Hostel Resident';
+        p.attendanceGoal = sGoal?.value || '80';
+
+        window.JUIT_PROFILE = p;
+        localStorage.setItem('juit_student_profile', JSON.stringify(p));
+        localStorage.setItem('juit_selected_batch', p.batch);
+        localStorage.setItem('juit_onboarded_v1', 'true');
+
+        this.applyProfileToTimetable(p);
+        this.updateUserProfileBadges();
+        this.refreshDashboard();
+
+        if (feedback) {
+          feedback.textContent = '✓ Profile saved & timetable updated!';
+          setTimeout(() => { feedback.textContent = ''; }, 3000);
+        }
+      });
+    }
+
+    // Scholar scratchpad autosave
+    if (notesArea) {
+      let autosaveTimer = null;
+      notesArea.addEventListener('input', () => {
+        if (notesStatus) notesStatus.textContent = 'Saving...';
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(() => {
+          localStorage.setItem('juit_scholar_notes', notesArea.value);
+          if (notesStatus) {
+            notesStatus.textContent = 'Auto-saved ✓';
+            setTimeout(() => { if (notesStatus.textContent === 'Auto-saved ✓') notesStatus.textContent = ''; }, 2000);
+          }
+        }, 600);
+      });
+    }
+
+    if (btnSaveNotes && notesArea) {
+      btnSaveNotes.addEventListener('click', () => {
+        localStorage.setItem('juit_scholar_notes', notesArea.value);
+        if (notesStatus) {
+          notesStatus.textContent = 'Saved ✓';
+          setTimeout(() => { notesStatus.textContent = ''; }, 2000);
+        }
+      });
+    }
+
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('frost-light');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('frost-light');
+          const tLabel = document.getElementById('settings-theme-label');
+          if (tLabel) tLabel.textContent = 'Frost Light Theme';
+        } else {
+          document.documentElement.classList.remove('frost-light');
+          document.documentElement.classList.add('dark');
+          const tLabel = document.getElementById('settings-theme-label');
+          if (tLabel) tLabel.textContent = 'Dark Obsidian Theme';
+        }
+      });
+    }
+
+    if (clearCacheBtn) {
+      clearCacheBtn.addEventListener('click', async () => {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        alert('Offline cache cleared successfully.');
+      });
+    }
+
+    if (resetProfileBtn) {
+      resetProfileBtn.addEventListener('click', () => {
+        if (confirm('Reset profile to default B.Tech CSE Batch B1?')) {
+          localStorage.removeItem('juit_student_profile');
+          location.reload();
+        }
       });
     }
   },
 
-  openOnboardingModal() {
-    const modal = document.getElementById('onboarding-modal-backdrop');
+  applyProfileToTimetable(p) {
+    if (!window.TimetableController) return;
+    let semKey = 'even_btech_4_sem';
+    if (p.semester === '1') semKey = 'odd_btech_1_sem';
+    else if (p.semester === '2') semKey = 'even_btech_2_sem';
+    else if (p.semester === '3') semKey = 'odd_btech_3_sem';
+    else if (p.semester === '4') semKey = 'even_btech_4_sem';
+    else if (p.semester === '5') semKey = 'odd_btech_5_sem';
+    else if (p.semester === '6') semKey = 'even_btech_6_sem';
+    else if (p.semester === '7') semKey = 'odd_btech_7_sem';
+    else if (p.semester === '8') semKey = 'even_btech_8_sem';
+
+    window.TimetableController.activeSemesterId = semKey;
+    window.TimetableController.activeBatch = p.batch || 'B1';
+    if (window.AcademicsController) {
+      window.AcademicsController.activeBatch = p.batch || 'B1';
+    }
+    window.TimetableController.renderSemesterDropdown?.();
+    window.TimetableController.populateBatchDropdown?.();
+    window.TimetableController.renderQuickBatchChips?.();
+    window.TimetableController.renderDayPills?.();
+    window.TimetableController.renderSchedule?.();
+  },
+
+  openAccountModal(isFirstTime = false) {
+    const modal = document.getElementById('student-account-modal') || document.getElementById('onboarding-modal-backdrop');
     if (!modal) return;
 
-    const p = window.JUIT_PROFILE || {};
-    const nameInput = document.getElementById('onboard-name-input');
-    const progSelect = document.getElementById('onboard-programme-select');
-    const branchSelect = document.getElementById('onboard-branch-select');
-    const semSelect = document.getElementById('onboard-sem-select');
-    const batchSelect = document.getElementById('onboard-batch-select');
-    const roleSelect = document.getElementById('onboard-role-select');
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
 
-    if (nameInput) nameInput.value = p.name || '';
+    const p = window.JUIT_PROFILE || {};
+    const nameInput = document.getElementById('account-name-input');
+    const rollInput = document.getElementById('account-roll-input');
+    const progSelect = document.getElementById('account-prog-select');
+    const branchSelect = document.getElementById('account-branch-select');
+    const semSelect = document.getElementById('account-sem-select');
+    const batchSelect = document.getElementById('account-batch-select');
+    const hostelSelect = document.getElementById('account-hostel-select');
+    const attGoalSelect = document.getElementById('account-att-goal-select');
+
+    if (nameInput) nameInput.value = p.name || 'Aarav Sharma';
+    if (rollInput) rollInput.value = p.rollNo || '25B17EC171';
     if (progSelect && p.programme) progSelect.value = p.programme;
     if (branchSelect && p.branch) branchSelect.value = p.branch;
     if (semSelect && p.semester) semSelect.value = p.semester;
-    if (roleSelect && p.role) roleSelect.value = p.role;
-
+    
+    // Populate batch options
     if (batchSelect) {
-      const sem = semSelect ? semSelect.value : (p.semester || '1');
+      const sem = semSelect ? semSelect.value : (p.semester || '4');
+      let html = '';
+      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
+        html += `<option value="${b}">Batch ${b}</option>`;
+      });
       let prefix = '26BT';
       if (sem === '3' || sem === '4') prefix = '25BT';
-      if (sem === '5' || sem === '6') prefix = '24BT';
-      if (sem === '7' || sem === '8') prefix = '23BT';
-
-      let html = '';
-      for (let i = 1; i <= 30; i++) {
+      else if (sem === '5' || sem === '6') prefix = '24BT';
+      else if (sem === '7' || sem === '8') prefix = '23BT';
+      for (let i = 1; i <= 20; i++) {
         const code = `${prefix}${String(i).padStart(2, '0')}`;
         html += `<option value="${code}">${code}</option>`;
       }
       batchSelect.innerHTML = html;
-      batchSelect.value = p.batch || (prefix + '16');
+      batchSelect.value = p.batch || 'B1';
     }
 
-    modal.classList.add('open');
+    if (hostelSelect && p.hostel) hostelSelect.value = p.hostel;
+    if (attGoalSelect && p.attendanceGoal) attGoalSelect.value = p.attendanceGoal;
+
+    // Digital pass card
+    const cardName = document.getElementById('account-display-name');
+    const cardRoll = document.getElementById('account-display-roll');
+    const cardAcademic = document.getElementById('account-display-academic');
+    const cardResidence = document.getElementById('account-display-residence');
+    if (cardName) cardName.textContent = p.name || 'Aarav Sharma';
+    if (cardRoll) cardRoll.textContent = `Roll No: ${p.rollNo || '25B17EC171'}`;
+    if (cardAcademic) cardAcademic.textContent = `${p.programme || 'B.Tech'} ${p.branch || 'CSE'} • Sem ${p.semester || '4'} • Batch ${p.batch || 'B1'}`;
+    if (cardResidence) cardResidence.textContent = p.hostel || 'Hostel Resident';
+  },
+
+  closeAccountModal() {
+    const modal = document.getElementById('student-account-modal') || document.getElementById('onboarding-modal-backdrop');
+    if (modal) {
+      modal.classList.remove('open', 'active');
+      modal.classList.add('hidden');
+    }
+  },
+
+  openOnboardingModal() {
+    this.openAccountModal(true);
   },
 
   /* ================= MOBILE NAVIGATION DRAWER & HUD DOCK ================= */
