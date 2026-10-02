@@ -270,21 +270,22 @@
   <header class="app-header fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.2)] pt-safe lg:left-64">
     <div class="h-16 px-margin-mobile lg:px-8 flex items-center justify-between">
       <!-- Left: Mobile Brand & Altitude Whisper -->
-      <div class="flex items-center gap-3">
-        <button type="button" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <button type="button" class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
           <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <a href="#dash" class="flex flex-col" id="mobile-brand-link">
-          <div class="flex items-center gap-2">
-            <span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">JUIT Hub</span>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm border border-white/[0.06]">Solan Hills · 1,550m</span>
+        <a href="#dash" class="flex flex-col min-w-0 justify-center" id="mobile-brand-link">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="font-headline-sm text-base sm:text-lg lg:text-headline-sm text-primary font-bold tracking-tight shrink-0 whitespace-nowrap">JUIT Hub</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-secondary bg-surface-container-high border border-white/[0.06] shrink-0 font-medium whitespace-nowrap">1,550m</span>
           </div>
-          <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic leading-none mt-0.5">Waknaghat Ridge</span>
+          <span class="font-caption-editorial text-[11px] sm:text-caption-editorial text-on-surface-variant italic leading-none mt-0.5 truncate">Solan Hills · Waknaghat</span>
         </a>
       </div>
 
       <!-- Right: Action Controls & Live Clock -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 shrink-0">
         <div class="hidden md:flex flex-col text-right mr-2">
           <span class="font-mono text-xs text-primary font-semibold" id="live-clock-time">09:47 AM</span>
           <span class="font-label-sm text-[10px] text-on-surface-variant" id="live-clock-date">Tuesday, 22 Sep</span>
