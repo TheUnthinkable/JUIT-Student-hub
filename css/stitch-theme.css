@@ -420,9 +420,13 @@ body {
 
 /* Modals & Drawers */
 .modal-backdrop {
-  background-color: rgba(10, 14, 23, 0.82) !important;
+  display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background-color: rgba(10, 14, 23, 0.85) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
+  z-index: 70 !important;
 }
 
 .modal-card {
@@ -434,7 +438,8 @@ body {
 }
 
 /* Modals & Active Drawers */
-.modal-backdrop.open {
+.modal-backdrop.open,
+.modal-backdrop.active {
   display: flex !important;
 }
 #mobile-drawer-backdrop {
@@ -574,4 +579,189 @@ body {
   line-height: 1;
   flex-shrink: 0;
 }
+
+/* ==========================================================================
+   ANNAPURNA MESS DAY TABS & MEAL CARDS (STITCH MD3)
+   ========================================================================== */
+.mess-day-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: var(--bg-surface-container);
+  border: 1px solid var(--border-subtle);
+  color: var(--color-on-surface-variant);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mess-day-btn:hover {
+  background: var(--bg-surface-container-high);
+  color: var(--color-on-surface);
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+}
+.mess-day-btn.active {
+  background: var(--color-primary-container) !important;
+  color: var(--color-on-primary-container) !important;
+  border-color: var(--color-primary) !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+}
+
+.meal-card {
+  background: var(--bg-surface-container-low);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.meal-card:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+}
+.meal-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.75rem;
+}
+.meal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.meal-icon-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+.meal-card.breakfast .meal-icon-avatar { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.meal-card.lunch .meal-icon-avatar { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.meal-card.snacks .meal-icon-avatar { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+.meal-card.dinner .meal-icon-avatar { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+.meal-label-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+.meal-time-pill {
+  font-size: 0.75rem;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-mono);
+}
+.meal-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.food-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--color-on-surface);
+}
+.food-bullet {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   CAMPUS MAP: CONTROLS, VIEWPORT & DRAWER (NO-GLITCH)
+   ========================================================================== */
+#map-viewport-box,
+#map-canvas-container,
+#campus-vector-svg {
+  touch-action: none !important;
+}
+
+#campus-vector-svg #map-world-layer {
+  transform-origin: 500px 340px;
+  will-change: transform;
+}
+
+.quick-bldg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--bg-surface-container);
+  border: 1px solid var(--border-subtle);
+  color: var(--color-on-surface-variant);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.quick-bldg-btn:hover {
+  background: var(--bg-surface-container-high);
+  color: var(--color-on-surface);
+  border-color: var(--border-focus);
+}
+.quick-bldg-btn.active {
+  background: var(--color-primary-container) !important;
+  color: var(--color-on-primary-container) !important;
+  border-color: var(--color-primary) !important;
+  font-weight: 700;
+}
+
+.category-pill {
+  user-select: none;
+}
+
+.map-venue-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: min(420px, 100vw) !important;
+  max-width: 100% !important;
+  background: var(--bg-surface-container) !important;
+  border-left: 1px solid var(--border-subtle) !important;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.75) !important;
+  transform: translateX(105%) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  z-index: 60 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+}
+
+.map-venue-drawer.open {
+  transform: translateX(0) !important;
+}
+
+/* ==========================================================================
+   TIMETABLE DAY PILLS COMPACT MOBILE FIT
+   ========================================================================== */
+@media (max-width: 640px) {
+  #timetable-day-pills > div {
+    padding: 0.625rem 0.25rem !important;
+  }
+  #timetable-day-pills p.font-headline-sm {
+    font-size: 0.875rem !important;
+  }
+  #timetable-day-pills p.font-label-sm {
+    font-size: 0.6875rem !important;
+  }
+}
+
 

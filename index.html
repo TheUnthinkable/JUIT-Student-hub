@@ -671,14 +671,14 @@
           </div>
         </div>
 
-        <!-- Main Feast Card: Tonight's Thali -->
-        <div class="mt-space-xs flex flex-col rounded-xl bg-surface-container-low shadow-xl overflow-hidden border border-white/[0.08]">
+        <!-- Main Feast Card: Dynamic Daily Feast -->
+        <div class="mt-space-xs flex flex-col rounded-xl bg-surface-container-low shadow-xl overflow-hidden border border-white/[0.08]" id="mess-featured-card">
           <div class="relative w-full h-48 overflow-hidden">
-            <img class="w-full h-full object-cover" alt="Himalayan brass thali with slow-cooked Dal Makhani and Shahi Paneer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRGY7_pLkTkCoZ7-1p2DpJEBBmkMV3DOrVu6r-mU0rlx-MjCqv0vzKDAqLWVBiGiVjLq1AaBlm6oohN-CK2Z4uoqMGWwyP2pyLPoaxgWVLC7BjiUGsegcxrvLecJ7K-EvYrZeNdHWc3mrNESlWWS_6WH1AHN_TYbDFFsYl_t2OeCJAYBLOy1SlEyCoGPNXkxLGE3lqO-mqgh3viHJMufKhdS70bQZPJZWswRFMY7QYa6dxu_66wEMz" />
+            <img class="w-full h-full object-cover" id="mess-featured-img" alt="Annapurna Dining Hall Fresh Himalayan Feast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRGY7_pLkTkCoZ7-1p2DpJEBBmkMV3DOrVu6r-mU0rlx-MjCqv0vzKDAqLWVBiGiVjLq1AaBlm6oohN-CK2Z4uoqMGWwyP2pyLPoaxgWVLC7BjiUGsegcxrvLecJ7K-EvYrZeNdHWc3mrNESlWWS_6WH1AHN_TYbDFFsYl_t2OeCJAYBLOy1SlEyCoGPNXkxLGE3lqO-mqgh3viHJMufKhdS70bQZPJZWswRFMY7QYa6dxu_66wEMz" />
             <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-surface-container-low/40 to-transparent"></div>
             <div class="absolute bottom-3 left-space-md right-space-md flex items-center justify-between">
-              <span class="font-headline-md text-headline-md text-primary tracking-tight font-bold drop-shadow-sm">Tonight's Thali</span>
-              <span class="px-space-sm py-0.5 rounded-full bg-surface-container-highest/90 text-on-surface font-label-sm text-label-sm backdrop-blur-md">
+              <span class="font-headline-md text-headline-md text-primary tracking-tight font-bold drop-shadow-sm" id="mess-featured-title">Annapurna Special Feast</span>
+              <span class="px-space-sm py-0.5 rounded-full bg-surface-container-highest/90 text-on-surface font-label-sm text-label-sm backdrop-blur-md" id="mess-featured-tag">
                 Hall A & B Special
               </span>
             </div>
@@ -692,23 +692,23 @@
             </span>
             <span class="inline-flex items-center gap-1 px-space-sm py-1 rounded-full bg-tertiary-container/20 text-tertiary font-label-sm text-label-sm">
               <span class="material-symbols-outlined text-[14px]">egg_alt</span>
-              Egg Counter · Hall B
+              Special Counter · Hall B
             </span>
           </div>
 
-          <!-- Featured Dishes -->
-          <div class="p-space-lg flex flex-col gap-space-md">
+          <!-- Featured Dishes Container -->
+          <div class="p-space-lg flex flex-col gap-space-md" id="mess-featured-dishes">
             <div class="flex items-start gap-space-sm">
               <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center shrink-0 mt-0.5 text-primary">
                 <span class="material-symbols-outlined text-[18px]">skillet</span>
               </div>
               <div class="flex flex-col min-w-0">
                 <div class="flex items-baseline justify-between">
-                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Shahi Paneer</h4>
-                  <span class="font-label-sm text-label-sm text-primary font-bold">Main</span>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="mess-dish-1-name">Slow-Cooked Dal & Vegetables</h4>
+                  <span class="font-label-sm text-label-sm text-primary font-bold" id="mess-dish-1-badge">Special</span>
                 </div>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                  Slow-simmered in a warm, velvety tomato-cashew gravy with freshly ground spices.
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5" id="mess-dish-1-desc">
+                  Freshly prepared hot in Annapurna mountain dining halls with aromatic North Indian spices.
                 </p>
               </div>
             </div>
@@ -719,11 +719,11 @@
               </div>
               <div class="flex flex-col min-w-0">
                 <div class="flex items-baseline justify-between">
-                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Dal Makhani & Basmati</h4>
-                  <span class="font-label-sm text-label-sm text-secondary font-bold">Classic</span>
+                  <h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="mess-dish-2-name">Traditional Sweet & Basmati</h4>
+                  <span class="font-label-sm text-label-sm text-secondary font-bold" id="mess-dish-2-badge">Dessert</span>
                 </div>
-                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
-                  Black lentils cooked overnight on charcoal with whole butter and fragrant long-grain steamed rice.
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5" id="mess-dish-2-desc">
+                  Served with warm tandoori roti and fragrant long-grain steamed rice.
                 </p>
               </div>
             </div>
@@ -851,8 +851,8 @@
               <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-reset" title="Reset View">↺</button>
             </div>
           </div>
-          <div class="w-full h-80 rounded-lg overflow-hidden bg-surface-container-lowest relative flex items-center justify-center" id="map-world-layer">
-            <svg class="w-full h-full" id="campus-vector-svg" viewBox="0 0 1000 700"></svg>
+          <div class="w-full h-80 sm:h-96 rounded-lg overflow-hidden bg-surface-container-lowest relative flex items-center justify-center select-none" id="map-canvas-container" style="touch-action: none;">
+            <svg class="w-full h-full" id="campus-vector-svg" viewBox="0 0 1000 680" style="touch-action: none;"></svg>
             <div id="map-hud-overlay-layer"></div>
           </div>
         </div>
@@ -1844,7 +1844,7 @@
        MODALS: SEARCH, NOTIFICATIONS, PDF PREVIEW, ROUTE, ONBOARDING
        ====================================================================== -->
   <!-- Search Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-start justify-center pt-20 px-4" id="search-modal-backdrop">
+  <div class="fixed inset-0 modal-backdrop z-50 flex items-start justify-center pt-20 px-4" id="search-modal-backdrop">
     <div class="modal-card w-full max-w-xl p-5 space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Campus Search</h3>
@@ -1874,26 +1874,42 @@
   </aside>
 
   <!-- PDF Preview Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="pdf-preview-modal">
-    <div class="modal-card w-full max-w-4xl h-[85vh] p-4 flex flex-col justify-between">
-      <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-        <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate" id="preview-modal-title">Resource Preview</h3>
-        <div class="flex items-center gap-2">
-          <a href="#" id="preview-modal-newtab" target="_blank" class="text-xs text-on-surface-variant hover:text-primary">New Tab</a>
-          <a href="#" id="preview-modal-download" class="btn-attendance-toggle attended" download>Download</a>
-          <button type="button" id="preview-modal-close" class="text-on-surface-variant hover:text-primary cursor-pointer">
-            <span class="material-symbols-outlined">close</span>
+  <div class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-3 sm:p-4" id="pdf-preview-modal">
+    <div class="modal-card w-full max-w-4xl h-[88vh] p-4 flex flex-col justify-between">
+      <div class="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+        <div class="flex items-center gap-2 overflow-hidden min-w-0 pr-2">
+          <span class="material-symbols-outlined text-primary text-[22px] flex-shrink-0">description</span>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate" id="preview-modal-title">Resource Preview</h3>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <a href="#" id="preview-modal-newtab" target="_blank" rel="noopener noreferrer" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary text-xs font-semibold inline-flex items-center gap-1 transition-colors">
+            <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            <span class="hidden sm:inline">Open in Tab</span>
+          </a>
+          <a href="#" id="preview-modal-download" class="btn-attendance-toggle attended text-xs py-1.5 px-2.5 sm:px-3 inline-flex items-center gap-1" download>
+            <span class="material-symbols-outlined text-[15px]">download</span>
+            <span class="hidden sm:inline">Download</span>
+          </a>
+          <button type="button" id="preview-modal-close" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" title="Close Preview">
+            <span class="material-symbols-outlined text-[18px]">close</span>
           </button>
         </div>
       </div>
-      <div class="flex-1 w-full mt-2 bg-surface-container-lowest rounded-lg overflow-hidden">
+      <div class="flex-1 w-full my-2 bg-surface-container-lowest rounded-lg overflow-hidden relative">
         <iframe id="preview-modal-iframe" class="w-full h-full border-0"></iframe>
+      </div>
+      <div class="flex items-center justify-between text-xs text-on-surface-variant pt-2 border-t border-white/[0.06]">
+        <span class="italic text-[11px] sm:text-xs">Having trouble viewing PDF in embedded frame?</span>
+        <a href="#" id="preview-modal-footer-link" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-semibold flex items-center gap-1 text-[11px] sm:text-xs">
+          <span>Open Direct PDF File</span>
+          <span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+        </a>
       </div>
     </div>
   </div>
 
   <!-- Route Navigation Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="map-route-modal">
+  <div class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="map-route-modal">
     <div class="modal-card w-full max-w-md p-5 space-y-4" id="map-route-modal-card">
       <div class="flex items-center justify-between">
         <h3 class="font-headline-sm text-headline-sm font-semibold">Campus Route</h3>
@@ -1913,7 +1929,7 @@
   </div>
 
   <!-- Onboarding Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="onboarding-modal-backdrop">
+  <div class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="onboarding-modal-backdrop">
     <div class="modal-card w-full max-w-md p-6 space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -1947,8 +1963,8 @@
   </div>
 
   <!-- Universal Modal Container -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="universal-modal">
-    <div class="modal-card w-full max-w-lg p-5" id="universal-modal-content"></div>
+  <div class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="universal-modal">
+    <div class="modal-card w-full max-w-xl max-h-[90vh] overflow-y-auto p-5" id="universal-modal-content"></div>
   </div>
 
   <!-- Inline Helper Scripts -->

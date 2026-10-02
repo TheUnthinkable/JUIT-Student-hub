@@ -354,6 +354,16 @@ const ResourcesController = {
     });
   },
 
+  closePreviewModal() {
+    const modal = document.getElementById('pdf-preview-modal');
+    if (modal) {
+      modal.classList.remove('open', 'active');
+      modal.classList.add('hidden');
+      const iframeEl = modal.querySelector('#preview-modal-iframe');
+      if (iframeEl) iframeEl.src = '';
+    }
+  },
+
   previewDocument(link, title) {
     if (!link) return;
     
@@ -362,50 +372,41 @@ const ResourcesController = {
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'pdf-preview-modal';
-      modal.className = 'modal-backdrop';
+      modal.className = 'fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4';
       modal.innerHTML = `
-        <div class="modal-content-window" style="max-width: 950px; width: 95%; height: 90vh; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--bg-card); border-bottom: 1px solid var(--border-subtle);">
-            <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-              <span class="material-symbols-outlined text-[20px]" style="color: #3b82f6;">description</span>
-              <h3 id="preview-modal-title" style="font-size: 1rem; margin: 0; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Document Preview</h3>
+        <div class="modal-card w-full max-w-4xl h-[85vh] p-4 flex flex-col justify-between" style="box-shadow: 0 24px 60px rgba(0,0,0,0.7);">
+          <div class="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <span class="material-symbols-outlined text-primary text-[22px]">description</span>
+              <h3 id="preview-modal-title" class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">Document Preview</h3>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
-              <a id="preview-modal-newtab" href="#" target="_blank" class="btn-secondary" style="padding: 6px 12px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                <span class="material-symbols-outlined" style="font-size: 14px;">open_in_new</span>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <a id="preview-modal-newtab" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary text-xs font-semibold inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-[15px]">open_in_new</span>
                 <span>Open in Tab</span>
               </a>
-              <a id="preview-modal-download" href="#" download class="btn-primary" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                <span class="material-symbols-outlined" style="font-size: 14px;">download</span>
+              <a id="preview-modal-download" href="#" download class="btn-attendance-toggle attended text-xs py-1.5 px-3 inline-flex items-center gap-1">
+                <span class="material-symbols-outlined text-[15px]">download</span>
                 <span>Download</span>
               </a>
-              <button type="button" class="btn-icon-header" id="preview-modal-close" style="font-size: 1.1rem; width: 32px; height: 32px; border-radius: 6px; cursor: pointer;">✕</button>
+              <button type="button" id="preview-modal-close" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" title="Close Preview">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+              </button>
             </div>
           </div>
-          <div style="flex: 1; position: relative; background: #0b0f19;">
-            <iframe id="preview-modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+          <div class="flex-1 w-full mt-3 bg-surface-container-lowest rounded-lg overflow-hidden relative">
+            <iframe id="preview-modal-iframe" src="" class="w-full h-full border-0"></iframe>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
-
-      modal.querySelector('#preview-modal-close').addEventListener('click', () => {
-        modal.classList.remove('active');
-        modal.querySelector('#preview-modal-iframe').src = '';
-      });
-
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-          modal.querySelector('#preview-modal-iframe').src = '';
-        }
-      });
     }
 
     const titleEl = modal.querySelector('#preview-modal-title');
     const dlEl = modal.querySelector('#preview-modal-download');
     const newTabEl = modal.querySelector('#preview-modal-newtab');
     const iframeEl = modal.querySelector('#preview-modal-iframe');
+    const closeBtn = modal.querySelector('#preview-modal-close');
 
     if (titleEl) titleEl.textContent = title || 'Document Preview';
     if (dlEl) {
@@ -414,10 +415,33 @@ const ResourcesController = {
     }
     if (newTabEl) {
       newTabEl.href = link;
+      newTabEl.setAttribute('target', '_blank');
+      newTabEl.setAttribute('rel', 'noopener noreferrer');
     }
-    if (iframeEl) iframeEl.src = link;
+    if (iframeEl) {
+      iframeEl.src = link;
+    }
 
-    modal.classList.add('active');
+    // Attach listeners reliably
+    if (closeBtn && !closeBtn._boundPreviewClose) {
+      closeBtn._boundPreviewClose = true;
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.closePreviewModal();
+      });
+    }
+
+    if (!modal._boundPreviewBackdrop) {
+      modal._boundPreviewBackdrop = true;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.closePreviewModal();
+        }
+      });
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
   },
 
   resetFilters() {

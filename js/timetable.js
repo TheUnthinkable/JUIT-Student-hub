@@ -403,17 +403,17 @@ const TimetableController = {
     if (!container) return;
 
     container.innerHTML = `
-      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'today' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="today">
+      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'today' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="today">
         <span class="material-symbols-outlined text-[16px]">bolt</span>
-        <span>Today View</span>
+        <span>Today</span>
       </button>
-      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'day' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="day">
+      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'day' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="day">
         <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-        <span>Day View</span>
+        <span>Day Flow</span>
       </button>
-      <button type="button" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg ${this.viewMode === 'week' ? 'bg-surface-container-high text-primary font-medium shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="week">
+      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'week' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-body-sm transition-colors cursor-pointer" data-mode="week">
         <span class="material-symbols-outlined text-[16px]">view_column</span>
-        <span>Week Matrix View</span>
+        <span>Week Matrix</span>
       </button>
     `;
 
@@ -444,12 +444,12 @@ const TimetableController = {
       const count = dayClasses.length;
 
       return `
-        <div class="${isActive ? 'bg-surface-container-high ring-1 ring-primary shadow-md' : 'bg-surface-container-low hover:bg-surface-container'} p-space-md rounded-xl text-center cursor-pointer transition-colors border border-outline-variant/15" data-day="${d}">
-          <div class="flex items-center justify-center gap-1.5">
-            <p class="font-headline-sm text-headline-sm font-bold ${isActive ? 'text-primary' : 'text-on-surface'}">${d}</p>
+        <div class="${isActive ? 'bg-surface-container-high ring-1 ring-primary shadow-md' : 'bg-surface-container-low hover:bg-surface-container'} p-2 sm:p-3 rounded-xl text-center cursor-pointer transition-colors border border-outline-variant/15 select-none" data-day="${d}">
+          <div class="flex items-center justify-center gap-1">
+            <p class="font-headline-sm text-body-md sm:text-headline-sm font-bold ${isActive ? 'text-primary' : 'text-on-surface'}">${d}</p>
             ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>' : ''}
           </div>
-          <p class="font-label-sm text-label-sm ${isActive ? 'text-secondary font-medium' : 'text-outline'} mt-0.5">${count} ${count === 1 ? 'class' : 'classes'}</p>
+          <p class="font-label-sm text-[10px] sm:text-label-sm ${isActive ? 'text-secondary font-medium' : 'text-outline'} mt-0.5 truncate">${count} ${count === 1 ? 'class' : 'classes'}</p>
         </div>
       `;
     }).join('');
@@ -563,7 +563,7 @@ const TimetableController = {
       this.renderWeekView(container);
       return;
     } else {
-      if (dayPillsWrap) dayPillsWrap.style.display = 'flex';
+      if (dayPillsWrap) dayPillsWrap.style.display = '';
     }
 
     const dayName = this.dayFullNames[this.activeDay] || this.activeDay;
@@ -730,7 +730,7 @@ const TimetableController = {
       const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
 
       return `
-        <div class="bg-surface-container-low hover:bg-surface-container p-space-md rounded-xl shadow-sm transition-colors flex flex-wrap lg:flex-nowrap items-center justify-between gap-space-md border border-outline-variant/15 group ${c.status === 'LIVE_NOW' ? 'ring-1 ring-primary' : ''}" id="${c.uniqueId}">
+        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-space-md rounded-xl shadow-sm transition-colors flex flex-wrap lg:flex-nowrap items-center justify-between gap-space-md border border-outline-variant/15 group ${c.status === 'LIVE_NOW' ? 'ring-1 ring-primary' : ''} cursor-pointer" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
           <div class="flex items-center gap-space-md min-w-0">
             <div class="w-12 h-12 rounded-xl ${c.type === 'P' ? 'bg-secondary/20 text-secondary' : (c.type === 'T' ? 'bg-secondary-container/20 text-secondary-container' : 'bg-primary-container/20 text-primary')} flex items-center justify-center flex-shrink-0">
               <span class="material-symbols-outlined text-[24px]">${c.type === 'P' ? 'science' : (c.type === 'T' ? 'groups' : 'school')}</span>
@@ -848,11 +848,24 @@ const TimetableController = {
       });
     });
 
-    // Bind Class Inspector Modal listeners
+    // Bind Class Inspector Modal listeners (both inspect button and card body tap)
     container.querySelectorAll('.btn-class-inspect').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const uId = btn.dataset.classId;
+        const found = enrichedClasses.find(c => c.uniqueId === uId);
+        if (found) {
+          this.openClassInspector(found);
+        }
+      });
+    });
+
+    container.querySelectorAll('.class-schedule-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-attendance-toggle') || e.target.closest('a') || e.target.closest('.btn-class-inspect')) {
+          return;
+        }
+        const uId = card.dataset.uniqueId || card.id;
         const found = enrichedClasses.find(c => c.uniqueId === uId);
         if (found) {
           this.openClassInspector(found);
@@ -1099,7 +1112,16 @@ const TimetableController = {
       });
     }
 
-    modal.classList.add('open');
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
+    if (!modal._boundBackdrop) {
+      modal._boundBackdrop = true;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          window.PortalsController?.closeModal();
+        }
+      });
+    }
   },
 
   openTutorialsPickerModal(tutorials, meta = {}) {
@@ -1172,7 +1194,16 @@ const TimetableController = {
       });
     });
 
-    modal.classList.add('open');
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
+    if (!modal._boundBackdrop) {
+      modal._boundBackdrop = true;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          window.PortalsController?.closeModal();
+        }
+      });
+    }
   },
 
   bindEvents() {

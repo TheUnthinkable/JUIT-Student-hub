@@ -1040,7 +1040,7 @@ const CampusMap = {
 
   /* ================= PAN & ZOOM CONTROLS ================= */
   applyTransform(animate = false) {
-    const world = document.getElementById('map-world-layer');
+    const world = document.querySelector('#campus-vector-svg #map-world-layer') || document.getElementById('map-world-layer');
     if (!world) return;
 
     if (animate) {
@@ -1166,12 +1166,14 @@ const CampusMap = {
         );
         initialPinchZoom = this.zoomLevel;
       }
-    }, { passive: true });
+    }, { passive: false });
 
     viewport.addEventListener('touchmove', (e) => {
       if (e.touches.length === 1 && isPointerDown) {
+        if (e.cancelable) e.preventDefault();
         onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
       } else if (e.touches.length === 2 && initialPinchDist) {
+        if (e.cancelable) e.preventDefault();
         const currentDist = Math.hypot(
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
@@ -1180,14 +1182,14 @@ const CampusMap = {
         this.zoomLevel = Math.max(0.75, Math.min(2.5, initialPinchZoom * factor));
         this.applyTransform(false);
       }
-    }, { passive: true });
+    }, { passive: false });
 
     viewport.addEventListener('touchend', (e) => {
       if (e.touches.length === 0) {
         onPointerUp();
         initialPinchDist = null;
       }
-    });
+    }, { passive: false });
 
     // Mouse Wheel Zoom
     viewport.addEventListener('wheel', (e) => {
@@ -1282,7 +1284,8 @@ const CampusMap = {
       <div id="route-steps-container"></div>
     `;
 
-    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
 
     const renderSteps = (isAccessible) => {
       const destId = document.getElementById('route-dest-point')?.value || defaultDest;
@@ -1335,7 +1338,7 @@ const CampusMap = {
         `;
 
         document.getElementById('btn-show-pin-on-map')?.addEventListener('click', () => {
-          modal.style.display = 'none';
+          modal.classList.remove('open', 'active');
           this.focusBuilding(targetB, destRoom, false);
           document.getElementById('map-viewport-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
@@ -1346,7 +1349,7 @@ const CampusMap = {
 
     // Modal Events
     document.getElementById('btn-close-route-modal')?.addEventListener('click', () => {
-      modal.style.display = 'none';
+      modal.classList.remove('open', 'active');
     });
 
     document.getElementById('route-dest-point')?.addEventListener('change', () => {
@@ -1372,7 +1375,7 @@ const CampusMap = {
     });
 
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.style.display = 'none';
+      if (e.target === modal) modal.classList.remove('open', 'active');
     });
   },
 

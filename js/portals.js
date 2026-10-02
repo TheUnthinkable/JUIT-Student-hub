@@ -117,7 +117,10 @@ const PortalsController = {
 
   closeModal() {
     const modal = document.getElementById('universal-modal');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+      modal.classList.remove('open', 'active');
+      modal.classList.add('hidden');
+    }
   }
 };
 

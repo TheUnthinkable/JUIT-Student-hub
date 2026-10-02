@@ -46,14 +46,15 @@ const MessController = {
       const isActive = (d === this.activeDay);
       return `
         <button type="button" class="mess-day-btn ${isActive ? 'active' : ''}" data-day="${d}">
-          <div>${d}</div>
-          ${isToday ? '<span style="font-size: 0.7rem; color: #10b981; font-weight: 700;">● Today</span>' : ''}
+          <span>${d}</span>
+          ${isToday ? '<span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10b981; margin-left: 2px;"></span>' : ''}
         </button>
       `;
     }).join('');
 
     container.querySelectorAll('.mess-day-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
         this.activeDay = btn.dataset.day;
         this.renderDayTabs();
         this.renderMeals();
@@ -72,8 +73,38 @@ const MessController = {
 
     const dayData = this.data.weeklyMenu && this.data.weeklyMenu[this.activeDay];
     if (!dayData) {
-      container.innerHTML = '<p style="color: var(--text-muted);">No meal data found for this day.</p>';
+      container.innerHTML = '<p style="color: var(--color-on-surface-variant); padding: 1.5rem; text-align: center;">No meal data found for this day.</p>';
       return;
+    }
+
+    // Dynamically update featured top feast card
+    const featTitle = document.getElementById('mess-featured-title');
+    const featTag = document.getElementById('mess-featured-tag');
+    const d1Name = document.getElementById('mess-dish-1-name');
+    const d1Badge = document.getElementById('mess-dish-1-badge');
+    const d1Desc = document.getElementById('mess-dish-1-desc');
+    const d2Name = document.getElementById('mess-dish-2-name');
+    const d2Badge = document.getElementById('mess-dish-2-badge');
+    const d2Desc = document.getElementById('mess-dish-2-desc');
+
+    if (featTitle) featTitle.textContent = `${this.activeDay}'s Annapurna Feast`;
+    if (featTag) featTag.textContent = `${this.activeDay} Hall Special`;
+
+    if (dayData.dinner) {
+      const dinner = dayData.dinner;
+      const lunch = dayData.lunch || {};
+      const mainDish = dinner.highlights?.[0] || dinner.items?.[1] || dinner.items?.[0] || 'Mountain Special Curry';
+      const secDish = dinner.sweet || dinner.highlights?.[1] || lunch.highlights?.[0] || 'Dal Makhani & Basmati';
+
+      if (d1Name) d1Name.textContent = mainDish;
+      if (d1Badge) d1Badge.textContent = 'Dinner Highlight';
+      if (d1Desc) d1Desc.textContent = `Prepared fresh for ${this.activeDay} evening with authentic mountain seasoning in Annapurna dining halls.`;
+
+      if (d2Name) d2Name.textContent = secDish;
+      if (d2Badge) d2Badge.textContent = dinner.sweet ? 'Sweet Dish' : 'Chef Special';
+      if (d2Desc) d2Desc.textContent = dinner.sweetDish
+        ? `Dessert: ${dinner.sweetDish}, served alongside fragrant steamed rice & hot phulkas.`
+        : `Served hot with tandoori roti, dal, and aromatic steamed rice.`;
     }
 
     const timings = this.data.mealTimings || {};
@@ -89,20 +120,20 @@ const MessController = {
               <div class="meal-time-pill">${timings.breakfast?.display || '07:30 AM – 09:30 AM'}</div>
             </div>
           </div>
-          ${dayData.breakfast.category ? `<span class="kbd-shortcut" style="color: var(--color-breakfast);">${dayData.breakfast.category}</span>` : ''}
+          ${dayData.breakfast?.category ? `<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">${dayData.breakfast.category}</span>` : ''}
         </div>
         <div class="meal-items-list">
-          ${dayData.breakfast.items.map(item => `
+          ${(dayData.breakfast?.items || []).map(item => `
             <div class="food-item-row">
               <span class="food-bullet">✦</span>
               <span>${item}</span>
             </div>
           `).join('')}
         </div>
-        ${dayData.breakfast.highlights ? `
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+        ${dayData.breakfast?.highlights ? `
+          <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
             ${dayData.breakfast.highlights.map(h => `
-              <span class="facility-pill" style="color: var(--color-breakfast); border-color: rgba(249, 115, 22, 0.3);">
+              <span class="px-2 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">
                 ✨ ${h}
               </span>
             `).join('')}
@@ -120,20 +151,23 @@ const MessController = {
               <div class="meal-time-pill">${timings.lunch?.display || '12:00 PM – 02:00 PM'}</div>
             </div>
           </div>
-          ${dayData.lunch.fruit ? `<span class="kbd-shortcut" style="color: #10b981;">🍎 ${dayData.lunch.fruit}</span>` : ''}
+          ${dayData.lunch?.fruit ? `<span class="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">🍎 ${dayData.lunch.fruit}</span>` : ''}
         </div>
         <div class="meal-items-list">
-          ${dayData.lunch.items.map(item => `
+          ${(dayData.lunch?.items || []).map(item => `
             <div class="food-item-row">
               <span class="food-bullet">✦</span>
               <span>${item}</span>
             </div>
           `).join('')}
         </div>
-        ${dayData.lunch.fruit ? `
-          <div class="meal-special-callout fruit-callout">
-            <span>🍏</span>
-            <span><strong>Seasonal Fruit:</strong> ${dayData.lunch.fruit}</span>
+        ${dayData.lunch?.highlights ? `
+          <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
+            ${dayData.lunch.highlights.map(h => `
+              <span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">
+                🍲 ${h}
+              </span>
+            `).join('')}
           </div>
         ` : ''}
       </div>
@@ -148,18 +182,18 @@ const MessController = {
               <div class="meal-time-pill">${timings.dinner?.display || '07:30 PM – 09:00 PM'}</div>
             </div>
           </div>
-          ${dayData.dinner.sweet ? `<span class="kbd-shortcut" style="color: #ec4899;">🍨 ${dayData.dinner.sweet}</span>` : ''}
+          ${dayData.dinner?.sweet ? `<span class="px-2.5 py-1 rounded-full bg-pink-500/15 text-pink-400 font-label-sm text-label-sm font-semibold">🍨 ${dayData.dinner.sweet}</span>` : ''}
         </div>
         <div class="meal-items-list">
-          ${dayData.dinner.items.map(item => `
+          ${(dayData.dinner?.items || []).map(item => `
             <div class="food-item-row">
               <span class="food-bullet">✦</span>
               <span>${item}</span>
             </div>
           `).join('')}
         </div>
-        ${dayData.dinner.sweetDish ? `
-          <div class="meal-special-callout sweet-dish-callout">
+        ${dayData.dinner?.sweetDish ? `
+          <div class="flex items-center gap-2 p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-300 font-body-sm text-body-sm mt-1">
             <span>🍨</span>
             <span><strong>Sweet Dish:</strong> ${dayData.dinner.sweetDish}</span>
           </div>

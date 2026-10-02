@@ -1165,7 +1165,12 @@ const App = {
       } else if (e.key === 'Escape') {
         if (modal && modal.classList.contains('open')) closeSearch();
         const obModal = document.getElementById('onboarding-modal-backdrop');
-        if (obModal && obModal.classList.contains('open')) obModal.classList.remove('open');
+        if (obModal && obModal.classList.contains('open')) obModal.classList.remove('open', 'active');
+        window.ResourcesController?.closePreviewModal();
+        window.PortalsController?.closeModal();
+        const routeModal = document.getElementById('map-route-modal');
+        if (routeModal) routeModal.classList.remove('open', 'active');
+        window.CampusMap?.closeBuildingDrawer();
       }
     });
 
