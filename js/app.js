@@ -87,17 +87,18 @@ const App = {
   },
 
   switchView(viewId) {
+    if (viewId === 'events') viewId = 'events-clubs';
     this.activeView = viewId;
     window.location.hash = viewId;
 
     // Update active state in desktop sidebar, top tabs, and mobile bottom HUD dock
     document.querySelectorAll('.nav-link, .nav-tab-item, .mobile-nav-item, .mobile-hud-item').forEach(btn => {
-      const match = (btn.dataset.view === viewId);
+      const match = (btn.dataset.view === viewId || (btn.dataset.view === 'events' && viewId === 'events-clubs') || (btn.dataset.view === 'events-clubs' && viewId === 'events'));
       btn.classList.toggle('active', match);
     });
 
     // Synchronize bottom HUD dock: if active view is a secondary module, illuminate 'More'
-    const directDockViews = ['dash', 'timetable', 'academics', 'mess', 'resources'];
+    const directDockViews = ['dash', 'timetable', 'campus', 'mess', 'resources'];
     const hudMoreBtn = document.getElementById('btn-mobile-hud-more');
     if (hudMoreBtn) {
       const isSecondary = !directDockViews.includes(viewId);
@@ -133,6 +134,16 @@ const App = {
       window.TimetableController.renderSchedule();
     } else if (viewId === 'mess' && window.MessController) {
       window.MessController.renderMeals();
+    } else if (viewId === 'resources' && window.ResourcesController) {
+      window.ResourcesController.renderResources();
+    } else if (viewId === 'utilities' && window.UtilitiesController) {
+      if (typeof window.UtilitiesController.renderActiveTab === 'function') {
+        window.UtilitiesController.renderActiveTab();
+      }
+    } else if (viewId === 'announcements' && window.AnnouncementsController) {
+      window.AnnouncementsController.renderAnnouncements();
+    } else if (viewId === 'events-clubs' && window.EventsClubsController) {
+      window.EventsClubsController.renderContent();
     } else if (viewId === 'calendar' && window.CalendarController) {
       if (typeof window.CalendarController.renderCalendarContent === 'function') {
         window.CalendarController.renderCalendarContent();

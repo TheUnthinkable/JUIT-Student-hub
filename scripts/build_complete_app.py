@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+import os
+
+def build_complete():
+    # Read the active Stitch screens HTML to extract the exact components
+    def load_stitch_screen(fname):
+        p = os.path.join('scripts/stitch_active', fname)
+        if os.path.exists(p):
+            with open(p, 'r', encoding='utf-8') as f:
+                return f.read()
+        return ''
+
+    html = '''<!DOCTYPE html>
 <html class="dark" lang="en" data-theme="dark" data-theme-mode="dark" data-accent="amber">
 
 <head>
@@ -1900,3 +1911,11 @@
 </body>
 
 </html>
+'''
+
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(html)
+    print("index.html successfully updated! Size:", len(html))
+
+if __name__ == '__main__':
+    build_complete()

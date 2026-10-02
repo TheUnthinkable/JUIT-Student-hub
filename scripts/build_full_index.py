@@ -1,4 +1,16 @@
-<!DOCTYPE html>
+import os
+
+def build_index():
+    # Read active stitch screen components
+    def read_screen(fname):
+        path = os.path.join('scripts/stitch_active', fname)
+        if os.path.exists(path):
+            with open(path, 'r', encoding='utf-8') as f:
+                return f.read()
+        return ''
+
+    # We will assemble index.html
+    html = '''<!DOCTYPE html>
 <html class="dark" lang="en" data-theme="dark" data-theme-mode="dark" data-accent="amber">
 
 <head>
@@ -148,15 +160,10 @@
 
 <body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 
-  <!-- Offline status alert banner -->
-  <div class="hidden bg-error-container text-on-error-container text-center py-1.5 px-4 font-label-sm text-label-sm font-semibold" id="offline-status-banner">
-    ⚠️ Working Offline — Viewing cached campus timetable and notices
-  </div>
-
   <!-- ======================================================================
        DESKTOP SIDEBAR (Visible on lg+ screens)
        ====================================================================== -->
-  <aside class="desktop-sidebar hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-surface-container-lowest z-50 flex-col justify-between overflow-y-auto border-r border-white/[0.06] p-4" id="desktop-sidebar" aria-label="Desktop Navigation">
+  <aside class="desktop-sidebar hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-surface-container-lowest z-50 flex-col justify-between overflow-y-auto border-r border-white/[0.06] p-4" aria-label="Desktop Navigation">
     <div class="space-y-6">
       <!-- Brand & Telemetry Header -->
       <a href="#dash" class="flex items-center gap-3 p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" id="brand-logo-link">
@@ -271,34 +278,30 @@
     <div class="h-16 px-margin-mobile lg:px-8 flex items-center justify-between">
       <!-- Left: Mobile Brand & Altitude Whisper -->
       <div class="flex items-center gap-3">
-        <button type="button" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
+        <button type="button" class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
           <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <a href="#dash" class="flex flex-col" id="mobile-brand-link">
+        <div class="flex flex-col">
           <div class="flex items-center gap-2">
             <span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">JUIT Hub</span>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm border border-white/[0.06]">Solan Hills · 1,550m</span>
           </div>
           <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic leading-none mt-0.5">Waknaghat Ridge</span>
-        </a>
+        </div>
       </div>
 
-      <!-- Right: Action Controls & Live Clock -->
+      <!-- Right: Action Controls -->
       <div class="flex items-center gap-2">
-        <div class="hidden md:flex flex-col text-right mr-2">
-          <span class="font-mono text-xs text-primary font-semibold" id="live-clock-time">09:47 AM</span>
-          <span class="font-label-sm text-[10px] text-on-surface-variant" id="live-clock-date">Tuesday, 22 Sep</span>
-        </div>
-        <button type="button" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-primary font-label-sm text-label-sm border border-white/[0.06] transition-colors cursor-pointer" id="btn-open-search" title="Search Campus Resources (Ctrl+K)">
+        <button type="button" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-high text-on-surface-variant hover:text-primary font-label-sm text-label-sm border border-white/[0.06] transition-colors" id="btn-open-search" title="Search Campus Resources (Ctrl+K)">
           <span class="material-symbols-outlined text-[16px]">search</span>
           <span>Search</span>
           <kbd class="px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono text-[10px]">⌘K</kbd>
         </button>
-        <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors relative cursor-pointer" id="btn-open-notifications" aria-label="View notifications">
+        <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors relative" id="btn-open-notifications" aria-label="View notifications">
           <span class="material-symbols-outlined text-[22px]">notifications</span>
           <span class="hidden absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" id="notif-badge-counter"></span>
         </button>
-        <button type="button" class="w-9 h-9 rounded-full bg-surface-container-high border border-white/[0.08] flex items-center justify-center text-primary overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" id="btn-open-profile-settings" aria-label="User Profile & Settings">
+        <button type="button" class="w-9 h-9 rounded-full bg-surface-container-high border border-white/[0.08] flex items-center justify-center text-primary overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all" id="btn-open-profile-settings" aria-label="User Profile & Settings">
           <span class="material-symbols-outlined text-[20px]">person</span>
         </button>
       </div>
@@ -308,7 +311,7 @@
   <!-- ======================================================================
        MAIN CONTENT CONTAINER
        ====================================================================== -->
-  <main class="flex-1 w-full bg-surface pt-16 pb-24 min-h-screen lg:pl-64" id="app-shell-layout">
+  <main class="flex-1 w-full bg-surface pt-16 pb-24 min-h-screen lg:pl-64">
     <div class="w-full max-w-5xl mx-auto px-margin-mobile lg:px-8 py-4">
 
       <!-- ==================================================================
@@ -326,27 +329,12 @@
 
         <!-- Warm Student Greeting -->
         <div class="py-space-md">
-          <div class="flex items-center justify-between">
-            <div>
-              <h1 class="font-headline-xl-mobile lg:font-headline-xl text-headline-xl-mobile lg:text-headline-xl text-primary tracking-tight font-bold" id="dash-live-greeting">
-                Evening, Scholar.
-              </h1>
-              <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed" id="dash-greeting-sub">
-                Wrapped up classes today. Grab a hot chai from Peach Tree or relax before night mess.
-              </p>
-            </div>
-            <div class="hidden sm:flex flex-col items-center justify-center px-4 py-2 rounded-xl bg-surface-container-low border border-white/[0.06] text-center">
-              <span class="font-headline-lg text-headline-lg font-bold text-primary leading-tight" id="dash-today-classes-count">5</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Classes</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Academic Milestone Advisory Banner -->
-        <div class="w-full rounded-xl bg-surface-container-low p-space-md px-space-lg shadow-sm border border-white/[0.06] mb-space-md" id="dash-milestone-banner-container">
-          <div id="dash-milestone-countdown">
-            <!-- Dynamically populated by App.updateDashboardMilestone() -->
-          </div>
+          <h1 class="font-headline-xl-mobile lg:font-headline-xl text-headline-xl-mobile lg:text-headline-xl text-primary tracking-tight font-bold" id="dash-live-greeting">
+            Evening, Scholar.
+          </h1>
+          <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs leading-relaxed" id="dash-greeting-sub">
+            Wrapped up classes today. Grab a hot chai from Peach Tree or relax before night mess.
+          </p>
         </div>
 
         <!-- Gentle Tomorrow / Next Class Reminder Card -->
@@ -444,7 +432,7 @@
                     <span class="font-headline-sm text-body-lg text-on-surface font-semibold truncate">Annapurna Dinner</span>
                     <span class="w-2 h-2 rounded-full bg-secondary"></span>
                   </div>
-                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-1" id="dash-fast-mess-hint">
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-1">
                     Shahi paneer, yellow dal, kheer & phulka
                   </p>
                   <p class="font-caption-editorial text-caption-editorial text-secondary mt-1">
@@ -514,11 +502,8 @@
 
         <!-- Today's Schedule Live Preview Stack -->
         <div class="mt-space-lg space-y-space-sm">
-          <div class="flex items-center justify-between px-1" id="dash-schedule-status-header-wrap">
-            <div>
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Today's Timeline</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant block" id="dash-today-schedule-sub">Timeline: Active</span>
-            </div>
+          <div class="flex items-center justify-between px-1">
+            <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Today's Timeline</span>
             <a href="#timetable" data-action-view="timetable" class="font-label-sm text-label-sm text-primary hover:underline">Full Timetable →</a>
           </div>
           <div class="space-y-space-xs" id="dash-upcoming-classes-preview">
@@ -536,18 +521,6 @@
             <!-- Dynamically populated -->
           </div>
         </div>
-
-        <!-- Announcements / Circulars Preview Container -->
-        <div class="mt-space-xl space-y-space-sm">
-          <div class="flex items-center justify-between px-1">
-            <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Latest Campus Dispatches</span>
-            <a href="#announcements" data-action-view="announcements" class="font-label-sm text-label-sm text-primary hover:underline">All Circulars →</a>
-          </div>
-          <div class="space-y-2" id="dash-announcements-preview"></div>
-        </div>
-
-        <!-- Meal Preview Container -->
-        <div id="dash-next-meal-preview" class="hidden"></div>
       </section>
 
       <!-- ==================================================================
@@ -560,10 +533,7 @@
             <span class="material-symbols-outlined text-[17px] text-secondary">cloud</span>
             <span class="font-caption-editorial text-caption-editorial italic">18°C Misty afternoon · Ridge breeze</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-secondary" id="timetable-live-clock-badge">LIVE TRACKER</span>
-            <span class="font-label-sm text-label-sm tracking-wide text-primary font-bold">WEEK 6</span>
-          </div>
+          <span class="font-label-sm text-label-sm tracking-wide text-primary font-bold">WEEK 6</span>
         </div>
 
         <!-- Batch & Attendance Reassurance Card -->
@@ -603,8 +573,7 @@
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div class="relative w-full sm:w-80">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-            <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-9 pr-9 py-2 rounded-xl text-on-surface placeholder:text-outline font-body-sm text-body-sm border border-white/[0.06] focus:outline-none focus:border-primary" />
-            <button type="button" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[16px]">close</span></button>
+            <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-9 pr-4 py-2 rounded-xl text-on-surface placeholder:text-outline font-body-sm text-body-sm border border-white/[0.06] focus:outline-none focus:border-primary" />
           </div>
           <div class="inline-flex rounded-xl bg-surface-container-low p-1 border border-white/[0.06]" id="timetable-view-mode-tabs">
             <button type="button" class="term-btn active" data-mode="today">Today</button>
@@ -619,15 +588,12 @@
         </div>
 
         <!-- Timeline Section Heading -->
-        <div class="flex items-center justify-between pt-2" id="timetable-timeline-wrapper">
+        <div class="flex items-center justify-between pt-2">
           <div>
             <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="schedule-day-title">Tuesday Timeline</h2>
-            <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic" id="timetable-timeline-heading">Waknaghat Academic Blocks</span>
+            <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic">Waknaghat Academic Blocks</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button type="button" id="btn-jump-period" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm">Now</button>
-            <span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-bold" id="schedule-classes-count">5 Classes</span>
-          </div>
+          <span class="font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-bold" id="schedule-classes-count">5 Classes</span>
         </div>
 
         <!-- Period Scrubber Tracker -->
@@ -656,7 +622,6 @@
             <div class="flex items-center gap-space-xs text-on-surface">
               <span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">schedule</span>
               <p class="font-body-md text-body-md font-medium" id="mess-current-day-label">Dinner starts at 7:30 PM <span class="text-on-surface-variant font-normal">(in 40 mins)</span></p>
-              <span class="font-label-sm text-label-sm text-on-surface-variant ml-2" id="mess-month-cycle-label">October 2026 Cycle</span>
             </div>
             <p class="font-caption-editorial text-caption-editorial text-primary-fixed-dim italic">
               Tonight is North Indian special · Warm aromas drifting across the pine court
@@ -782,10 +747,8 @@
         <div class="bg-surface-container rounded-xl p-space-md shadow-md border border-white/[0.06]">
           <div class="relative flex items-center mb-space-sm">
             <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">search</span>
-            <input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm pl-10 pr-9 py-2.5 rounded-lg outline-none border border-white/[0.06] focus:border-primary transition-all" id="map-search-input" placeholder="Find a room, lab, or faculty office (e.g. CR01, CL-3)..." type="text" />
-            <button type="button" class="hidden absolute right-3 text-on-surface-variant hover:text-primary" id="map-search-clear"><span class="material-symbols-outlined text-[16px]">close</span></button>
+            <input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm pl-10 pr-4 py-2.5 rounded-lg outline-none border border-white/[0.06] focus:border-primary transition-all" id="map-search-input" placeholder="Find a room, lab, or faculty office (e.g. CR01, CL-3)..." type="text" />
           </div>
-          <div id="map-search-dropdown" class="hidden space-y-1 py-1"></div>
           <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="map-category-filters">
             <button class="filter-chip active flex items-center gap-1" data-block="all">
               <span>All Blocks</span>
@@ -806,16 +769,6 @@
               <span class="material-symbols-outlined text-[15px]">local_library</span>
               <span>LRC</span>
             </button>
-          </div>
-        </div>
-
-        <!-- Route Mode Header Bar & Quick Buildings -->
-        <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar" id="map-header-mode-bar">
-          <div class="flex items-center gap-1" id="map-quick-buildings"></div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button type="button" id="btn-shortest-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Shortest</button>
-            <button type="button" id="btn-accessible-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Accessible</button>
-            <button type="button" id="btn-clear-active-route" class="hidden px-2.5 py-1 rounded-lg bg-error-container text-on-error-container text-xs">Clear</button>
           </div>
         </div>
 
@@ -846,14 +799,13 @@
               <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Interactive Campus Map</h3>
             </div>
             <div class="flex items-center gap-1.5">
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-zoom-in" title="Zoom In">+</button>
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-zoom-out" title="Zoom Out">−</button>
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-reset" title="Reset View">↺</button>
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="btn-map-zoom-in" title="Zoom In">+</button>
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="btn-map-zoom-out" title="Zoom Out">−</button>
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="btn-map-reset" title="Reset View">↺</button>
             </div>
           </div>
           <div class="w-full h-80 rounded-lg overflow-hidden bg-surface-container-lowest relative flex items-center justify-center" id="map-world-layer">
             <svg class="w-full h-full" id="campus-vector-svg" viewBox="0 0 1000 700"></svg>
-            <div id="map-hud-overlay-layer"></div>
           </div>
         </div>
 
@@ -926,16 +878,7 @@
         </div>
 
         <!-- Venue / Building Info Drawer Element -->
-        <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer">
-          <div class="flex items-center justify-between p-4 border-b border-white/[0.06]">
-            <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Building Details</span>
-            <button type="button" class="text-on-surface-variant hover:text-primary" id="btn-close-map-drawer"><span class="material-symbols-outlined">close</span></button>
-          </div>
-          <div class="p-4 space-y-3">
-            <button type="button" id="btn-drawer-directions" class="btn-attendance-toggle attended w-full justify-center">Get Directions</button>
-            <button type="button" id="btn-show-pin-on-map" class="btn-attendance-toggle w-full justify-center">Highlight on Map</button>
-          </div>
-        </aside>
+        <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer"></aside>
       </section>
 
       <!-- ==================================================================
@@ -1042,10 +985,7 @@
         <div class="space-y-3 pt-2">
           <div class="flex items-center justify-between">
             <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Scheduled Departures</h3>
-            <div class="flex items-center gap-2">
-              <div id="bus-filter-pills" class="flex gap-1"></div>
-              <input type="text" id="bus-search-input" placeholder="Filter destination..." class="select-styled py-1 text-xs" />
-            </div>
+            <input type="text" id="bus-search-input" placeholder="Filter destination..." class="select-styled py-1 text-xs" />
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="bus-destinations-grid">
             <!-- Dynamically populated by BusGuideController -->
@@ -1093,21 +1033,13 @@
             <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
             <input class="w-full h-12 pl-11 pr-4 bg-surface-container rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-high border border-white/[0.06] shadow-sm transition-all" id="resource-search-input" placeholder="Search subject, course code (e.g. 18B11CI111), or topic..." type="search" />
           </div>
-          <!-- Category & Subject Pills -->
+          <!-- Category Pills -->
           <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="resource-type-filters">
             <button class="filter-chip active" data-filter="all">All (42)</button>
             <button class="filter-chip" data-filter="pyq">PYQ Solved Banks (18)</button>
             <button class="filter-chip" data-filter="tutorials">Tutorial Sheets (12)</button>
             <button class="filter-chip" data-filter="lab">Lab Manuals (8)</button>
             <button class="filter-chip" data-filter="cheatsheet">Formula Cheat-sheets (4)</button>
-          </div>
-          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="resource-subject-filters"></div>
-          <div class="hidden" id="resource-sem-filter"></div>
-          <div class="flex justify-end">
-            <button type="button" id="btn-add-resource" class="text-xs text-primary hover:underline flex items-center gap-1">
-              <span class="material-symbols-outlined text-[14px]">add</span>
-              <span>Submit Resource Note</span>
-            </button>
           </div>
         </div>
 
@@ -1282,11 +1214,6 @@
           <div class="flex flex-col items-center justify-center py-6 bg-surface-container-low rounded-xl relative overflow-hidden border border-white/[0.04]">
             <span class="font-headline-lg lg:font-headline-xl text-headline-lg lg:text-headline-xl text-on-surface font-bold tracking-tight" id="pomo-time-display">25:00</span>
             <span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase mt-1">Single Sprint Cycle</span>
-            <div class="flex items-center gap-2 mt-2">
-              <button type="button" id="btn-pomo-focus" class="px-2 py-0.5 rounded bg-surface-container text-xs">Focus (25m)</button>
-              <button type="button" id="btn-pomo-short" class="px-2 py-0.5 rounded bg-surface-container text-xs">Short (5m)</button>
-              <button type="button" id="btn-pomo-long" class="px-2 py-0.5 rounded bg-surface-container text-xs">Long (15m)</button>
-            </div>
             <div class="flex items-center gap-space-md mt-space-md">
               <button type="button" aria-label="Reset timer" class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition-transform" id="btn-pomo-reset">
                 <span class="material-symbols-outlined text-[20px]">restart_alt</span>
@@ -1362,15 +1289,9 @@
           </div>
         </div>
 
-        <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Campus Noticeboard</h2>
-            <p class="font-body-md text-body-md text-on-surface-variant">Official circulars, mess updates, and ridge dispatches.</p>
-          </div>
-          <div class="relative w-full sm:w-64">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-            <input type="text" id="announcements-search-input" placeholder="Search notices..." class="select-styled w-full pl-9 py-1.5 text-xs" />
-          </div>
+        <div class="pt-2">
+          <h2 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Campus Noticeboard</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Official circulars, mess updates, and ridge dispatches.</p>
         </div>
 
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="announcements-category-filters">
@@ -1412,12 +1333,9 @@
            VIEW 9: CAMPUS LIFE & EVENTS (EVENTS-CLUBS)
            ================================================================== -->
       <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-events-clubs">
-        <div class="pt-space-sm pb-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Campus Life & Events</h2>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-0.5">What's happening around Waknaghat ridge and Open Air Theatre.</p>
-          </div>
-          <input type="text" id="events-clubs-search" placeholder="Search events & clubs..." class="select-styled py-1.5 text-xs w-full sm:w-64" />
+        <div class="pt-space-sm pb-space-xs flex flex-col">
+          <h2 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Campus Life & Events</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant mt-0.5">What's happening around Waknaghat ridge and Open Air Theatre.</p>
         </div>
 
         <!-- Category Pills -->
@@ -1474,24 +1392,9 @@
           <span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Official University Schedule</span>
           <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Academic Calendar</h1>
         </div>
-        <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar py-1">
-          <div class="flex items-center gap-2">
-            <button class="term-btn active" id="btn-cal-odd">Odd Sem (July – Dec 2026)</button>
-            <button class="term-btn" id="btn-cal-even">Even Sem (Jan – May 2027)</button>
-            <span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-secondary" id="calendar-active-term-pill">Odd Sem 2026</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="relative">
-              <input type="text" id="calendar-search-input" placeholder="Search calendar..." class="select-styled py-1 text-xs" />
-              <button type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2" id="calendar-search-clear">✕</button>
-            </div>
-            <button type="button" id="btn-export-ics-main" class="px-2.5 py-1 rounded bg-surface-container text-xs text-primary hover:bg-surface-container-high">Export .ics</button>
-            <div id="calendar-view-switcher" class="hidden"></div>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" id="btn-month-prev" class="px-2 py-1 rounded bg-surface-container text-xs">◀ Prev</button>
-          <button type="button" id="btn-month-next" class="px-2 py-1 rounded bg-surface-container text-xs">Next ▶</button>
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <button class="term-btn active" id="btn-cal-odd">Odd Sem (July – Dec 2026)</button>
+          <button class="term-btn" id="btn-cal-even">Even Sem (Jan – May 2027)</button>
         </div>
         <div class="rounded-xl bg-surface-container-low p-space-md border border-white/[0.06] shadow-sm" id="calendar-timeline-container">
           <!-- Dynamically populated by CalendarController -->
@@ -1506,67 +1409,8 @@
           <span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Target 80% Rule</span>
           <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Attendance Studio</h1>
         </div>
-        <div class="flex gap-2 border-b border-white/[0.06] pb-2" id="academics-subnav-tabs">
-          <button type="button" class="term-btn active" id="tab-btn-personal-attendance">My Attendance</button>
-          <button type="button" class="term-btn" id="tab-btn-batch-attendance">Batch Matrix</button>
-          <button type="button" class="term-btn" id="tab-btn-cgpa-checker">CGPA Predictor</button>
-        </div>
-
-        <div id="subpanel-personal-attendance" class="space-y-4">
-          <div class="flex justify-between items-center">
-            <span class="font-headline-sm text-headline-sm font-semibold">Registered Courses</span>
-            <div class="flex gap-2">
-              <button type="button" id="btn-add-personal-main" class="px-2.5 py-1 rounded bg-surface-container text-xs text-primary">+ Add Course</button>
-              <button type="button" id="btn-reset-attendance" class="px-2.5 py-1 rounded bg-surface-container text-xs text-error">Reset</button>
-            </div>
-          </div>
-          <div class="space-y-3" id="academics-attendance-container"></div>
-          <div id="academics-courses-list" class="space-y-2"></div>
-        </div>
-
-        <div id="subpanel-batch-attendance" class="hidden space-y-4">
-          <input type="text" id="batch-matrix-search" placeholder="Search batch matrix..." class="select-styled w-full" />
-          <div id="batch-attendance-container" class="space-y-2"></div>
-        </div>
-
-        <div id="subpanel-cgpa-checker" class="hidden space-y-4">
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs text-on-surface-variant block mb-1">Past Cumulative CGPA</label>
-              <input type="number" step="0.01" id="cgpa-past-cgpa" class="select-styled w-full" placeholder="8.50" />
-            </div>
-            <div>
-              <label class="text-xs text-on-surface-variant block mb-1">Past Completed Credits</label>
-              <input type="number" id="cgpa-past-credits" class="select-styled w-full" placeholder="40" />
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <button type="button" id="btn-add-cgpa-course" class="px-2.5 py-1 rounded bg-surface-container text-xs text-primary">+ Add Course</button>
-            <button type="button" id="btn-reset-cgpa-courses" class="px-2.5 py-1 rounded bg-surface-container text-xs text-error">Reset</button>
-          </div>
-          <div id="academics-cgpa-container" class="space-y-2"></div>
-          <div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between">
-            <span>Projected SGPA: <strong id="calc-sgpa-result" class="text-primary font-bold">--</strong></span>
-            <span>Cumulative CGPA: <strong id="calc-cgpa-result" class="text-secondary font-bold">--</strong></span>
-          </div>
-
-          <!-- Hidden predictor inputs for controller compatibility -->
-          <div class="hidden">
-            <input type="number" id="pred-past-cgpa" />
-            <input type="number" id="pred-past-credits" />
-            <input type="number" id="pred-current-credits" />
-            <input type="number" id="pred-target-cgpa" />
-            <span id="pred-result-sgpa"></span>
-            <div id="pred-diagnosis-banner"><span id="pred-diagnosis-text"></span></div>
-            <button type="button" id="btn-simulate-odd"></button>
-            <button type="button" id="btn-simulate-even"></button>
-            <button type="button" id="btn-simulate-summer"></button>
-            <button type="button" id="btn-sim-attend-plus"></button>
-            <button type="button" id="btn-sim-miss-plus"></button>
-            <button type="button" id="btn-sim-reset"></button>
-            <button type="button" id="btn-add-custom-course"></button>
-            <button type="button" id="btn-add-assignment"></button>
-          </div>
+        <div class="space-y-space-md" id="academics-attendance-container">
+          <!-- Dynamically populated by AcademicsController -->
         </div>
       </section>
 
@@ -1602,22 +1446,8 @@
               <select id="onboard-batch-select" class="select-styled w-full"></select>
             </div>
           </div>
-          <div class="flex items-center justify-between pt-2">
-            <span class="text-xs text-on-surface-variant" id="settings-display-batch"></span>
+          <div class="pt-2">
             <button type="button" class="btn-attendance-toggle attended" id="btn-set-user-batch">Save Profile</button>
-          </div>
-          <div class="pt-4 border-t border-white/[0.06]">
-            <span class="text-xs text-on-surface-variant block mb-2">Theme Mode</span>
-            <span id="current-theme-label" class="font-bold text-primary text-sm">Dark Theme</span>
-          </div>
-          <!-- Scholar Notes Section -->
-          <div class="pt-4 border-t border-white/[0.06] space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Personal Scholar Notes</span>
-              <span id="notes-save-status" class="text-xs text-secondary"></span>
-            </div>
-            <textarea id="scholar-notes-textarea" rows="4" class="w-full bg-surface-container-lowest p-3 rounded-lg text-sm text-on-surface border border-white/[0.06] focus:border-primary" placeholder="Scratchpad notes..."></textarea>
-            <button type="button" id="btn-save-notes" class="btn-attendance-toggle attended text-xs">Save Notes</button>
           </div>
         </div>
       </section>
@@ -1629,7 +1459,7 @@
         <div class="pt-space-sm pb-space-xs flex flex-col">
           <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Admin Control Panel</h1>
         </div>
-        <div class="rounded-xl bg-surface-container-low p-space-lg border border-white/[0.06] shadow-sm">
+        <div class="rounded-xl bg-surface-container-low p-space-lg border border-white/[0.06] shadow-sm" id="admin-content-area">
           <div id="admin-locked-banner" class="space-y-4 text-center py-8">
             <span class="material-symbols-outlined text-[48px] text-primary">lock</span>
             <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Authorized Access Only</h3>
@@ -1638,29 +1468,8 @@
               <input type="password" id="admin-passcode-input" placeholder="Passcode (juit2026)" class="select-styled w-full" />
               <button type="button" id="btn-admin-unlock-submit" class="btn-attendance-toggle attended">Unlock</button>
             </div>
-            <button type="button" id="btn-admin-quick-unlock" class="text-xs text-on-surface-variant hover:text-primary">Quick Demo Unlock</button>
           </div>
-          <div id="admin-content-area" class="hidden space-y-4">
-            <div id="admin-tabs-nav" class="flex gap-2 pb-2 border-b border-white/[0.06]"></div>
-            <div class="flex gap-2">
-              <button type="button" id="btn-admin-add-class" class="px-2.5 py-1 rounded bg-surface-container text-xs">+ Class</button>
-              <button type="button" id="btn-admin-new-notice" class="px-2.5 py-1 rounded bg-surface-container text-xs">+ Notice</button>
-              <button type="button" id="btn-admin-add-room" class="px-2.5 py-1 rounded bg-surface-container text-xs">+ Room</button>
-              <button type="button" id="btn-admin-add-link" class="px-2.5 py-1 rounded bg-surface-container text-xs">+ Link</button>
-              <button type="button" id="btn-save-mess-edits" class="px-2.5 py-1 rounded bg-surface-container text-xs text-secondary">Save Mess</button>
-            </div>
-            <!-- Excel import zone -->
-            <div id="excel-dropzone" class="p-4 border-2 border-dashed border-white/[0.1] rounded-xl text-center">
-              <input type="file" id="excel-file-input" class="hidden" />
-              <span class="text-xs text-on-surface-variant">Drop Excel Timetable (.xls, .xlsx)</span>
-            </div>
-            <div id="excel-preview-results"></div>
-            <div class="flex gap-2">
-              <button type="button" id="btn-commit-import" class="hidden px-2.5 py-1 rounded bg-secondary text-on-secondary text-xs">Commit</button>
-              <button type="button" id="btn-cancel-import" class="hidden px-2.5 py-1 rounded bg-surface-container text-xs">Cancel</button>
-            </div>
-            <div id="admin-panel-dynamic-view"></div>
-          </div>
+          <div id="admin-panel-dynamic-view" class="hidden"></div>
         </div>
       </section>
 
@@ -1693,7 +1502,7 @@
           <span class="material-symbols-outlined text-[20px]">menu_book</span>
           <span class="font-label-sm text-label-sm mt-0.5">Vault</span>
         </a>
-        <button type="button" class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all relative cursor-pointer" id="btn-mobile-hud-more" aria-label="More navigation options">
+        <button type="button" class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all relative" id="btn-mobile-hud-more" aria-label="More navigation options">
           <span class="material-symbols-outlined text-[20px]">more_horiz</span>
           <span class="font-label-sm text-label-sm mt-0.5">More</span>
         </button>
@@ -1712,19 +1521,9 @@
           <span class="material-symbols-outlined text-primary text-[22px]">school</span>
           <span class="font-headline-sm text-headline-sm text-primary font-bold">JUIT Hub</span>
         </div>
-        <button type="button" class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-close-mobile-drawer">
+        <button type="button" class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="btn-close-mobile-drawer">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
-      </div>
-
-      <div class="p-3 rounded-xl bg-surface-container flex items-center gap-3" id="mobile-sidebar-user-card">
-        <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
-          <span class="material-symbols-outlined text-[18px]">account_circle</span>
-        </div>
-        <div class="truncate">
-          <p class="font-label-md text-label-md text-on-surface font-semibold truncate">JUIT Scholar</p>
-          <p class="font-label-sm text-label-sm text-secondary truncate">Batch 26BT12 · Solan Hills</p>
-        </div>
       </div>
 
       <div class="space-y-1">
@@ -1753,14 +1552,14 @@
   </aside>
 
   <!-- ======================================================================
-       MODALS: SEARCH, NOTIFICATIONS, PDF PREVIEW, ROUTE, ONBOARDING
+       MODALS: SEARCH, NOTIFICATIONS, PDF PREVIEW
        ====================================================================== -->
   <!-- Search Modal -->
   <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-start justify-center pt-20 px-4" id="search-modal-backdrop">
     <div class="modal-card w-full max-w-xl p-5 space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Campus Search</h3>
-        <button type="button" class="text-on-surface-variant hover:text-primary cursor-pointer" id="btn-close-search-modal">
+        <button type="button" class="text-on-surface-variant hover:text-primary" id="btn-close-search-modal">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -1774,12 +1573,9 @@
     <div class="space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-white/[0.06]">
         <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Dispatches & Alerts</h3>
-        <div class="flex items-center gap-2">
-          <button type="button" id="btn-mark-all-read" class="text-xs text-primary hover:underline">Mark read</button>
-          <button type="button" class="text-on-surface-variant hover:text-primary cursor-pointer" id="btn-close-notif-drawer">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
+        <button type="button" class="text-on-surface-variant hover:text-primary" id="btn-close-notif-drawer">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
       <div class="space-y-2 overflow-y-auto max-h-[75vh]" id="notification-items-list"></div>
     </div>
@@ -1791,9 +1587,8 @@
       <div class="flex items-center justify-between pb-2 border-b border-white/[0.06]">
         <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate" id="preview-modal-title">Resource Preview</h3>
         <div class="flex items-center gap-2">
-          <a href="#" id="preview-modal-newtab" target="_blank" class="text-xs text-on-surface-variant hover:text-primary">New Tab</a>
           <a href="#" id="preview-modal-download" class="btn-attendance-toggle attended" download>Download</a>
-          <button type="button" id="preview-modal-close" class="text-on-surface-variant hover:text-primary cursor-pointer">
+          <button type="button" id="preview-modal-close" class="text-on-surface-variant hover:text-primary">
             <span class="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -1802,65 +1597,6 @@
         <iframe id="preview-modal-iframe" class="w-full h-full border-0"></iframe>
       </div>
     </div>
-  </div>
-
-  <!-- Route Navigation Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="map-route-modal">
-    <div class="modal-card w-full max-w-md p-5 space-y-4" id="map-route-modal-card">
-      <div class="flex items-center justify-between">
-        <h3 class="font-headline-sm text-headline-sm font-semibold">Campus Route</h3>
-        <button type="button" id="btn-close-route-modal" class="text-on-surface-variant hover:text-primary cursor-pointer"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <div class="space-y-2 text-sm">
-        <div class="flex items-center gap-2"><span>Start:</span><strong id="route-start-point" class="text-primary">AB1</strong></div>
-        <div class="flex items-center gap-2"><span>Dest:</span><strong id="route-dest-point" class="text-secondary">CR-02</strong></div>
-        <div class="flex gap-2 pt-1">
-          <button type="button" id="btn-route-fast" class="px-2 py-1 rounded bg-surface-container text-xs">Fast</button>
-          <button type="button" id="btn-route-accessible" class="px-2 py-1 rounded bg-surface-container text-xs">Accessible</button>
-        </div>
-      </div>
-      <div id="route-steps-container" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-on-surface-variant"></div>
-      <button type="button" id="btn-view-route-details" class="btn-attendance-toggle attended w-full justify-center">Show Full Route Details</button>
-    </div>
-  </div>
-
-  <!-- Onboarding Modal -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="onboarding-modal-backdrop">
-    <div class="modal-card w-full max-w-md p-6 space-y-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary text-[24px]">school</span>
-          <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Welcome to JUIT Hub</h3>
-        </div>
-        <button type="button" id="btn-close-onboarding-modal" class="text-on-surface-variant hover:text-primary cursor-pointer"><span class="material-symbols-outlined">close</span></button>
-      </div>
-      <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-        Personalize your daily timetable, Annapurna dining views, and attendance tracking with your academic details.
-      </p>
-      <form id="onboarding-profile-form" class="space-y-3">
-        <div>
-          <label class="text-xs text-on-surface-variant block mb-1">Programme</label>
-          <select id="onboard-programme-select" class="select-styled w-full"></select>
-        </div>
-        <div>
-          <label class="text-xs text-on-surface-variant block mb-1">Branch</label>
-          <select id="onboard-branch-select" class="select-styled w-full"></select>
-        </div>
-        <div>
-          <label class="text-xs text-on-surface-variant block mb-1">Semester</label>
-          <select id="onboard-sem-select" class="select-styled w-full"></select>
-        </div>
-        <div class="hidden">
-          <select id="onboard-role-select"></select>
-        </div>
-        <button type="submit" class="btn-attendance-toggle attended w-full justify-center py-2.5 font-bold">Enter JUIT Hub</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Universal Modal Container -->
-  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="universal-modal">
-    <div class="modal-card w-full max-w-lg p-5" id="universal-modal-content"></div>
   </div>
 
   <!-- Inline Helper Scripts -->
@@ -1900,3 +1636,11 @@
 </body>
 
 </html>
+'''
+
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(html)
+    print("index.html written successfully! Size:", len(html))
+
+if __name__ == '__main__':
+    build_index()

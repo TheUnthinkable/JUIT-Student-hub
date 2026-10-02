@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0f131c;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed":"#002113","surface-container-lowest":"#0b0e16","surface-container-high":"#272a33","surface-container-highest":"#32353e","secondary-container":"#00a572","inverse-primary":"#855300","on-surface":"#e0e2ee","on-tertiary-fixed-variant":"#2f2ebe","surface":"#0f131c","surface-container":"#1d1f28","on-primary":"#472a00","on-secondary-container":"#00311f","on-tertiary":"#1000a9","on-primary-fixed-variant":"#653e00","background":"#0f131c","on-secondary-fixed-variant":"#005236","on-secondary":"#003824","inverse-surface":"#e0e2ee","primary-container":"#f59e0b","primary":"#ffc174","surface-variant":"#32353e","secondary-fixed":"#6ffbbe","on-primary-container":"#613b00","surface-tint":"#ffb95f","outline-variant":"#534434","on-tertiary-fixed":"#07006c","tertiary-fixed-dim":"#c0c1ff","primary-fixed-dim":"#ffb95f","on-surface-variant":"#d8c3ad","on-error-container":"#ffdad6","secondary-fixed-dim":"#4edea3","on-primary-fixed":"#2a1700","tertiary":"#c7c8ff","surface-dim":"#0f131c","error-container":"#93000a","outline":"#a08e7a","primary-fixed":"#ffddb8","on-tertiary-container":"#2b29bb","secondary":"#4edea3","inverse-on-surface":"#2d3039","tertiary-fixed":"#e1e0ff","on-background":"#e0e2ee","on-error":"#690005","surface-bright":"#363942","surface-container-low":"#181b24","error":"#ffb4ab","tertiary-container":"#a7a9ff"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.25rem","space-lg":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","gutter":"1rem","space-md":"1rem","space-xl":"2.25rem"},fontFamily:{"label-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"]},fontSize:{"label-lg":["13px",{"lineHeight":"18px","letterSpacing":"0.02em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"500"}],"body-sm":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"headline-lg":["30px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}};</script><style>body{min-height:max(884px,100dvh);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.35)] pt-safe"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">JUIT Hub</span><span class="text-on-surface-variant text-[13px] leading-none opacity-40">•</span><span class="inline-flex items-center px-space-xs py-0.5 rounded-full bg-surface-container-high/80 text-on-surface-variant font-label-sm text-label-sm border border-white/[0.06]">Solan Hills · 1,550m</span></div></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-9 h-9 rounded-full bg-surface-container-high border border-white/[0.08] flex items-center justify-center overflow-hidden"><span class="material-symbols-outlined text-primary text-[20px]">account_circle</span></div></div></div></header><main class="flex-1 w-full bg-surface pt-16 pb-24 min-h-screen"><div class="flex flex-col w-full px-margin pb-10">
+<!-- Header Intro Section -->
+<div class="pt-4 pb-3 flex flex-col">
+<div class="flex items-center gap-space-xs text-primary mb-1">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold">Peer Archive &amp; Repository</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Academic Vault</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-snug">
+      Handwritten notes, solved papers &amp; lab roadmaps passed down from JUIT seniors.
+    </p>
+</div>
+<!-- Senior Tip Card (Warm Solan Amber Note) -->
+<div class="mt-2 bg-gradient-to-br from-primary-container/20 via-surface-container to-surface-container-high rounded-xl p-space-md shadow-md">
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container/30 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-1">
+<span class="font-label-md text-label-md text-primary font-semibold">Senior Advice for T-2 Exams</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded-full">Waknaghat Tips</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+          Don’t cram 500-page textbooks. Focus on the 4-year PYQ patterns and tutorial sheets—they cover 80% of test rubrics.
+        </p>
+</div>
+</div>
+</div>
+<!-- Search & Filter Bar -->
+<div class="mt- space-lg flex flex-col gap-space-sm">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full h-12 pl-11 pr-4 bg-surface-container rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-high shadow-sm transition-all" id="vault-search-input" placeholder="Search subject, code (e.g. 18B11CI111), or topic..." type="search"/>
+</div>
+<!-- Category Pills (Horizontal Scroll) -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-primary-container text-on-primary-container shadow-sm transition-transform active:scale-95" data-filter="all">
+        All (42)
+      </button>
+<button class="vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-filter="pyq">
+        PYQ Solved Banks (18)
+      </button>
+<button class="vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-filter="tutorials">
+        Tutorial Sheets (12)
+      </button>
+<button class="vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-filter="lab">
+        Lab Manuals (8)
+      </button>
+<button class="vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-filter="cheatsheet">
+        Formula Cheat-sheets (4)
+      </button>
+</div>
+</div>
+<!-- Curated Subject Packs Section -->
+<div class="mt-space-lg flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">folder_special</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Curated Subject Packs</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">Updated Winter ’24</span>
+</div>
+<!-- Subject Pack 1: SDF -->
+<div class="subject-card bg-surface-container rounded-xl p-space-md shadow-md flex flex-col gap-space-sm" data-category="pyq tutorials">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase font-bold tracking-wide text-secondary bg-secondary-container/20 px-2 py-0.5 rounded-full">
+              Sem 1 CSE • 18B11CI111
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Software Development Fundamentals (SDF)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Verified Faculty &amp; Senior Notes by 4th-Year Toppers</p>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[24px]">terminal</span>
+</div>
+</div>
+<!-- File Resource Rows -->
+<div class="mt-1 flex flex-col gap-2">
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">description</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Complete C Pointers &amp; Dynamic Allocation Guide</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 4.2 MB • Handwritten Diagram Set</span>
+</div>
+</div>
+<button aria-label="View or save resource" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">SDF 2021–2025 Solved T-2 Question Papers</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 8.1 MB • Fully Annoted by TA</span>
+</div>
+</div>
+<button aria-label="View or save resource" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Pack Footer Stats & Primary Download -->
+<div class="mt-2 pt-2 flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">trending_up</span>
+<span>High Demand • 840 downloads</span>
+</div>
+<button class="h-10 px-4 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Pack Offline</span>
+</button>
+</div>
+</div>
+<!-- Subject Pack 2: Engineering Mathematics I -->
+<div class="subject-card bg-surface-container rounded-xl p-space-md shadow-md flex flex-col gap-space-sm" data-category="pyq cheatsheet">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase font-bold tracking-wide text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              Sem 1 Core • 18B11MA111
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Engineering Mathematics I (Calculus &amp; Matrices)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Step-by-step problem templates &amp; standard proofs</p>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[24px]">functions</span>
+</div>
+</div>
+<!-- File Resource Rows -->
+<div class="mt-1 flex flex-col gap-2">
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Taylor Series &amp; Matrix Eigenvalues Step-by-Step Handout</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 3.6 MB • High-res scans</span>
+</div>
+</div>
+<button aria-label="Download handout" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">PYQ 5-Year Solved Bank (T-1, T-2, T-3)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 11.4 MB • With Marking Schemes</span>
+</div>
+</div>
+<button aria-label="Download solved bank" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Pack Footer Stats & Download -->
+<div class="mt-2 pt-2 flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+<span>Exam Essential • Offline ready</span>
+</div>
+<button class="h-10 px-4 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Download</span>
+</button>
+</div>
+</div>
+<!-- Subject Pack 3: Electronics Circuit Workshop -->
+<div class="subject-card bg-surface-container rounded-xl p-space-md shadow-md flex flex-col gap-space-sm" data-category="lab cheatsheet">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase font-bold tracking-wide text-tertiary bg-tertiary/10 px-2 py-0.5 rounded-full">
+              ECE &amp; CSE • 18B17EC171
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Electronics Circuit Workshop</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Practical lab checklists, breadboard wiring &amp; viva cues</p>
+</div>
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[24px]">memory</span>
+</div>
+</div>
+<!-- File Resource Rows -->
+<div class="mt-1 flex flex-col gap-2">
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">schema</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Lab Exp 1–8 GCC Verification &amp; Breadboard Diagrams</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 5.4 MB • Colored Pinouts</span>
+</div>
+</div>
+<button aria-label="Download lab guide" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">quiz</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Viva Cheat-Sheet &amp; Common Lab Pitfalls</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF • 1.8 MB • 60 Rapid Questions</span>
+</div>
+</div>
+<button aria-label="Download viva sheet" class="shrink-0 p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-90">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Pack Footer Stats & Download -->
+<div class="mt-2 pt-2 flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-tertiary">science</span>
+<span>Verified for JUIT ECE Labs</span>
+</div>
+<button class="h-10 px-4 rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Download</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Peer Contribution Box (Warm Human Community Touch) -->
+<div class="mt-space-xl bg-surface-container-high rounded-xl p-space-md shadow-lg flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-snug">Have clear handwritten notes?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Upload and earn senior goodwill across Waknaghat campus.</p>
+</div>
+</div>
+<div class="pt-2 flex flex-col gap-2">
+<button class="w-full h-12 rounded-xl bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-transform" id="share-notes-btn">
+<span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+<span>Share Your Notes</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span>Reviewed &amp; digitized by Student Council within 24 hrs</span>
+</div>
+</div>
+</div>
+<!-- Simple Feedback Toast (Hidden by default) -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 bg-surface-bright text-on-surface px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-300" id="vault-toast">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md" id="vault-toast-msg">Document saved to offline storage!</span>
+</div>
+</div>
+<script>
+  (function() {
+    // Quick Category Pill Filtering
+    const filterPills = document.querySelectorAll('.vault-pill-filter');
+    const subjectCards = document.querySelectorAll('.subject-card');
+    const toast = document.getElementById('vault-toast');
+    const toastMsg = document.getElementById('vault-toast-msg');
+
+    function showToast(message) {
+      if (!toast) return;
+      toastMsg.textContent = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        // Reset all pills
+        filterPills.forEach(p => {
+          p.className = 'vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-surface-container text-on-surface-variant hover:text-on-surface transition-all active:scale-95';
+        });
+        // Set active pill style
+        pill.className = 'vault-pill-filter px-3.5 py-1.5 rounded-full font-label-md text-label-md whitespace-nowrap bg-primary-container text-on-primary-container shadow-sm transition-transform active:scale-95';
+
+        const filterType = pill.getAttribute('data-filter');
+        subjectCards.forEach(card => {
+          const cardCats = card.getAttribute('data-category') || '';
+          if (filterType === 'all' || cardCats.includes(filterType)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Realtime Search Filter
+    const searchInput = document.getElementById('vault-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        subjectCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          if (!query || text.includes(query)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    // Download Micro-Interactions
+    const downloadBtns = document.querySelectorAll('button');
+    downloadBtns.forEach(btn => {
+      if (btn.innerText.includes('Download') || btn.innerText.includes('Pack Offline')) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showToast('Saved pack to local offline cache 🌲');
+        });
+      }
+    });
+
+    const shareBtn = document.getElementById('share-notes-btn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        showToast('Vault uploader opened: Ready to upload PDF / Scans ✨');
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe px-margin pointer-events-none" data-active-classes="text-primary bg-primary/10"><div class="max-w-md mx-auto mb-3 pointer-events-auto"><div class="bg-surface-container-low/95 backdrop-blur-2xl rounded-full shadow-[0_12px_32px_-4px_rgba(10,13,19,0.8),0_1px_0_0_rgba(255,255,255,0.06)] px-space-xs py-1.5 flex items-center justify-between border border-white/[0.06]"><a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="home" href="#"><span class="material-symbols-outlined text-[20px]">cottage</span><span class="font-label-sm text-label-sm mt-0.5">Home</span></a><a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="schedule" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="font-label-sm text-label-sm mt-0.5">Schedule</span></a><a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="campus" href="#"><span class="material-symbols-outlined text-[20px]">explore</span><span class="font-label-sm text-label-sm mt-0.5">Campus</span></a><a class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="mess" href="#"><span class="material-symbols-outlined text-[20px]">restaurant</span><span class="font-label-sm text-label-sm mt-0.5">Mess</span></a><a aria-current="page" class="flex-1 flex flex-col items-center justify-center min-h-[44px] py-1 rounded-full transition-all text-primary bg-primary/10" data-path="vault" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-sm text-label-sm mt-0.5">Vault</span></a></div></div></nav></body></html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0f131c;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed":"#002113","surface-container-lowest":"#0b0e16","surface-container-high":"#272a33","surface-container-highest":"#32353e","secondary-container":"#00a572","inverse-primary":"#855300","on-surface":"#e0e2ee","on-tertiary-fixed-variant":"#2f2ebe","surface":"#0f131c","surface-container":"#1d1f28","on-primary":"#472a00","on-secondary-container":"#00311f","on-tertiary":"#1000a9","on-primary-fixed-variant":"#653e00","background":"#0f131c","on-secondary-fixed-variant":"#005236","on-secondary":"#003824","inverse-surface":"#e0e2ee","primary-container":"#f59e0b","primary":"#ffc174","surface-variant":"#32353e","secondary-fixed":"#6ffbbe","on-primary-container":"#613b00","surface-tint":"#ffb95f","outline-variant":"#534434","on-tertiary-fixed":"#07006c","tertiary-fixed-dim":"#c0c1ff","primary-fixed-dim":"#ffb95f","on-surface-variant":"#d8c3ad","on-error-container":"#ffdad6","secondary-fixed-dim":"#4edea3","on-primary-fixed":"#2a1700","tertiary":"#c7c8ff","surface-dim":"#0f131c","error-container":"#93000a","outline":"#a08e7a","primary-fixed":"#ffddb8","on-tertiary-container":"#2b29bb","secondary":"#4edea3","inverse-on-surface":"#2d3039","tertiary-fixed":"#e1e0ff","on-background":"#e0e2ee","on-error":"#690005","surface-bright":"#363942","surface-container-low":"#181b24","error":"#ffb4ab","tertiary-container":"#a7a9ff"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1.25rem","space-lg":"1.5rem","space-sm":"0.5rem","space-xs":"0.25rem","gutter":"1rem","space-md":"1rem","space-xl":"2.25rem"},fontFamily:{"label-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"],"headline-lg":["Plus Jakarta Sans"]},fontSize:{"label-lg":["13px",{"lineHeight":"18px","letterSpacing":"0.02em","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0em","fontWeight":"400"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"500"}],"body-sm":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"label-sm":["10px",{"lineHeight":"14px","letterSpacing":"0.06em","fontWeight":"700"}],"headline-lg":["30px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}]}}}};</script><style>body{min-height:max(884px,100dvh);}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.35)] pt-safe"><div class="h-14 px-margin flex items-center justify-between"><button aria-label="Go back" class="w-11 h-11 -ml-2 flex items-center justify-center rounded-full text-on-surface hover:text-primary hover:bg-surface-container-low transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-sm text-headline-sm text-on-surface truncate flex-1 text-center pr-9">Announcements &amp; Utilities</h1></div></header><main class="flex-1 w-full bg-surface pt-14 pb-safe min-h-screen"><div class="flex flex-col w-full pb-10">
+<!-- Alpine Weather & Campus Ambient Ribbon -->
+<section class="px-margin mb-space-md">
+<div class="bg-surface-container-low rounded-xl px-4 py-3 flex items-center justify-between shadow-sm">
+<div class="flex items-center space-x-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">filter_drama</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Waknaghat Altitude 1,550m</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold">17°C • Crisp Pine Breeze</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high px-2.5 py-1 rounded-full">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Campus Active</span>
+</div>
+</div>
+</section>
+<!-- Context Header -->
+<section class="px-margin mb-space-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface">Campus Life &amp; Events</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">What's happening around Waknaghat ridge and OAT.</p>
+</section>
+<!-- Category Filter Pills (Scroller) -->
+<section class="mb-space-lg overflow-x-auto pl-margin scrollbar-none flex gap-2">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-full shadow-sm flex items-center gap-1.5 shrink-0">
+<span class="material-symbols-outlined text-[16px]">celebration</span>
+<span>All Happenings</span>
+</button>
+<button class="bg-surface-container text-on-surface font-label-md text-label-md px-4 py-2 rounded-full shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+<span>Tech &amp; Hack</span>
+</button>
+<button class="bg-surface-container text-on-surface font-label-md text-label-md px-4 py-2 rounded-full shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">hiking</span>
+<span>Treks &amp; Eco</span>
+</button>
+<button class="bg-surface-container text-on-surface font-label-md text-label-md px-4 py-2 rounded-full shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">coffee</span>
+<span>Chai &amp; Culture</span>
+</button>
+</section>
+<!-- Featured Big Card: Murious 19.0 -->
+<section class="px-margin mb-space-xl">
+<div class="relative bg-surface-container rounded-xl overflow-hidden shadow-xl">
+<!-- Media Header with Rich Himalayan Aesthetic Backdrop -->
+<div class="relative h-48 w-full">
+<img class="w-full h-full object-cover" data-alt="Students gathered at an open-air amphitheater nestled in pine-covered Himalayan ridges during twilight, with warm golden festoon lights, robotic drone demo stages, and high-altitude mist glowing under sunset amber tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUkvvbcnzi9EAkbaSb-1SFoxc7zcFUZcP-e0U9y9q5_Hdm8L-xpIyKWrR31c9MnabilWcQsq_jan6be12_ysdgnASWqghdNVrz05M6sQ_NsKEh6RRIhx1co2udAkYEwVnHBuJYQ3l2ZPl_022cGryrOu_KU0D2GfcOqGc29NoWE3Onj9_WyQW3sSpj2OxsWDPDE9CrSR0B_45-EkLezXpDVmH0E8k4qgM1oqULyqKFhQRss2KmHMt9"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/60 to-transparent"></div>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="bg-primary-container text-on-primary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-wider font-bold shadow-md">
+            Flagship Fest
+          </span>
+<span class="bg-surface-container-lowest/80 backdrop-blur-md text-secondary px-2.5 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">military_tech</span> ₹1.5L Pool
+          </span>
+</div>
+</div>
+<!-- Content Area -->
+<div class="p-5 flex flex-col gap-3.5">
+<div>
+<div class="flex items-center gap-1.5 text-primary mb-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span class="font-label-md text-label-md font-semibold">Oct 9 – Oct 11 • Open Air Theatre &amp; AB2</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Murious 19.0 — National Tech Symposium</h3>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+          North India's premier technical fest featuring 24-hr Hackathon, WebCraft, and Drone Racing. Over ₹1.5 Lakhs in prize pools across technical, design, and hardware tracks.
+        </p>
+<!-- Organizer Tag -->
+<div class="flex items-center gap-2 bg-surface-container-high px-3 py-2 rounded-lg">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">verified</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+            Organized by <span class="text-on-surface font-semibold">TIEDC &amp; Technical Council</span>
+</p>
+</div>
+<!-- Call to Actions -->
+<div class="grid grid-cols-2 gap-2.5 pt-1">
+<button class="bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-lg font-bold shadow-md flex items-center justify-center gap-1.5 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">group_add</span>
+<span>Register Team</span>
+</button>
+<button class="bg-surface-container-high text-on-surface font-label-lg text-label-lg py-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+<span>OAT Map</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Campus Landmark Snapshot -->
+<section class="px-margin mb-space-xl">
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center gap-4 shadow-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[26px]">theater_comedy</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="flex items-center gap-1">
+<span class="font-label-sm text-label-sm text-secondary font-bold uppercase">Landmark Focus</span>
+<span class="w-1 h-1 rounded-full bg-on-surface-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Central Hub</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-bold truncate">Open Air Theatre (OAT)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Stage setup starts Thursday evening. Rehearsals ongoing.</p>
+</div>
+</div>
+</section>
+<!-- Upcoming Gatherings Section -->
+<section class="px-margin mb-space-xl">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Upcoming Gatherings</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Local meetups, club trails &amp; courtyard sessions</p>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-semibold">3 Active</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Item 1: Le-Fiestus Planning -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex gap-3.5 items-start">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex flex-col items-center justify-center shrink-0 text-on-surface">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase">Wed</span>
+<span class="font-headline-sm text-headline-sm font-bold leading-none">04</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Cultural Meet</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5:30 PM</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold leading-tight">Le-Fiestus Cultural Fest Planning Meet</h4>
+<div class="flex items-center gap-1 mt-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-primary">pin_drop</span>
+<span class="font-body-sm text-body-sm truncate">Cafeteria Peach Tree Bench</span>
+</div>
+</div>
+</div>
+<!-- Item 2: Karol Tibba Trek -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex gap-3.5 items-start">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex flex-col items-center justify-center shrink-0 text-on-surface">
+<span class="font-label-sm text-label-sm text-secondary font-bold uppercase">Sat</span>
+<span class="font-headline-sm text-headline-sm font-bold leading-none">07</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-primary font-semibold">Adventure &amp; Eco Club</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">6:30 AM</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold leading-tight">Waknaghat Weekend Trek to Karol Tibba</h4>
+<div class="flex items-center gap-1 mt-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-primary">hiking</span>
+<span class="font-body-sm text-body-sm truncate">Departure from Main Gate 1</span>
+</div>
+</div>
+</div>
+<!-- Item 3: Open Mic & Chai Night -->
+<div class="bg-surface-container rounded-xl p-4 shadow-sm flex gap-3.5 items-start">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex flex-col items-center justify-center shrink-0 text-on-surface">
+<span class="font-label-sm text-label-sm text-tertiary-fixed-dim font-bold uppercase">Fri</span>
+<span class="font-headline-sm text-headline-sm font-bold leading-none">06</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1 mb-0.5">
+<span class="font-label-sm text-label-sm text-tertiary font-semibold">Acoustic &amp; Poetry</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">8:00 PM</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold leading-tight">Open Mic &amp; Chai Night</h4>
+<div class="flex items-center gap-1 mt-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-primary">local_cafe</span>
+<span class="font-body-sm text-body-sm truncate">Outside Annapurna Pine Court</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Student Societies Directory -->
+<section class="px-margin">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Active Student Societies</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Join student-run communities on hill</p>
+</div>
+<button class="font-label-sm text-label-sm text-primary font-semibold flex items-center">
+        View All <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<!-- Societies Grid -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Society 1: ACM -->
+<div class="bg-surface-container rounded-xl p-3.5 flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">Tech</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">ACM Chapter</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">Coding contests &amp; OSS</p>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>180+ Peers</span>
+<span class="text-primary font-semibold">Join</span>
+</div>
+</div>
+<!-- Society 2: TIEDC -->
+<div class="bg-surface-container rounded-xl p-3.5 flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">Startups</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">TIEDC Cell</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">Incubation &amp; grants</p>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>14 Ventures</span>
+<span class="text-secondary font-semibold">Join</span>
+</div>
+</div>
+<!-- Society 3: Rotaract -->
+<div class="bg-surface-container rounded-xl p-3.5 flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">Social</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">Rotaract Club</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">Community outreach</p>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Ridge Drives</span>
+<span class="text-tertiary font-semibold">Join</span>
+</div>
+</div>
+<!-- Society 4: Oasis -->
+<div class="bg-surface-container rounded-xl p-3.5 flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+</div>
+<span class="font-label-sm text-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">Lit</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">Oasis (L&amp;D Club)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">Debates &amp; journals</p>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Weekly Pod</span>
+<span class="text-primary-fixed-dim font-semibold">Join</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Subtle Mountain Culture Quote Footer -->
+<section class="px-margin mt-space-xl text-center">
+<div class="py-4 px-6 bg-surface-container-lowest rounded-xl">
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">
+        “From morning mist at the gate to starry night jam sessions at OAT.”
+      </p>
+<p class="font-label-sm text-label-sm text-primary font-medium mt-1">JUIT Waknaghat • Student Life Desk</p>
+</div>
+</section>
+</div></main></body></html>
