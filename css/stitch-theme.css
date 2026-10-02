@@ -750,17 +750,72 @@ body {
 }
 
 /* ==========================================================================
-   TIMETABLE DAY PILLS COMPACT MOBILE FIT
+   TIMETABLE & MOBILE VIEWPORT CONTAINMENT
    ========================================================================== */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative;
+}
+
+#app-shell-layout,
+.app-view-panel,
+main {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+
+/* Styled select controls across Stitch themes */
+.select-styled {
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-on-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.45rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  outline: none !important;
+  cursor: pointer !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.select-styled:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(255, 193, 116, 0.2) !important;
+}
+
+.select-styled option,
+.select-styled optgroup {
+  background-color: #181c25 !important;
+  color: #dfe2ef !important;
+  padding: 4px 8px;
+}
+
+.class-schedule-card {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 @media (max-width: 640px) {
   #timetable-day-pills > div {
-    padding: 0.625rem 0.25rem !important;
+    padding: 0.5rem 0.2rem !important;
   }
   #timetable-day-pills p.font-headline-sm {
-    font-size: 0.875rem !important;
+    font-size: 0.8125rem !important;
+    letter-spacing: -0.01em;
   }
   #timetable-day-pills p.font-label-sm {
-    font-size: 0.6875rem !important;
+    font-size: 0.65rem !important;
+  }
+  .class-schedule-card {
+    padding: 0.75rem !important;
   }
 }
 

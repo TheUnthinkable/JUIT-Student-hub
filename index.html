@@ -567,27 +567,27 @@
         </div>
 
         <!-- Batch & Attendance Reassurance Card -->
-        <div class="bg-surface-container rounded-xl p-space-md shadow-md border border-white/[0.06]">
-          <div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-sm">
-            <div class="flex items-center gap-space-xs">
-              <span class="material-symbols-outlined text-primary text-[20px]">school</span>
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="timetable-batch-display-label">Batch 26BT12</span>
-              <span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">CSE 1st Sem</span>
+        <div class="bg-surface-container rounded-xl p-3 sm:p-space-md shadow-md border border-white/[0.06] w-full max-w-full">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 mb-space-sm">
+            <div class="flex items-center gap-space-xs min-w-0 flex-wrap">
+              <span class="material-symbols-outlined text-primary text-[20px] shrink-0">school</span>
+              <span class="font-headline-sm text-body-md sm:text-headline-sm text-on-surface font-semibold truncate" id="timetable-batch-display-label">Batch 26BT12</span>
+              <span class="font-label-sm text-[11px] sm:text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant shrink-0 font-medium">CSE 1st Sem</span>
             </div>
             <!-- Semester & Batch Controls -->
-            <div class="flex items-center gap-2">
-              <select class="select-styled" id="timetable-sem-select" aria-label="Select Semester"></select>
-              <select class="select-styled" id="timetable-batch-select" aria-label="Select Batch"></select>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
+              <select class="select-styled w-full max-w-full truncate" id="timetable-sem-select" aria-label="Select Semester"></select>
+              <select class="select-styled w-full max-w-full truncate" id="timetable-batch-select" aria-label="Select Batch"></select>
             </div>
           </div>
 
           <!-- Reassurance Badge -->
-          <div class="flex items-center gap-space-sm bg-surface-container-low rounded-lg p-space-sm border border-white/[0.04]">
+          <div class="flex items-center gap-space-sm bg-surface-container-low rounded-lg p-2.5 sm:p-space-sm border border-white/[0.04]">
             <div class="w-7 h-7 rounded-full bg-secondary/15 flex items-center justify-center shrink-0">
               <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">spa</span>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="font-body-sm text-body-sm text-on-surface">
+              <p class="font-body-sm text-xs sm:text-body-sm text-on-surface">
                 You are safe on attendance <span class="font-label-md text-label-md text-secondary font-bold">(89% total)</span>. No worries.
               </p>
             </div>
@@ -606,7 +606,7 @@
             <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-9 pr-9 py-2 rounded-xl text-on-surface placeholder:text-outline font-body-sm text-body-sm border border-white/[0.06] focus:outline-none focus:border-primary" />
             <button type="button" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[16px]">close</span></button>
           </div>
-          <div class="inline-flex rounded-xl bg-surface-container-low p-1 border border-white/[0.06]" id="timetable-view-mode-tabs">
+          <div class="grid grid-cols-3 w-full sm:w-auto rounded-xl bg-surface-container-low p-1 border border-white/[0.06]" id="timetable-view-mode-tabs">
             <button type="button" class="term-btn active" data-mode="today">Today</button>
             <button type="button" class="term-btn" data-mode="day">Day Flow</button>
             <button type="button" class="term-btn" data-mode="week">Week Matrix</button>
@@ -614,7 +614,7 @@
         </div>
 
         <!-- Horizontal Day Flow Ribbon -->
-        <div class="grid grid-cols-6 gap-2 py-1" id="timetable-day-pills">
+        <div class="grid grid-cols-6 gap-1.5 sm:gap-2 py-1" id="timetable-day-pills">
           <!-- Dynamically rendered day cards (MON, TUE, WED, THU, FRI, SAT) -->
         </div>
 
@@ -810,9 +810,9 @@
         </div>
 
         <!-- Route Mode Header Bar & Quick Buildings -->
-        <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar" id="map-header-mode-bar">
-          <div class="flex items-center gap-1" id="map-quick-buildings"></div>
-          <div class="flex items-center gap-1.5 shrink-0">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full" id="map-header-mode-bar">
+          <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 w-full sm:max-w-[70%]" id="map-quick-buildings"></div>
+          <div class="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
             <button type="button" id="btn-shortest-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Shortest</button>
             <button type="button" id="btn-accessible-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Accessible</button>
             <button type="button" id="btn-clear-active-route" class="hidden px-2.5 py-1 rounded-lg bg-error-container text-on-error-container text-xs">Clear</button>
