@@ -21,6 +21,7 @@ const CampusMap = {
   highlightedVenue: null,
   activeFloorFilter: 'all',
   activeMapMode: 'blueprint', // 'blueprint' | 'walkways' | 'night'
+  is3DMode: true, // Default to 3D Isometric View
   
   // Transform State
   zoomLevel: 1,
@@ -34,107 +35,135 @@ const CampusMap = {
   // Active Navigation Route State
   activeRoute: null, // { pathCoords: [...], fromId, toId, distanceMeters, timeMinutes, isAccessible, steps: [...] }
 
-  // Architectural Layout & Metadata for JUIT Waknaghat (1000 x 680 Canvas)
+  // Architectural Layout & Metadata for JUIT Waknaghat with Real Campus Gallery Imagery
   layoutMeta: {
     main_gate: {
-      x: 60, y: 195, w: 128, h: 54,
+      x: 60, y: 195, w: 128, h: 54, height3D: 18,
       code: 'GATE 1', badge: 'Entry', color: '#64748b',
       name: 'Main Campus Gate 1',
       sub: 'Security, Barrier & PNB 24x7 ATM',
-      category: 'facility'
+      category: 'facility',
+      photo: 'https://www.juit.ac.in/banners/campus-gallery.jpg',
+      photoAlt: 'NH-5 Highway Gate 1 Entrance'
     },
     admin: {
-      x: 235, y: 155, w: 136, h: 58,
+      x: 235, y: 155, w: 136, h: 58, height3D: 28,
       code: 'ADMIN', badge: 'Directorate', color: '#38bdf8',
       name: 'Administrative Block',
       sub: 'VC Secretariat, Registrar & COE',
-      category: 'library'
+      category: 'library',
+      photo: 'https://www.juit.ac.in/galleryimages/photo-gallery-7.jpg',
+      photoAlt: 'JUIT Administrative Secretariat'
     },
     dispensary: {
-      x: 120, y: 295, w: 132, h: 52,
+      x: 120, y: 295, w: 132, h: 52, height3D: 22,
       code: 'HEALTH', badge: '24x7 Med', color: '#ef4444',
       name: 'Health Centre & Dispensary',
       sub: 'OPD, Pharmacy & Ambulance Bay',
-      category: 'facility'
+      category: 'facility',
+      photo: 'https://www.juit.ac.in/galleryimages/dispensary.jpg',
+      photoAlt: 'JUIT Campus Dispensary & Medical Centre'
     },
     lrc: {
-      x: 420, y: 135, w: 162, h: 68,
+      x: 420, y: 135, w: 162, h: 68, height3D: 36,
       code: 'LRC', badge: '3 Floors', color: '#f59e0b',
       name: 'Learning Resource Centre',
       sub: 'Central Library, DSpace & PYQ Archive',
       featured: true,
-      category: 'library'
+      category: 'library',
+      photo: 'https://www.juit.ac.in/galleryimages/photo-gallery-3.jpg',
+      photoAlt: 'Central Learning Resource Centre Library'
     },
     viewpoint: {
-      x: 640, y: 125, w: 134, h: 50,
+      x: 640, y: 125, w: 134, h: 50, height3D: 16,
       code: 'VIEW', badge: '1,570m Ridge', color: '#0ea5e9',
       name: 'Shivalik Ridge Helipad',
       sub: 'Valley Overlook & Mandir Trail',
-      category: 'facility'
+      category: 'facility',
+      photo: 'https://www.juit.ac.in/galleryimages/photo-gallery-2.jpg',
+      photoAlt: 'Shivalik Ridge Mountain Overlook & Helipad'
     },
     hostels_girls: {
-      x: 790, y: 180, w: 150, h: 60,
+      x: 790, y: 180, w: 150, h: 60, height3D: 38,
       code: 'GH', badge: '5 Blocks', color: '#ec4899',
       name: 'Girls Hostels Complex',
       sub: 'Geeta & Malviya Bhawans • Quad',
-      category: 'hostel'
+      category: 'hostel',
+      photo: 'https://www.juit.ac.in/galleryimages/photo-gallery-5.jpg',
+      photoAlt: 'Girls Hostels Courtyard Complex'
     },
     block1: {
-      x: 250, y: 345, w: 160, h: 72,
+      x: 250, y: 345, w: 160, h: 72, height3D: 42,
       code: 'AB1', badge: '4 Floors', color: '#00e5ff',
       name: 'Academic Block 1',
       sub: 'CR01–CR10 • TR1–7 • Physics/ECE Labs',
-      category: 'academic'
+      category: 'academic',
+      photo: 'https://www.juit.ac.in/galleryimages/Academic%20Block1.JPG',
+      photoAlt: 'Academic Block 1 Lecture Theatres & Core Labs'
     },
     block2: {
-      x: 480, y: 310, w: 172, h: 76,
+      x: 480, y: 310, w: 172, h: 76, height3D: 44,
       code: 'AB2', badge: '4 Floors', color: '#3b82f6',
       name: 'Academic Block 2',
       sub: 'LT1–LT3 Theatres • CL01–52 Computing',
       featured: true,
-      category: 'academic'
+      category: 'academic',
+      photo: 'https://www.juit.ac.in/galleryimages/Electronics%20and%20Communication%20Lab2.JPG',
+      photoAlt: 'Academic Block 2 Computing & ECE Labs'
     },
     block3: {
-      x: 720, y: 345, w: 160, h: 72,
+      x: 720, y: 345, w: 160, h: 72, height3D: 42,
       code: 'AB3', badge: '4 Floors', color: '#10b981',
       name: 'Academic Block 3',
       sub: 'Biotech, Bioinformatics & Civil Labs',
-      category: 'academic'
+      category: 'academic',
+      photo: 'https://www.juit.ac.in/galleryimages/civil1.JPG',
+      photoAlt: 'Academic Block 3 Civil & Biotech Labs'
     },
     oat: {
-      x: 470, y: 435, w: 135, h: 52,
+      x: 470, y: 435, w: 135, h: 52, height3D: 22,
       code: 'OAT', badge: 'Amphitheatre', color: '#8b5cf6',
       name: 'Open Air Theatre',
       sub: 'Tiered Cultural Stage & Arena',
-      category: 'sports'
+      category: 'sports',
+      photo: 'https://www.juit.ac.in/galleryimages/Stage%20performance.JPG',
+      photoAlt: 'Tagore Open Air Amphitheatre'
     },
     hostels_boys: {
-      x: 120, y: 485, w: 150, h: 64,
+      x: 120, y: 485, w: 150, h: 64, height3D: 40,
       code: 'BH', badge: '1–4 Blocks', color: '#6366f1',
       name: 'Boys Hostels Terraces',
       sub: 'Shastri, Azad, Patel, Subhash, Parmar',
-      category: 'hostel'
+      category: 'hostel',
+      photo: 'https://www.juit.ac.in/galleryimages/Mall%20Road.JPG',
+      photoAlt: 'Boys Hostels Terraces & Campus Mall Road'
     },
     annapurna_a: {
-      x: 325, y: 520, w: 150, h: 60,
+      x: 325, y: 520, w: 150, h: 60, height3D: 30,
       code: 'MESS-A', badge: 'Central Dining', color: '#f97316',
       name: 'Annapurna Dining A',
       sub: 'Senior Boys & Main Dining Hall',
-      category: 'mess'
+      category: 'mess',
+      photo: 'https://www.juit.ac.in/galleryimages/Annapurna%20(%20Student\'s%20Mess%20).JPG',
+      photoAlt: 'Annapurna Main Dining Hall'
     },
     annapurna_b: {
-      x: 525, y: 520, w: 150, h: 60,
+      x: 525, y: 520, w: 150, h: 60, height3D: 30,
       code: 'MESS-B', badge: 'Dining & Cafe', color: '#f97316',
       name: 'Annapurna Dining B',
       sub: 'Girls, 1st Year & Peach Tree Cafe',
-      category: 'mess'
+      category: 'mess',
+      photo: 'https://www.juit.ac.in/galleryimages/Student%20mess%20counter.JPG',
+      photoAlt: 'Annapurna Dining Counters & Peach Tree Cafe'
     },
     sports_complex: {
-      x: 740, y: 505, w: 150, h: 64,
+      x: 740, y: 505, w: 150, h: 64, height3D: 26,
       code: 'SPORTS', badge: 'Arena & Gym', color: '#14b8a6',
       name: 'Sports Arena & Gym',
       sub: 'Basketball, Volleyball & Fitness Gym',
-      category: 'sports'
+      category: 'sports',
+      photo: 'https://www.juit.ac.in/galleryimages/NCC.JPG',
+      photoAlt: 'Sports Complex & Athletic Activity Grounds'
     }
   },
 
@@ -527,17 +556,33 @@ const CampusMap = {
       <!-- 7. Architectural Building Nodes Layer -->
       <g id="map-buildings-layer">
         ${this.buildings.map(b => {
-          const meta = this.layoutMeta[b.id] || { x: b.coordinates.x, y: b.coordinates.y, w: 140, h: 54, code: b.code, badge: 'Landmark', color: b.color || '#3b82f6', name: b.name, sub: '' };
-          const { x, y, w, h, code, badge, color, name, sub, featured } = meta;
+          const meta = this.layoutMeta[b.id] || { x: b.coordinates.x, y: b.coordinates.y, w: 140, h: 54, height3D: 24, code: b.code, badge: 'Landmark', color: b.color || '#3b82f6', name: b.name, sub: '' };
+          const { x, y, w, h, code, badge, color, name, sub, featured, height3D, photo } = meta;
           
           const isCategoryMatch = isCategoryActive(this.activeCategory, b.id);
           const isHighlighted = (this.activeBuilding && this.activeBuilding.id === b.id);
           const isVenueMatch = (this.highlightedVenue && this.buildingContainsVenue(b, this.highlightedVenue));
           const opacity = isCategoryMatch ? '1' : '0.2';
+          const depth = (this.is3DMode ? (height3D || 26) : 0);
+
+          // 3D Extruded Architectural Geometry
+          const extrusionMarkup = (this.is3DMode && depth > 0) ? `
+            <!-- 3D Base Drop Shadow -->
+            <rect x="6" y="${h + depth - 4}" width="${w - 12}" height="12" rx="4" fill="rgba(0,0,0,0.6)" filter="url(#route-blur)" />
+            
+            <!-- 3D Front Facade with Storey Windows -->
+            <polygon points="0,${h} ${w},${h} ${w},${h + depth} 0,${h + depth}" fill="#0f172a" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" />
+            <line x1="0" y1="${h + depth * 0.45}" x2="${w}" y2="${h + depth * 0.45}" stroke="${color}" stroke-opacity="0.4" stroke-dasharray="4 6" stroke-width="1.2" />
+            <line x1="0" y1="${h + depth * 0.8}" x2="${w}" y2="${h + depth * 0.8}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4" stroke-width="0.8" />
+            
+            <!-- 3D Right Depth Wall with Shadowing -->
+            <polygon points="${w},0 ${w},${h} ${w + 8},${h + depth} ${w + 8},${depth}" fill="#080e1a" stroke="rgba(255,255,255,0.05)" stroke-width="0.8" />
+          ` : '';
 
           // Animated Glowing Bouncing Location Pin
+          const pinY = (this.is3DMode && depth > 0) ? -28 : -20;
           const anchorPin = (isHighlighted || isVenueMatch) ? `
-            <g transform="translate(${w / 2}, -20)" class="venue-beacon-pin">
+            <g transform="translate(${w / 2}, ${pinY})" class="venue-beacon-pin">
               <!-- Radar Wave Rings -->
               <circle cx="0" cy="0" r="10" fill="none" stroke="${color}" stroke-width="2" class="beacon-radar-pulse" />
               <circle cx="0" cy="0" r="22" fill="none" stroke="${color}" stroke-width="1.2" class="beacon-radar-pulse" />
@@ -556,17 +601,28 @@ const CampusMap = {
           let cardBorder = (isHighlighted || isVenueMatch) ? '#00e5ff' : (featured ? color : '#232f48');
           let borderWidth = (isHighlighted || isVenueMatch) ? '2.8' : (featured ? '2' : '1.3');
 
+          // Photo indicator badge
+          const photoBadge = photo ? `
+            <g transform="translate(${w - 54}, ${h - 18})" opacity="0.85">
+              <rect width="46" height="13" rx="3" fill="rgba(0,0,0,0.7)" stroke="${color}" stroke-width="0.6"/>
+              <text x="23" y="9.5" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#ffffff">📷 PHOTO</text>
+            </g>
+          ` : '';
+
           return `
-            <g class="bldg-node ${isHighlighted || isVenueMatch ? 'highlighted' : ''}" 
+            <g class="bldg-node ${this.is3DMode ? 'bldg-node-3d' : ''} ${isHighlighted || isVenueMatch ? 'highlighted' : ''}" 
                data-id="${b.id}" 
                transform="translate(${x}, ${y})"
                opacity="${opacity}"
                filter="url(#bldg-shadow)"
                style="cursor: pointer;">
               
+              <!-- 3D Isometric Extruded Walls -->
+              ${extrusionMarkup}
+
               ${anchorPin}
 
-              <!-- Architectural Building Footprint Box -->
+              <!-- Architectural Building Roof / Face Box -->
               <rect x="0" y="0" width="${w}" height="${h}" rx="9" 
                     fill="${cardBg}" 
                     stroke="${cardBorder}" 
@@ -593,6 +649,9 @@ const CampusMap = {
               <text x="12" y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.8" font-weight="500" fill="#94a3b8">
                 ${sub ? sub.substring(0, 27) : ''}
               </text>
+
+              <!-- Real Photo Badge -->
+              ${photoBadge}
             </g>
           `;
         }).join('')}
@@ -779,21 +838,22 @@ const CampusMap = {
   },
 
   /* ================= FLYOUT BUILDING DRAWER ================= */
+  /* ================= FLYOUT BUILDING DRAWER ================= */
   openBuildingDrawer(bldg, roomToMatch) {
     const drawer = document.getElementById('map-venue-drawer');
     if (!drawer) return;
 
     this.activeBuilding = bldg;
-    const meta = this.layoutMeta[bldg.id] || { color: '#3b82f6', code: bldg.code, badge: 'Landmark' };
+    const meta = this.layoutMeta[bldg.id] || { color: '#3b82f6', code: bldg.code, badge: 'Landmark', photo: null, photoAlt: bldg.name };
     const matchCode = roomToMatch || this.highlightedVenue;
 
     // Floor navigation tabs
     const floors = bldg.floors || [];
     const floorTabsHtml = floors.length > 0 ? `
-      <div class="drawer-floor-tabs">
-        <button type="button" class="floor-tab-btn ${this.activeFloorFilter === 'all' ? 'active' : ''}" data-floor="all">All Floors</button>
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <button type="button" class="floor-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${this.activeFloorFilter === 'all' ? 'bg-primary text-on-primary shadow-sm font-bold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'}" data-floor="all">All Floors</button>
         ${floors.map(fl => `
-          <button type="button" class="floor-tab-btn ${this.activeFloorFilter === fl.level ? 'active' : ''}" data-floor="${fl.level}">
+          <button type="button" class="floor-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${this.activeFloorFilter === fl.level ? 'bg-primary text-on-primary shadow-sm font-bold' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'}" data-floor="${fl.level}">
             ${fl.level}
           </button>
         `).join('')}
@@ -806,23 +866,25 @@ const CampusMap = {
       : floors.filter(fl => fl.level === this.activeFloorFilter);
 
     const roomListHtml = filteredFloors.map(fl => `
-      <div class="drawer-floor-group">
-        <div class="floor-group-header">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: ${meta.color};">layers</span>
-          <span>${fl.level}</span>
-          <span class="floor-room-count">${fl.facilities.length} rooms / labs</span>
+      <div class="p-3 rounded-xl bg-surface-container border border-white/[0.06] space-y-2">
+        <div class="flex items-center justify-between pb-1.5 border-b border-white/[0.06]">
+          <div class="flex items-center gap-1.5 text-xs font-bold text-on-surface">
+            <span class="material-symbols-outlined text-[15px]" style="color: ${meta.color};">layers</span>
+            <span>${fl.level}</span>
+          </div>
+          <span class="text-[11px] font-mono text-on-surface-variant">${fl.facilities.length} rooms / labs</span>
         </div>
-        <div class="drawer-rooms-grid">
+        <div class="space-y-1.5">
           ${fl.facilities.map(fac => {
             const isTarget = matchCode && fac.toUpperCase().includes(matchCode.toUpperCase());
             return `
-              <div class="drawer-room-chip ${isTarget ? 'room-target' : ''}" data-room="${fac}">
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                  <span class="room-chip-name">${fac}</span>
-                  ${isTarget ? '<span class="room-matched-pill">📍 Your Class</span>' : ''}
+              <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high/60 hover:bg-surface-container-highest transition-colors border border-white/[0.04] text-xs ${isTarget ? 'ring-1 ring-cyan-400 bg-cyan-400/10' : ''}">
+                <div class="flex items-center gap-2 truncate pr-2">
+                  <span class="font-medium text-on-surface truncate">${fac}</span>
+                  ${isTarget ? '<span class="px-1.5 py-0.2 rounded text-[10px] bg-cyan-400/20 text-cyan-300 font-bold shrink-0">📍 Your Class</span>' : ''}
                 </div>
-                <button type="button" class="btn-room-nav" data-room="${fac}" title="Get walking route to this room">
-                  Walk Here →
+                <button type="button" class="btn-room-nav shrink-0 px-2.5 py-1 rounded-md bg-primary/15 hover:bg-primary text-primary hover:text-on-primary text-[11px] font-semibold transition-all cursor-pointer" data-room="${fac}">
+                  Walk →
                 </button>
               </div>
             `;
@@ -831,46 +893,77 @@ const CampusMap = {
       </div>
     `).join('');
 
-    drawer.innerHTML = `
+    const safePhoto = meta.photo ? (meta.photo.includes('%') ? meta.photo : encodeURI(meta.photo)) : null;
+    const photoBannerHtml = safePhoto ? `
+      <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 shrink-0">
+        <img src="${safePhoto}" alt="${meta.photoAlt || bldg.name}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&auto=format&fit=crop&q=80';" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#181c25] via-[#181c25]/30 to-transparent"></div>
+        <a href="https://www.juit.ac.in/campus-facilities/campus-gallery" target="_blank" rel="noopener noreferrer" class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/20 text-[10px] font-mono font-medium text-white flex items-center gap-1.5 hover:bg-black/80 transition-colors shadow">
+          <span class="material-symbols-outlined text-[13px] text-cyan-400">photo_camera</span>
+          <span>JUIT Campus Gallery</span>
+          <span class="material-symbols-outlined text-[11px] text-slate-400">open_in_new</span>
+        </a>
+        <button type="button" class="btn-drawer-close absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white flex items-center justify-center border border-white/20 transition-all cursor-pointer z-10" id="btn-close-map-drawer" aria-label="Close building inspector">✕</button>
+        <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[11px] text-slate-300">
+          <span class="font-mono truncate max-w-[70%] drop-shadow">${meta.photoAlt || bldg.name}</span>
+          <span class="px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[10px] font-bold">3D Verified</span>
+        </div>
+      </div>
+    ` : `
       <div class="drawer-header-strip" style="border-top: 3px solid ${meta.color};">
         <div>
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
             <span class="drawer-code-pill" style="color: ${meta.color}; border-color: ${meta.color};">${meta.code}</span>
             <span class="drawer-category-pill">${bldg.category ? bldg.category.toUpperCase() : 'CAMPUS'}</span>
-            <span class="hud-status-badge status-good" style="font-size: 0.68rem; padding: 1px 6px;">Open Facility</span>
           </div>
           <h2 class="drawer-bldg-name">${bldg.name}</h2>
-          <p class="drawer-bldg-summary">${bldg.summary || meta.sub || 'Main facility at JUIT Waknaghat.'}</p>
         </div>
         <button type="button" class="btn-drawer-close" id="btn-close-map-drawer" aria-label="Close building inspector">✕</button>
       </div>
+    `;
 
-      <!-- Facility Overview Telemetry Bar -->
-      <div class="drawer-telemetry-bar">
-        <div class="telemetry-item">
-          <span class="tele-label">Building Levels</span>
-          <span class="tele-val">${floors.length || 1} Floors</span>
+    drawer.innerHTML = `
+      <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto my-2 sm:hidden cursor-pointer" id="drawer-mobile-handle"></div>
+      ${photoBannerHtml}
+      <div class="drawer-scroll-body flex-1 overflow-y-auto p-4 space-y-3.5">
+        <!-- Building Identity Strip -->
+        <div class="p-3 rounded-xl bg-surface-container border border-white/[0.06] border-l-4" style="border-left-color: ${meta.color};">
+          <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+            <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold border border-white/[0.1] bg-surface-container-high" style="color: ${meta.color};">${meta.code}</span>
+            <span class="text-[11px] font-mono text-on-surface-variant uppercase font-semibold">${bldg.category ? bldg.category.toUpperCase() : 'CAMPUS'}</span>
+            <span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold ml-auto">Open Facility</span>
+          </div>
+          <h2 class="text-base font-bold text-on-surface tracking-tight">${bldg.name}</h2>
+          <p class="text-xs text-on-surface-variant mt-0.5 leading-relaxed">${bldg.summary || meta.sub || 'Main facility at JUIT Waknaghat.'}</p>
         </div>
-        <div class="telemetry-item">
-          <span class="tele-label">Accessibility</span>
-          <span class="tele-val" style="color: #10b981;">Elevator & Ramps ✓</span>
-        </div>
-        <div class="telemetry-item">
-          <span class="tele-label">Operating Hours</span>
-          <span class="tele-val">08:00 AM – 10:00 PM</span>
-        </div>
-      </div>
 
-      <!-- Floor Filter Tabs -->
-      ${floorTabsHtml}
+        <!-- Facility Overview Telemetry Bar -->
+        <div class="grid grid-cols-3 gap-2 p-3 rounded-xl bg-surface-container border border-white/[0.06] text-center">
+          <div class="flex flex-col">
+            <span class="text-[10px] uppercase font-mono text-on-surface-variant font-semibold">Levels</span>
+            <span class="text-xs font-bold text-on-surface mt-0.5">${floors.length || 1} Floors</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[10px] uppercase font-mono text-on-surface-variant font-semibold">Access</span>
+            <span class="text-xs font-bold text-emerald-400 mt-0.5">Ramps & Lift ✓</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[10px] uppercase font-mono text-on-surface-variant font-semibold">Hours</span>
+            <span class="text-xs font-bold text-on-surface mt-0.5">8 AM – 10 PM</span>
+          </div>
+        </div>
 
-      <!-- Rooms Directory Section -->
-      <div class="drawer-rooms-container">
-        ${roomListHtml || '<div style="padding: 20px; text-align: center; color: var(--text-muted);">No rooms listed for this floor.</div>'}
+        <!-- Floor Filter Tabs -->
+        ${floorTabsHtml}
+
+        <!-- Rooms Directory Section -->
+        <div class="space-y-3">
+          ${roomListHtml || '<div class="p-6 text-center text-xs text-on-surface-variant">No rooms listed for this floor.</div>'}
+        </div>
       </div>
 
       <!-- Actions Footer -->
-      <div class="drawer-actions-footer">
+      <div class="drawer-actions-footer p-3 bg-surface-container-low border-t border-white/[0.06] flex items-center gap-2">
         <button type="button" class="btn-primary" id="btn-drawer-directions" style="flex: 1; font-size: 0.85rem; padding: 10px 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
           <span class="material-symbols-outlined" style="font-size: 16px;">directions_walk</span>
           <span>Route to ${bldg.code}</span>
@@ -883,8 +976,18 @@ const CampusMap = {
 
     drawer.classList.add('open');
 
-    // Close button
+    // Show mobile backdrop
+    const backdrop = document.getElementById('map-drawer-backdrop');
+    if (backdrop) {
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+      backdrop.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    // Close button & mobile handle
     document.getElementById('btn-close-map-drawer')?.addEventListener('click', () => {
+      this.closeBuildingDrawer();
+    });
+    document.getElementById('drawer-mobile-handle')?.addEventListener('click', () => {
       this.closeBuildingDrawer();
     });
 
@@ -916,6 +1019,11 @@ const CampusMap = {
   closeBuildingDrawer() {
     const drawer = document.getElementById('map-venue-drawer');
     if (drawer) drawer.classList.remove('open');
+    const backdrop = document.getElementById('map-drawer-backdrop');
+    if (backdrop) {
+      backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
     this.activeBuilding = null;
     this.highlightedVenue = null;
     this.activeFloorFilter = 'all';
@@ -1038,6 +1146,35 @@ const CampusMap = {
     });
   },
 
+  /* ================= 2D / 3D MAP MODE TOGGLE ================= */
+  set3DMode(is3D) {
+    this.is3DMode = !!is3D;
+    const container = document.getElementById('map-canvas-container');
+    if (container) {
+      if (this.is3DMode) {
+        container.classList.remove('map-mode-2d');
+        container.classList.add('map-mode-3d');
+      } else {
+        container.classList.remove('map-mode-3d');
+        container.classList.add('map-mode-2d');
+      }
+    }
+
+    const btn3D = document.getElementById('btn-map-mode-3d');
+    const btn2D = document.getElementById('btn-map-mode-2d');
+    if (btn3D && btn2D) {
+      if (this.is3DMode) {
+        btn3D.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm';
+        btn2D.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface';
+      } else {
+        btn2D.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm';
+        btn3D.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface';
+      }
+    }
+
+    this.renderSVGMap();
+  },
+
   /* ================= PAN & ZOOM CONTROLS ================= */
   applyTransform(animate = false) {
     const world = document.querySelector('#campus-vector-svg #map-world-layer') || document.getElementById('map-world-layer');
@@ -1056,7 +1193,30 @@ const CampusMap = {
     const btnIn = document.getElementById('btn-map-zoom-in');
     const btnOut = document.getElementById('btn-map-zoom-out');
     const btnReset = document.getElementById('btn-map-reset');
+    const btn3D = document.getElementById('btn-map-mode-3d');
+    const btn2D = document.getElementById('btn-map-mode-2d');
+    const backdrop = document.getElementById('map-drawer-backdrop');
     const viewport = document.getElementById('map-viewport-box');
+
+    if (btn3D) {
+      btn3D.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.set3DMode(true);
+      });
+    }
+
+    if (btn2D) {
+      btn2D.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.set3DMode(false);
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', () => {
+        this.closeBuildingDrawer();
+      });
+    }
 
     if (btnIn) {
       btnIn.addEventListener('click', (e) => {

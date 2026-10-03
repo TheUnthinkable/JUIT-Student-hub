@@ -102,10 +102,12 @@ const AcademicsController = {
 
   /* ================= SUB-TAB NAVIGATION ================= */
   bindSubTabs() {
-    const tabButtons = document.querySelectorAll('.academic-tab-btn');
+    const tabButtons = document.querySelectorAll('.academic-tab-btn, #academics-subnav-tabs button');
     tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        const targetSubTab = btn.dataset.subtab;
+        const targetSubTab = btn.dataset.subtab || (
+          btn.id.includes('batch') ? 'batch-attendance' : (btn.id.includes('cgpa') ? 'cgpa-checker' : 'personal-attendance')
+        );
         this.switchSubTab(targetSubTab);
       });
     });
@@ -113,8 +115,16 @@ const AcademicsController = {
 
   switchSubTab(subTabKey) {
     this.activeSubTab = subTabKey;
-    document.querySelectorAll('.academic-tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.subtab === subTabKey);
+    document.querySelectorAll('.academic-tab-btn, #academics-subnav-tabs button').forEach(btn => {
+      const match = (btn.dataset.subtab === subTabKey) || (btn.id === `tab-btn-${subTabKey}`);
+      btn.classList.toggle('active', match);
+      if (match) {
+        btn.classList.add('bg-surface-container', 'text-primary', 'shadow-sm');
+        btn.classList.remove('text-on-surface-variant');
+      } else {
+        btn.classList.remove('bg-surface-container', 'text-primary', 'shadow-sm');
+        btn.classList.add('text-on-surface-variant');
+      }
     });
 
     const panels = {
@@ -124,13 +134,16 @@ const AcademicsController = {
     };
 
     Object.keys(panels).forEach(k => {
-      if (panels[k]) {
+      const el = panels[k];
+      if (el) {
         if (k === subTabKey) {
-          panels[k].style.display = 'block';
-          panels[k].classList.add('active');
+          el.classList.remove('hidden');
+          el.style.display = 'block';
+          el.classList.add('active');
         } else {
-          panels[k].style.display = 'none';
-          panels[k].classList.remove('active');
+          el.classList.add('hidden');
+          el.style.display = 'none';
+          el.classList.remove('active');
         }
       }
     });
@@ -609,6 +622,7 @@ const AcademicsController = {
 
     let totalAttended = 0;
     let totalConducted = 0;
+    let totalSafeBunks = 0;
     const T = this.targetPercent;
 
     const courseCardsHtml = keys.map(code => {
@@ -625,31 +639,36 @@ const AcademicsController = {
       let adviceHtml = '';
       let statusColor = '#10b981';
       let statusBadge = '';
+      let isSafe = currentPct >= T;
 
-      if (currentPct < T) {
+      if (!isSafe) {
         statusColor = '#ef4444';
         const needed = Math.ceil((T * total - 100 * attended) / (100 - T));
-        statusBadge = `<span class="attendance-status-badge danger">Debarment Risk</span>`;
+        statusBadge = `<span class="px-2 py-0.5 rounded-full bg-error/20 text-error text-[11px] font-semibold">Debar Risk</span>`;
         adviceHtml = `
-          <div class="attendance-advice-box danger">
-            ⚠️ Must attend the next <strong>${needed}</strong> consecutive ${needed === 1 ? 'class' : 'classes'} to reach ${T}% compliance.
+          <div class="p-2.5 rounded-xl bg-error/10 border border-error/20 text-xs text-error flex items-start gap-2">
+            <span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">warning</span>
+            <span>Must attend next <strong class="font-bold underline">${needed} consecutive ${needed === 1 ? 'class' : 'classes'}</strong> to clear the ${T}% cutoff.</span>
           </div>
         `;
       } else {
         const canBunk = Math.floor((100 * attended - T * total) / T);
+        totalSafeBunks += canBunk;
         if (canBunk > 0) {
-          statusBadge = `<span class="attendance-status-badge safe">Safe (+${canBunk} Bunks)</span>`;
+          statusBadge = `<span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary text-[11px] font-semibold">Safe (+${canBunk} Bunks)</span>`;
           adviceHtml = `
-            <div class="attendance-advice-box safe">
-              ✓ On track. You can safely miss <strong>${canBunk}</strong> ${canBunk === 1 ? 'class' : 'classes'} and stay above ${T}%.
+            <div class="p-2.5 rounded-xl bg-secondary/10 border border-secondary/20 text-xs text-secondary flex items-start gap-2">
+              <span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">verified_user</span>
+              <span>On track! You can safely miss up to <strong class="font-bold">${canBunk} ${canBunk === 1 ? 'class' : 'classes'}</strong> and maintain ≥${T}%.</span>
             </div>
           `;
         } else {
           statusColor = '#f59e0b';
-          statusBadge = `<span class="attendance-status-badge warning">Borderline Cutoff</span>`;
+          statusBadge = `<span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[11px] font-semibold">Cutoff Boundary</span>`;
           adviceHtml = `
-            <div class="attendance-advice-box warning">
-              ⚠️ Right on the ${T}% cutoff. Missing the next class will cause a shortage.
+            <div class="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-xs text-primary flex items-start gap-2">
+              <span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">info</span>
+              <span>Right on the ${T}% cutoff. Missing the next scheduled class will drop below threshold.</span>
             </div>
           `;
         }
@@ -659,68 +678,78 @@ const AcademicsController = {
       const ifMiss1 = (attended / (total + 1) * 100).toFixed(1);
 
       return `
-        <div class="dash-card attendance-card" data-course-code="${code}">
+        <div class="rounded-2xl bg-surface-container-low hover:bg-surface-container/70 p-4 sm:p-5 border border-white/[0.06] shadow-sm transition-all flex flex-col justify-between gap-4" data-course-code="${code}">
           <!-- Course Card Header -->
-          <div class="attendance-card-header">
-            <div class="attendance-card-title-group">
-              <div class="attendance-card-badges">
-                <span class="hub-badge">${code}</span>
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-0.5 rounded-md bg-surface-container-highest text-on-surface font-mono text-[11px] font-bold border border-white/[0.06]">${code}</span>
                 ${statusBadge}
               </div>
-              <h3 class="attendance-course-name">${c.name}</h3>
+              <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold truncate">${c.name}</h3>
             </div>
-            <div class="attendance-pct-box">
-              <span class="attendance-pct-number" style="color: ${statusColor};">${pctFormatted}%</span>
-              <span class="attendance-pct-label">Attendance</span>
+            <div class="text-right shrink-0">
+              <span class="font-mono text-2xl font-extrabold tracking-tight" style="color: ${statusColor};">${pctFormatted}%</span>
+              <span class="block text-[11px] text-on-surface-variant">Attendance</span>
             </div>
           </div>
 
-          <!-- Progress Bar -->
-          <div class="attendance-progress-track">
-            <div class="attendance-progress-fill" style="width: ${Math.min(100, currentPct)}%; background: ${statusColor};"></div>
+          <!-- Progress Track with 80% Marker -->
+          <div class="space-y-1">
+            <div class="relative w-full h-2.5 bg-surface-container rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, currentPct)}%; background: ${statusColor};"></div>
+              <div class="absolute top-0 bottom-0 w-0.5 bg-white/70 shadow-sm" style="left: ${T}%;" title="${T}% Target Threshold"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] font-mono text-on-surface-variant">
+              <span>0%</span>
+              <span class="text-on-surface font-bold">${T}% Target</span>
+              <span>100%</span>
+            </div>
           </div>
 
           <!-- Dual Interactive Stepper Controls -->
-          <div class="attendance-steppers-grid">
+          <div class="grid grid-cols-2 gap-2.5">
             <!-- Present Stepper -->
-            <div class="attendance-stepper-box present-box">
-              <div class="stepper-box-top">
-                <span class="stepper-box-label">Attended</span>
-                <span class="stepper-count attended">${attended}</span>
+            <div class="p-2.5 rounded-xl bg-surface-container border border-white/[0.04] flex flex-col justify-between gap-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-medium text-secondary">Attended</span>
+                <span class="font-mono text-base font-bold text-on-surface">${attended}</span>
               </div>
-              <div class="stepper-box-actions">
-                <button type="button" class="btn-step btn-step-dec" data-action="dec-present" data-code="${code}" aria-label="Decrease attended">−</button>
-                <button type="button" class="btn-step btn-step-inc present" data-action="inc-present" data-code="${code}">+1 Present</button>
+              <div class="flex items-center gap-1.5">
+                <button type="button" class="btn-step w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-bold text-sm flex items-center justify-center transition-colors cursor-pointer" data-action="dec-present" data-code="${code}" title="Subtract attended class">−</button>
+                <button type="button" class="btn-step flex-1 h-8 rounded-lg bg-secondary/20 hover:bg-secondary/30 text-secondary font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1" data-action="inc-present" data-code="${code}">+1 Present</button>
               </div>
             </div>
 
             <!-- Absent Stepper -->
-            <div class="attendance-stepper-box absent-box">
-              <div class="stepper-box-top">
-                <span class="stepper-box-label">Missed</span>
-                <span class="stepper-count missed">${missed}</span>
+            <div class="p-2.5 rounded-xl bg-surface-container border border-white/[0.04] flex flex-col justify-between gap-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-medium text-error">Missed</span>
+                <span class="font-mono text-base font-bold text-on-surface">${missed}</span>
               </div>
-              <div class="stepper-box-actions">
-                <button type="button" class="btn-step btn-step-dec" data-action="dec-absent" data-code="${code}" aria-label="Decrease missed">−</button>
-                <button type="button" class="btn-step btn-step-inc absent" data-action="inc-absent" data-code="${code}">+1 Absent</button>
+              <div class="flex items-center gap-1.5">
+                <button type="button" class="btn-step w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-bold text-sm flex items-center justify-center transition-colors cursor-pointer" data-action="dec-absent" data-code="${code}" title="Subtract missed class">−</button>
+                <button type="button" class="btn-step flex-1 h-8 rounded-lg bg-error/20 hover:bg-error/30 text-error font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1" data-action="inc-absent" data-code="${code}">+1 Absent</button>
               </div>
             </div>
           </div>
 
-          <!-- Total & Edit Counts -->
-          <div class="attendance-conducted-bar">
-            <span>Total Conducted: <strong>${total}</strong></span>
-            <button type="button" class="btn-edit-counts" data-code="${code}">
-              ✎ Edit Exact Numbers
+          <!-- Total Conducted & Manual Edit Link -->
+          <div class="flex items-center justify-between text-xs text-on-surface-variant border-t border-white/[0.04] pt-2.5">
+            <span>Total Conducted: <strong class="text-on-surface font-bold">${total} classes</strong></span>
+            <button type="button" class="btn-edit-course-modal text-primary hover:text-primary-fixed font-medium flex items-center gap-1 cursor-pointer transition-colors" data-code="${code}">
+              <span class="material-symbols-outlined text-[14px]">edit</span>
+              <span>Edit Numbers</span>
             </button>
           </div>
 
+          <!-- Advice Banner -->
           ${adviceHtml}
 
           <!-- Forecast Pills -->
-          <div class="attendance-forecast-row">
-            <span class="forecast-item next-attend">If attended next: <strong>${ifAttend1}%</strong></span>
-            <span class="forecast-item next-miss">If missed next: <strong>${ifMiss1}%</strong></span>
+          <div class="flex items-center justify-between gap-2 text-[11px] font-mono text-on-surface-variant bg-surface-container/40 px-3 py-1.5 rounded-xl">
+            <span>If attended next: <strong class="text-secondary">${ifAttend1}%</strong></span>
+            <span>If missed next: <strong class="text-error">${ifMiss1}%</strong></span>
           </div>
         </div>
       `;
@@ -730,52 +759,53 @@ const AcademicsController = {
     const isSafeAggregate = parseFloat(aggregatePct) >= T;
 
     container.innerHTML = `
-      <!-- SUMMARY & TARGET SELECTOR BANNER -->
-      <div class="dash-card col-span-12 attendance-summary-card">
-        <div class="summary-card-inner">
-          <div class="summary-left">
-            <div class="summary-badge-row">
-              <span class="summary-badge-title">Aggregate University Attendance</span>
-              <span class="summary-status-badge ${isSafeAggregate ? 'safe' : 'danger'}">
-                ${isSafeAggregate ? '✓ Safe Standing' : '⚠️ Below Mandate'}
+      <!-- AGGREGATE SUMMARY HERO CARD -->
+      <div class="rounded-2xl bg-gradient-to-br from-surface-container to-surface-container-low p-5 sm:p-6 border border-white/[0.08] shadow-md space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono font-semibold uppercase tracking-wider text-on-surface-variant">Aggregate Semester Standing</span>
+              <span class="px-2.5 py-0.5 rounded-full ${isSafeAggregate ? 'bg-secondary/20 text-secondary' : 'bg-error/20 text-error'} text-xs font-bold">
+                ${isSafeAggregate ? '✓ Safe Compliance' : '⚠️ Shortage Warning'}
               </span>
             </div>
-            <div class="summary-big-stats">
-              <span class="summary-big-pct" style="color: ${isSafeAggregate ? '#10b981' : '#ef4444'};">${aggregatePct}%</span>
-              <span class="summary-subtext">${totalAttended} of ${totalConducted} classes attended across registered courses</span>
+            <div class="flex items-baseline gap-3">
+              <span class="font-mono text-4xl sm:text-5xl font-extrabold" style="color: ${isSafeAggregate ? '#10b981' : '#ef4444'};">${aggregatePct}%</span>
+              <span class="text-xs sm:text-sm text-on-surface-variant font-medium">Overall Attendance (${totalAttended} of ${totalConducted} classes attended)</span>
             </div>
           </div>
 
-          <!-- Target Rule Selector & Quick Actions -->
-          <div class="summary-right">
-            <div class="target-rule-segmented">
-              <button type="button" class="btn-target-toggle ${T === 80 ? 'active' : ''}" data-target="80">
-                80% Rule (JUIT Rule)
+          <!-- Target Rule Selector & Safe Bunks -->
+          <div class="flex flex-col sm:items-end gap-2">
+            <div class="inline-flex p-1 bg-surface-container-high rounded-xl border border-white/[0.06] shadow-inner">
+              <button type="button" class="btn-target-toggle px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${T === 80 ? 'bg-primary text-on-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-target="80">
+                80% Rule (Official)
               </button>
-              <button type="button" class="btn-target-toggle ${T === 75 ? 'active' : ''}" data-target="75">
+              <button type="button" class="btn-target-toggle px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${T === 75 ? 'bg-primary text-on-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-target="75">
                 75% Rule (Relaxed)
               </button>
             </div>
-            <div class="summary-action-btns">
-              <button type="button" class="btn-secondary" id="btn-add-custom-course">
-                <span class="material-symbols-outlined text-[16px]">add</span>
-                <span>Add Subject</span>
-              </button>
-              <button type="button" class="btn-secondary" id="btn-reset-attendance" title="Reset to standard semester baseline">
-                ↺ Reset
-              </button>
-            </div>
+            <span class="text-xs text-secondary font-mono font-medium">
+              🛡️ +${totalSafeBunks} total safe bunks available across subjects
+            </span>
           </div>
+        </div>
+
+        <!-- Overall Progress Bar -->
+        <div class="relative w-full h-3 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, parseFloat(aggregatePct))}%; background: ${isSafeAggregate ? '#10b981' : '#ef4444'};"></div>
+          <div class="absolute top-0 bottom-0 w-0.5 bg-white shadow-sm" style="left: ${T}%;" title="${T}% Target Threshold"></div>
         </div>
       </div>
 
-      <!-- COURSE CARDS GRID -->
-      <div class="academics-cards-grid">
+      <!-- COURSE CARDS RESPONSIVE GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="academics-cards-grid">
         ${courseCardsHtml}
       </div>
     `;
 
     this.bindAttendanceControls();
+    this.bindModalListeners();
   },
 
   bindAttendanceControls() {
@@ -787,25 +817,32 @@ const AcademicsController = {
       });
     });
 
-    // Reset button
-    const btnReset = document.getElementById('btn-reset-attendance');
-    if (btnReset) {
-      btnReset.addEventListener('click', () => {
+    // Reset button in header and card
+    const resetBtns = [
+      document.getElementById('btn-reset-attendance-all'),
+      document.getElementById('btn-reset-attendance')
+    ];
+    resetBtns.forEach(btn => {
+      btn?.addEventListener('click', () => {
         if (confirm('Reset all course attendance to standard semester starting baseline?')) {
           this.seedInitialCourses();
         }
       });
-    }
+    });
 
-    // Add Subject button
-    const btnAdd = document.getElementById('btn-add-custom-course');
-    if (btnAdd) {
-      btnAdd.addEventListener('click', () => {
-        this.promptAddCourse();
+    // Add Subject buttons
+    const addBtns = [
+      document.getElementById('btn-add-subject-modal'),
+      document.getElementById('btn-add-personal-main'),
+      document.getElementById('btn-add-custom-course')
+    ];
+    addBtns.forEach(btn => {
+      btn?.addEventListener('click', () => {
+        this.openAddCourseModal();
       });
-    }
+    });
 
-    // Stepper buttons: inc-present, dec-present, inc-absent, dec-absent
+    // Stepper buttons
     document.querySelectorAll('.btn-step').forEach(btn => {
       btn.addEventListener('click', () => {
         const code = btn.dataset.code;
@@ -823,48 +860,80 @@ const AcademicsController = {
       });
     });
 
-    // Edit exact numbers prompt
-    document.querySelectorAll('.btn-edit-counts').forEach(btn => {
+    // Edit exact numbers buttons
+    document.querySelectorAll('.btn-edit-course-modal, .btn-edit-counts').forEach(btn => {
       btn.addEventListener('click', () => {
         const code = btn.dataset.code;
-        this.promptEditCourse(code);
+        this.openEditCourseModal(code);
       });
     });
   },
 
-  promptEditCourse(code) {
-    if (!window.JUIT_PROFILE || !window.JUIT_PROFILE.attendance) return;
-    const c = window.JUIT_PROFILE.attendance[code];
-    if (!c) return;
+  bindModalListeners() {
+    const modal = document.getElementById('modal-attendance-edit');
+    const form = document.getElementById('form-attendance-edit');
+    const btnClose = document.getElementById('btn-close-course-modal');
+    const btnCancel = document.getElementById('btn-cancel-course-modal');
 
-    const newPresent = prompt(`Enter Attended Classes for ${c.name}:`, c.present || 0);
-    if (newPresent === null) return;
-    const newAbsent = prompt(`Enter Missed Classes for ${c.name}:`, c.absent || 0);
-    if (newAbsent === null) return;
+    if (!modal || modal._boundListeners) return;
+    modal._boundListeners = true;
 
-    c.present = Math.max(0, parseInt(newPresent, 10) || 0);
-    c.absent = Math.max(0, parseInt(newAbsent, 10) || 0);
-    this.saveProfile();
-    this.renderAttendanceTracker();
+    btnClose?.addEventListener('click', () => this.closeCourseModal());
+    btnCancel?.addEventListener('click', () => this.closeCourseModal());
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('input-course-code')?.value.trim().toUpperCase();
+      const name = document.getElementById('input-course-name')?.value.trim();
+      const present = Math.max(0, parseInt(document.getElementById('input-course-present')?.value, 10) || 0);
+      const absent = Math.max(0, parseInt(document.getElementById('input-course-absent')?.value, 10) || 0);
+
+      if (!code || !name) return;
+
+      window.JUIT_PROFILE = window.JUIT_PROFILE || {};
+      window.JUIT_PROFILE.attendance = window.JUIT_PROFILE.attendance || {};
+      window.JUIT_PROFILE.attendance[code] = {
+        name: name,
+        present: present,
+        absent: absent
+      };
+
+      this.saveProfile();
+      this.closeCourseModal();
+      this.renderAttendanceTracker();
+    });
   },
 
-  promptAddCourse() {
-    const code = prompt('Course Code (e.g. 25B11EC111):');
-    if (!code) return;
-    const name = prompt('Course Name (e.g. Basic Electronics):');
-    if (!name) return;
-    const present = parseInt(prompt('Current Attended Classes:', '20'), 10) || 0;
-    const absent = parseInt(prompt('Current Missed Classes:', '2'), 10) || 0;
+  openAddCourseModal() {
+    const modal = document.getElementById('modal-attendance-edit');
+    if (!modal) return;
+    document.getElementById('modal-course-title').textContent = 'Add New Subject';
+    document.getElementById('input-course-code').value = '';
+    document.getElementById('input-course-code').readOnly = false;
+    document.getElementById('input-course-name').value = '';
+    document.getElementById('input-course-present').value = '20';
+    document.getElementById('input-course-absent').value = '2';
+    modal.classList.remove('hidden');
+  },
 
-    window.JUIT_PROFILE = window.JUIT_PROFILE || {};
-    window.JUIT_PROFILE.attendance = window.JUIT_PROFILE.attendance || {};
-    window.JUIT_PROFILE.attendance[code.toUpperCase()] = {
-      name: name,
-      present: present,
-      absent: absent
-    };
-    this.saveProfile();
-    this.renderAttendanceTracker();
+  openEditCourseModal(code) {
+    const modal = document.getElementById('modal-attendance-edit');
+    if (!modal) return;
+    const c = this.getProfile().attendance?.[code];
+    if (!c) return;
+
+    document.getElementById('modal-course-title').textContent = `Edit Attendance: ${c.name}`;
+    document.getElementById('input-course-code').value = code;
+    document.getElementById('input-course-code').readOnly = true;
+    document.getElementById('input-course-name').value = c.name;
+    document.getElementById('input-course-present').value = c.present || 0;
+    document.getElementById('input-course-absent').value = c.absent || 0;
+    modal.classList.remove('hidden');
+  },
+
+  closeCourseModal() {
+    const modal = document.getElementById('modal-attendance-edit');
+    if (modal) modal.classList.add('hidden');
   },
 
   seedInitialCourses() {

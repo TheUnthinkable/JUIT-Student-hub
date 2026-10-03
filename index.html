@@ -835,176 +835,111 @@
       <!-- ==================================================================
            VIEW 4: CAMPUS WAYFINDING & ACADEMIC BLOCKS (CAMPUS)
            ================================================================== -->
-      <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-campus">
-        <!-- Hill & Weather Whisper Bar -->
-        <div class="bg-surface-container-low rounded-xl px-space-md py-space-sm flex items-center justify-between shadow-sm border border-white/[0.06]">
-          <div class="flex items-center gap-space-sm min-w-0">
-            <span class="material-symbols-outlined text-primary text-[20px] shrink-0" style="font-variation-settings: 'FILL' 1;">cloud</span>
-            <div class="truncate">
-              <p class="font-label-sm text-label-sm text-on-surface truncate font-semibold">16°C · Overcast over Waknaghat ridge</p>
-              <p class="font-caption-editorial text-caption-editorial text-on-surface-variant italic truncate">Pine needle path between AB2 & LRC is slick from morning mist</p>
+      <section class="app-view-panel flex flex-col w-full space-y-3.5" id="view-campus">
+        <!-- Campus Wayfinding Header & 3D / 2D Perspective Controls -->
+        <div class="pt-space-sm pb-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="material-symbols-outlined text-primary text-[20px]">explore</span>
+              <span class="font-label-sm text-xs text-primary font-mono font-semibold uppercase tracking-wider">Waknaghat Ridge · 1,550m Altitude</span>
             </div>
+            <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Campus Wayfinding</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Turn-by-turn navigation, 3D architectural landmarks, classroom finder, and real campus gallery imagery.
+            </p>
           </div>
-          <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-label-sm text-label-sm font-semibold">Ridge Dry</span>
+          <!-- 2D / 3D Mode & Trail Indicator -->
+          <div class="flex items-center gap-2">
+            <div class="inline-flex p-1 bg-surface-container rounded-xl border border-white/[0.06] shadow-sm">
+              <button type="button" id="btn-map-mode-3d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm" data-mode="3d">
+                <span class="material-symbols-outlined text-[15px]">view_in_ar</span>
+                <span>3D Campus</span>
+              </button>
+              <button type="button" id="btn-map-mode-2d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface" data-mode="2d">
+                <span class="material-symbols-outlined text-[15px]">map</span>
+                <span>2D Plan</span>
+              </button>
+            </div>
+            <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono px-2.5 py-1.5 rounded-xl bg-surface-container-high text-secondary border border-white/[0.06]">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span>Walkways Dry</span>
+            </span>
+          </div>
         </div>
 
-        <!-- Search & Tactile Quick Filters -->
-        <div class="bg-surface-container rounded-xl p-space-md shadow-md border border-white/[0.06]">
-          <div class="relative flex items-center mb-space-sm">
-            <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">search</span>
-            <input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-sm text-body-sm pl-10 pr-9 py-2.5 rounded-lg outline-none border border-white/[0.06] focus:border-primary transition-all" id="map-search-input" placeholder="Find a room, lab, or faculty office (e.g. CR01, CL-3)..." type="text" />
-            <button type="button" class="hidden absolute right-3 text-on-surface-variant hover:text-primary" id="map-search-clear"><span class="material-symbols-outlined text-[16px]">close</span></button>
+        <!-- Sleek Search & Quick Category Filters -->
+        <div class="bg-surface-container-low rounded-2xl p-2.5 sm:p-3 border border-white/[0.06] shadow-sm space-y-2">
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[18px]">search</span>
+            <input class="w-full bg-surface-container text-on-surface placeholder:text-outline font-body-sm text-xs pl-10 pr-9 py-2.5 rounded-xl outline-none border border-white/[0.06] focus:border-primary transition-all" id="map-search-input" placeholder="Search room, lab, theatre, mess (e.g. CR01, CL-3, LT1, Annapurna)..." type="text" />
+            <button type="button" class="hidden absolute right-3 text-on-surface-variant hover:text-primary text-xs cursor-pointer" id="map-search-clear">✕</button>
           </div>
           <div id="map-search-dropdown" class="hidden space-y-1 py-1"></div>
-          <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1" id="map-category-filters">
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="map-category-filters">
             <button class="filter-chip active flex items-center gap-1" data-block="all">
-              <span>All Blocks</span>
+              <span>All Landmarks</span>
             </button>
-            <button class="filter-chip flex items-center gap-1" data-block="cr">
-              <span class="material-symbols-outlined text-[15px]">meeting_room</span>
-              <span>CR Rooms</span>
+            <button class="filter-chip flex items-center gap-1" data-block="academic">
+              <span class="material-symbols-outlined text-[15px]">school</span>
+              <span>Academic (AB1–3)</span>
             </button>
-            <button class="filter-chip flex items-center gap-1" data-block="cl">
-              <span class="material-symbols-outlined text-[15px]">terminal</span>
-              <span>Labs (CL)</span>
-            </button>
-            <button class="filter-chip flex items-center gap-1" data-block="food">
-              <span class="material-symbols-outlined text-[15px]">coffee</span>
-              <span>Food & Chai</span>
-            </button>
-            <button class="filter-chip flex items-center gap-1" data-block="lrc">
+            <button class="filter-chip flex items-center gap-1" data-block="library">
               <span class="material-symbols-outlined text-[15px]">local_library</span>
-              <span>LRC</span>
+              <span>LRC & Admin</span>
+            </button>
+            <button class="filter-chip flex items-center gap-1" data-block="mess">
+              <span class="material-symbols-outlined text-[15px]">restaurant</span>
+              <span>Annapurna Dining</span>
+            </button>
+            <button class="filter-chip flex items-center gap-1" data-block="hostel">
+              <span class="material-symbols-outlined text-[15px]">hotel</span>
+              <span>Hostels & Quads</span>
+            </button>
+            <button class="filter-chip flex items-center gap-1" data-block="sports">
+              <span class="material-symbols-outlined text-[15px]">sports_tennis</span>
+              <span>Sports & OAT</span>
             </button>
           </div>
         </div>
 
         <!-- Route Mode Header Bar & Quick Buildings -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 w-full" id="map-header-mode-bar">
-          <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 w-full sm:max-w-[70%]" id="map-quick-buildings"></div>
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full sm:max-w-[70%]" id="map-quick-buildings"></div>
           <div class="flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
-            <button type="button" id="btn-shortest-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Shortest</button>
-            <button type="button" id="btn-accessible-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high">Accessible</button>
-            <button type="button" id="btn-clear-active-route" class="hidden px-2.5 py-1 rounded-lg bg-error-container text-on-error-container text-xs">Clear</button>
+            <button type="button" id="btn-shortest-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high cursor-pointer font-medium">Shortest</button>
+            <button type="button" id="btn-accessible-path" class="px-2.5 py-1 rounded-lg bg-surface-container text-xs hover:bg-surface-container-high cursor-pointer font-medium">Accessible Ramps</button>
+            <button type="button" id="btn-clear-active-route" class="hidden px-2.5 py-1 rounded-lg bg-error-container text-on-error-container text-xs cursor-pointer font-medium">Clear Route</button>
           </div>
         </div>
 
-        <!-- Hilltop Campus Visual Context Card -->
-        <div class="relative rounded-xl overflow-hidden bg-surface-container shadow-md border border-white/[0.06]">
-          <div class="bg-cover bg-center w-full h-36 relative" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDcqS3PUZmN41zjZw1stQ5u8t0e1zY_PhACjvn53THXf7rdTYb3mJ2h9GSnomg42oItEOC-hEAtSSxWtTh_UpkrnE9KChDwpSDT_qbiBH870vFjGlwLcmH5FZQwlJlBKPSEtWDuJYTTOLeQuFZG4OdqzoEFnZeR3nruVpobqV04rkcR1AWnHOqBx7BfqluisYV9qudLeHzRoiCbOfKTdz1bvRGlIMKyZcmN_L4dVT6hJk9ll1BH-9kz')">
-            <div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/60 to-transparent"></div>
-            <div class="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-              <div>
-                <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold">Tiered Hill Topography</span>
-                <p class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Waknaghat Campus Layout</p>
-              </div>
-              <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic bg-surface-container-lowest/80 px-2 py-0.5 rounded-md">1,550m Altitude</span>
-            </div>
+        <!-- Interactive 3D / 2D Campus Vector Map Viewport -->
+        <div class="relative w-full rounded-2xl bg-surface-container-lowest border border-white/[0.08] shadow-lg overflow-hidden" id="map-viewport-box">
+          <!-- Floating Map Controls (Right Side Stack) -->
+          <div class="absolute top-3 right-3 z-20 flex flex-col gap-1.5 shadow-md">
+            <button type="button" class="w-9 h-9 rounded-xl bg-surface-container/90 backdrop-blur-md hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors cursor-pointer border border-white/[0.08] text-sm font-bold" id="btn-map-zoom-in" title="Zoom In">+</button>
+            <button type="button" class="w-9 h-9 rounded-xl bg-surface-container/90 backdrop-blur-md hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors cursor-pointer border border-white/[0.08] text-sm font-bold" id="btn-map-zoom-out" title="Zoom Out">−</button>
+            <button type="button" class="w-9 h-9 rounded-xl bg-surface-container/90 backdrop-blur-md hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors cursor-pointer border border-white/[0.08]" id="btn-map-reset" title="Recenter Campus">
+              <span class="material-symbols-outlined text-[18px]">my_location</span>
+            </button>
           </div>
-          <div class="p-space-md pt-2">
-            <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-              The campus follows the natural mountain spine. Higher tiered blocks (AB1, AB2) connect via covered pine staircases down toward the Annapurna dining terrace and the lower Highway Gate 1.
-            </p>
-          </div>
-        </div>
 
-        <!-- Interactive Campus Vector SVG Viewport -->
-        <div class="relative w-full rounded-xl bg-surface-container-low border border-white/[0.08] shadow-md p-4" id="map-viewport-box">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[20px]">map</span>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Interactive Campus Map</h3>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-zoom-in" title="Zoom In">+</button>
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-zoom-out" title="Zoom Out">−</button>
-              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer" id="btn-map-reset" title="Reset View">↺</button>
-            </div>
+          <!-- Compass Badge (Top Left of Map) -->
+          <div class="absolute top-3 left-3 z-20 pointer-events-none hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container-lowest/80 backdrop-blur-md border border-white/[0.08] text-[11px] font-mono text-on-surface-variant">
+            <span class="text-primary font-bold">N ↑</span>
+            <span>JUIT Waknaghat</span>
           </div>
-          <div class="w-full h-80 sm:h-96 rounded-lg overflow-hidden bg-surface-container-lowest relative flex items-center justify-center select-none" id="map-canvas-container" style="touch-action: none;">
+
+          <!-- SVG Canvas Container with 3D Mode Class -->
+          <div class="w-full h-[52vh] sm:h-[620px] rounded-2xl overflow-hidden bg-surface-container-lowest relative flex items-center justify-center select-none map-mode-3d" id="map-canvas-container" style="touch-action: none;">
             <svg class="w-full h-full" id="campus-vector-svg" viewBox="0 0 1000 680" style="touch-action: none;"></svg>
             <div id="map-hud-overlay-layer"></div>
           </div>
         </div>
 
-        <!-- Academic Blocks Directory -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[20px]">apartment</span>
-              <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Academic Blocks & Venues</h2>
-            </div>
-            <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic">Tap card for room directions</span>
-          </div>
-
-          <!-- AB-2 -->
-          <article class="block-card rounded-xl bg-surface-container p-space-md shadow-md transition-all border-l-4 border-l-primary border border-white/[0.06] cursor-pointer" data-venue="AB2" onclick="if(window.CampusMap) CampusMap.showBuildingDetails('ab2')">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="px-2 py-0.5 rounded-full bg-primary/15 text-primary font-label-sm text-label-sm font-bold">AB-2</span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Core Tech Wing</span>
-                </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Computer Centre & Lecture Halls</h3>
-              </div>
-              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high text-primary">
-                <span class="material-symbols-outlined text-[18px]">near_me</span>
-              </span>
-            </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
-              Houses Computer Labs (CL-1 through CL-8), Lecture Theatres LT-1, LT-2, LT-3, and Dean of Academics offices on the 2nd tier.
-            </p>
-          </article>
-
-          <!-- AB-1 -->
-          <article class="block-card rounded-xl bg-surface-container p-space-md shadow-md transition-all border-l-4 border-l-secondary border border-white/[0.06] cursor-pointer" data-venue="AB1" onclick="if(window.CampusMap) CampusMap.showBuildingDetails('ab1')">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm font-bold">AB-1</span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Instructional Wing</span>
-                </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Classrooms CR-1 to CR-14 & Basic Sciences</h3>
-              </div>
-              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high text-secondary">
-                <span class="material-symbols-outlined text-[18px]">near_me</span>
-              </span>
-            </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
-              Main theoretical lecture rooms CR01 to CR14, Physics & Chemistry laboratories, and Mathematics department faculty suites.
-            </p>
-          </article>
-
-          <!-- LRC -->
-          <article class="block-card rounded-xl bg-surface-container p-space-md shadow-md transition-all border-l-4 border-l-tertiary border border-white/[0.06] cursor-pointer" data-venue="LRC" onclick="if(window.CampusMap) CampusMap.showBuildingDetails('lrc')">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary font-label-sm text-label-sm font-bold">LRC</span>
-                  <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Learning Resource Centre</span>
-                </div>
-                <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Central Library & Reading Pods</h3>
-              </div>
-              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-high text-tertiary">
-                <span class="material-symbols-outlined text-[18px]">near_me</span>
-              </span>
-            </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
-              3-floor library complex with silent study bays, journal archives, IEEE digital access terminals, and 24x7 reading lounge during exams.
-            </p>
-          </article>
-        </div>
-
-        <!-- Venue / Building Info Drawer Element -->
+        <!-- Venue / Building Info Drawer & Mobile Bottom Sheet -->
+        <div id="map-drawer-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-[95] transition-opacity duration-300 opacity-0 pointer-events-none sm:hidden"></div>
         <aside class="map-venue-drawer" id="map-venue-drawer" aria-label="Building Information Drawer">
-          <div class="flex items-center justify-between p-4 border-b border-white/[0.06]">
-            <span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Building Details</span>
-            <button type="button" class="text-on-surface-variant hover:text-primary" id="btn-close-map-drawer"><span class="material-symbols-outlined">close</span></button>
-          </div>
-          <div class="p-4 space-y-3">
-            <button type="button" id="btn-drawer-directions" class="btn-attendance-toggle attended w-full justify-center">Get Directions</button>
-            <button type="button" id="btn-show-pin-on-map" class="btn-attendance-toggle w-full justify-center">Highlight on Map</button>
-          </div>
+          <!-- Dynamically populated with high-res real campus gallery photography by CampusMap.openBuildingDrawer -->
         </aside>
       </section>
 
@@ -1503,13 +1438,21 @@
         <div id="calendar-spotlight-milestone"></div>
 
         <!-- Controls Bar: Term Switcher & View Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low p-3 rounded-2xl border border-white/[0.06]">
-          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            <button type="button" id="btn-cal-odd" class="px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-semibold cursor-pointer">Odd Sem (Jul–Dec 2026)</button>
-            <button type="button" id="btn-cal-even" class="px-3.5 py-1.5 rounded-xl font-label-md text-label-md font-semibold cursor-pointer">Even Sem (Jan–May 2027)</button>
-            <span id="calendar-active-term-pill" class="hidden sm:inline-flex"></span>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low p-2 sm:p-2.5 rounded-2xl border border-white/[0.06] shadow-sm">
+          <div class="flex items-center gap-1.5 p-1 bg-surface-container rounded-xl border border-white/[0.04]">
+            <button type="button" id="btn-cal-odd" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Odd Sem</span>
+              <span class="opacity-70 text-[11px] font-normal hidden sm:inline">(Jul–Dec 2026)</span>
+            </button>
+            <button type="button" id="btn-cal-even" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+              <span>Even Sem</span>
+              <span class="opacity-70 text-[11px] font-normal hidden sm:inline">(Jan–May 2027)</span>
+            </button>
           </div>
           <div class="flex items-center gap-2 justify-between sm:justify-end">
+            <span id="calendar-active-term-pill" class="text-[11px] font-mono text-on-surface-variant px-2.5 py-1 rounded-lg bg-surface-container border border-white/[0.04]">AY 2026–27</span>
             <div id="calendar-view-switcher"></div>
           </div>
         </div>
@@ -1533,53 +1476,80 @@
       <!-- ==================================================================
            VIEW 11: ATTENDANCE TRACKER (ACADEMICS)
            ================================================================== -->
-      <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-academics">
-        <div class="pt-space-sm pb-space-xs flex flex-col">
-          <span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Target 80% Rule</span>
-          <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Attendance Studio</h1>
-        </div>
-        <div class="flex gap-2 border-b border-white/[0.06] pb-2" id="academics-subnav-tabs">
-          <button type="button" class="term-btn active" id="tab-btn-personal-attendance">My Attendance</button>
-          <button type="button" class="term-btn" id="tab-btn-batch-attendance">Batch Matrix</button>
-          <button type="button" class="term-btn" id="tab-btn-cgpa-checker">CGPA Predictor</button>
+      <section class="app-view-panel flex flex-col w-full space-y-4" id="view-academics">
+        <!-- Academics / Attendance Studio Header -->
+        <div class="pt-space-sm pb-space-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="material-symbols-outlined text-secondary text-[20px]">how_to_reg</span>
+              <span class="font-label-sm text-xs text-secondary font-mono font-semibold uppercase tracking-wider">Mandatory 80% Rule Compliance</span>
+            </div>
+            <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">Attendance Studio & Academics</h1>
+            <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Real-time course attendance calculator, safe bunk forecasts, batch compliance matrix, and SGPA predictor.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btn-add-subject-modal" class="px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-container font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">add</span>
+              <span>Add Subject</span>
+            </button>
+            <button type="button" id="btn-reset-attendance-all" class="px-3 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-error font-label-md text-xs font-semibold inline-flex items-center gap-1 transition-colors border border-white/[0.06] cursor-pointer" title="Reset all courses to semester defaults">
+              <span class="material-symbols-outlined text-[15px]">restart_alt</span>
+              <span>Reset</span>
+            </button>
+          </div>
         </div>
 
+        <!-- Subnav Tabs -->
+        <div class="flex items-center gap-1 p-1 bg-surface-container-low rounded-2xl border border-white/[0.06] shadow-sm overflow-x-auto no-scrollbar" id="academics-subnav-tabs">
+          <button type="button" class="academic-tab-btn active px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 bg-surface-container text-primary shadow-sm" data-subtab="personal-attendance" id="tab-btn-personal-attendance">
+            <span class="material-symbols-outlined text-[16px]">person_check</span>
+            <span>My Courses & Attendance</span>
+          </button>
+          <button type="button" class="academic-tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50" data-subtab="batch-attendance" id="tab-btn-batch-attendance">
+            <span class="material-symbols-outlined text-[16px]">grid_view</span>
+            <span>Batch Matrix (16 Batches)</span>
+          </button>
+          <button type="button" class="academic-tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50" data-subtab="cgpa-checker" id="tab-btn-cgpa-checker">
+            <span class="material-symbols-outlined text-[16px]">calculate</span>
+            <span>CGPA & SGPA Predictor</span>
+          </button>
+        </div>
+
+        <!-- Subpanel 1: Personal Attendance Tracker -->
         <div id="subpanel-personal-attendance" class="space-y-4">
-          <div class="flex justify-between items-center">
-            <span class="font-headline-sm text-headline-sm font-semibold">Registered Courses</span>
-            <div class="flex gap-2">
-              <button type="button" id="btn-add-personal-main" class="px-2.5 py-1 rounded bg-surface-container text-xs text-primary">+ Add Course</button>
-              <button type="button" id="btn-reset-attendance" class="px-2.5 py-1 rounded bg-surface-container text-xs text-error">Reset</button>
-            </div>
-          </div>
-          <div class="space-y-3" id="academics-attendance-container"></div>
-          <div id="academics-courses-list" class="space-y-2"></div>
+          <div id="academics-attendance-container" class="space-y-4"></div>
         </div>
 
+        <!-- Subpanel 2: Batch Attendance Indicator -->
         <div id="subpanel-batch-attendance" class="hidden space-y-4">
-          <input type="text" id="batch-matrix-search" placeholder="Search batch matrix..." class="select-styled w-full" />
-          <div id="batch-attendance-container" class="space-y-2"></div>
+          <div id="batch-attendance-container" class="space-y-4"></div>
         </div>
 
+        <!-- Subpanel 3: CGPA & SGPA Predictor -->
         <div id="subpanel-cgpa-checker" class="hidden space-y-4">
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-surface-container-low p-4 rounded-2xl border border-white/[0.06]">
             <div>
-              <label class="text-xs text-on-surface-variant block mb-1">Past Cumulative CGPA</label>
-              <input type="number" step="0.01" id="cgpa-past-cgpa" class="select-styled w-full" placeholder="8.50" />
+              <label class="text-xs font-medium text-on-surface-variant block mb-1">Past Cumulative CGPA</label>
+              <input type="number" step="0.01" id="cgpa-past-cgpa" class="w-full h-10 px-3.5 bg-surface-container rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] outline-none" placeholder="8.50" />
             </div>
             <div>
-              <label class="text-xs text-on-surface-variant block mb-1">Past Completed Credits</label>
-              <input type="number" id="cgpa-past-credits" class="select-styled w-full" placeholder="40" />
+              <label class="text-xs font-medium text-on-surface-variant block mb-1">Past Completed Credits</label>
+              <input type="number" id="cgpa-past-credits" class="w-full h-10 px-3.5 bg-surface-container rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] outline-none" placeholder="40" />
             </div>
           </div>
-          <div class="flex gap-2">
-            <button type="button" id="btn-add-cgpa-course" class="px-2.5 py-1 rounded bg-surface-container text-xs text-primary">+ Add Course</button>
-            <button type="button" id="btn-reset-cgpa-courses" class="px-2.5 py-1 rounded bg-surface-container text-xs text-error">Reset</button>
+          <div class="flex items-center justify-between">
+            <h3 class="font-headline-sm text-sm font-semibold text-on-surface">Registered Semester Courses</h3>
+            <div class="flex gap-2">
+              <button type="button" id="btn-add-cgpa-course" class="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-primary transition-colors cursor-pointer">+ Add Course</button>
+              <button type="button" id="btn-reset-cgpa-courses" class="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-error transition-colors cursor-pointer">Reset</button>
+            </div>
           </div>
           <div id="academics-cgpa-container" class="space-y-2"></div>
-          <div class="p-3 bg-surface-container-low rounded-xl flex items-center justify-between">
-            <span>Projected SGPA: <strong id="calc-sgpa-result" class="text-primary font-bold">--</strong></span>
-            <span>Cumulative CGPA: <strong id="calc-cgpa-result" class="text-secondary font-bold">--</strong></span>
+          <div class="p-4 bg-surface-container-low rounded-2xl border border-white/[0.06] flex items-center justify-between">
+            <span class="text-xs text-on-surface-variant">Projected SGPA: <strong id="calc-sgpa-result" class="text-primary font-bold text-sm">--</strong></span>
+            <span class="text-xs text-on-surface-variant">Cumulative CGPA: <strong id="calc-cgpa-result" class="text-secondary font-bold text-sm">--</strong></span>
           </div>
 
           <!-- Hidden predictor inputs for controller compatibility -->
@@ -1598,6 +1568,44 @@
             <button type="button" id="btn-sim-reset"></button>
             <button type="button" id="btn-add-custom-course"></button>
             <button type="button" id="btn-add-assignment"></button>
+          </div>
+        </div>
+
+        <!-- In-App Add / Edit Course Modal -->
+        <div id="modal-attendance-edit" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div class="bg-surface-container rounded-2xl border border-white/[0.1] shadow-2xl max-w-md w-full p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">edit_note</span>
+                <h3 class="font-headline-sm text-base text-on-surface font-semibold" id="modal-course-title">Add / Edit Subject Attendance</h3>
+              </div>
+              <button type="button" id="btn-close-course-modal" class="text-on-surface-variant hover:text-on-surface text-sm cursor-pointer p-1">✕</button>
+            </div>
+            <form id="form-attendance-edit" class="space-y-3">
+              <input type="hidden" id="input-course-id" />
+              <div>
+                <label class="block text-xs font-medium text-on-surface-variant mb-1">Course Code</label>
+                <input type="text" id="input-course-code" placeholder="e.g. 25B11EC111" class="w-full h-10 px-3.5 bg-surface-container-high rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] focus:border-primary outline-none" required />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-on-surface-variant mb-1">Course Name</label>
+                <input type="text" id="input-course-name" placeholder="e.g. Basic Electronics" class="w-full h-10 px-3.5 bg-surface-container-high rounded-xl text-xs text-on-surface border border-white/[0.06] focus:border-primary outline-none" required />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-secondary mb-1">Attended Classes</label>
+                  <input type="number" min="0" id="input-course-present" placeholder="20" class="w-full h-10 px-3.5 bg-surface-container-high rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] focus:border-secondary outline-none" required />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-error mb-1">Missed Classes</label>
+                  <input type="number" min="0" id="input-course-absent" placeholder="3" class="w-full h-10 px-3.5 bg-surface-container-high rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] focus:border-error outline-none" required />
+                </div>
+              </div>
+              <div class="pt-2 flex items-center justify-end gap-2">
+                <button type="button" id="btn-cancel-course-modal" class="px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold text-on-surface-variant transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-container text-xs font-semibold transition-colors cursor-pointer shadow-sm">Save Subject</button>
+              </div>
+            </form>
           </div>
         </div>
       </section>

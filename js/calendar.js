@@ -53,23 +53,23 @@ const CalendarController = {
     const termPill = document.getElementById('calendar-active-term-pill');
 
     if (btnOdd && btnEven) {
-      btnOdd.className = `px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all font-semibold cursor-pointer ${
-        this.activeTerm === 'odd2026'
-          ? 'bg-primary text-on-primary shadow-sm'
-          : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+      const isOdd = (this.activeTerm === 'odd2026');
+      btnOdd.className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
+        isOdd
+          ? 'bg-primary text-on-primary shadow-sm font-bold'
+          : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
       }`;
-      btnEven.className = `px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all font-semibold cursor-pointer ${
-        this.activeTerm === 'even2027'
-          ? 'bg-primary text-on-primary shadow-sm'
-          : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+      btnEven.className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
+        !isOdd
+          ? 'bg-primary text-on-primary shadow-sm font-bold'
+          : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
       }`;
     }
 
     if (termPill) {
       termPill.innerHTML = this.activeTerm === 'odd2026'
-        ? '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>ODD Sem 2026 (Jul–Dec)</span>'
-        : '<span class="w-2 h-2 rounded-full bg-purple-400"></span><span>EVEN Sem 2027 (Jan–May)</span>';
-      termPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono bg-surface-container-high text-secondary border border-white/[0.06] font-medium';
+        ? '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span>AY 2026-27 (Gazetted)</span></span>'
+        : '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span><span>Even Term 2027</span></span>';
     }
   },
 

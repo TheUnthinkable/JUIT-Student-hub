@@ -9737,3 +9737,130 @@ html, body {
     transform: translateY(0);
   }
 }
+
+/* ==========================================================================
+   3D ISOMETRIC CAMPUS MAP & MOBILE BOTTOM SHEET
+   ========================================================================== */
+#map-canvas-container {
+  transition: perspective 0.5s ease;
+}
+
+#map-canvas-container.map-mode-3d {
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+}
+
+#map-canvas-container.map-mode-3d #campus-vector-svg {
+  transform: rotateX(40deg) rotateZ(-14deg) scale(0.95);
+  transform-style: preserve-3d;
+  box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.9);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#map-canvas-container.map-mode-2d #campus-vector-svg {
+  transform: none;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 3D Extruded Building Layer */
+.bldg-node-3d {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+}
+
+.bldg-node-3d:hover {
+  transform: translateY(-8px);
+  filter: drop-shadow(0 18px 30px rgba(0, 229, 255, 0.45)) brightness(1.2);
+}
+
+.bldg-node-3d.highlighted {
+  transform: translateY(-12px);
+  filter: drop-shadow(0 22px 35px rgba(0, 229, 255, 0.6)) brightness(1.25);
+}
+
+/* Campus Building Drawer & Mobile Bottom Sheet */
+.map-venue-drawer {
+  position: fixed;
+  z-index: 100;
+  background: #181c25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  overflow: hidden;
+}
+
+/* Desktop Drawer (Slide-in from right) */
+@media (min-width: 769px) {
+  .map-venue-drawer {
+    top: 76px;
+    right: 24px;
+    bottom: 24px;
+    width: 410px;
+    border-radius: 20px;
+    transform: translateX(450px);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .map-venue-drawer.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Mobile Bottom Sheet (<768px) */
+@media (max-width: 768px) {
+  .map-venue-drawer {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 78vh;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    border-bottom: none;
+    transform: translateY(105%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .map-venue-drawer.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Drawer Content Scrollable Area */
+.drawer-scroll-body {
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+}
+
+/* ==========================================================================
+   ATTENDANCE STUDIO REFINED STYLING
+   ========================================================================== */
+.attendance-progress-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.attendance-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.attendance-target-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 6px #ffffff;
+  z-index: 10;
+}
+
