@@ -268,29 +268,31 @@ const ThemeManager = {
   },
 
   renderThemePickerInModal() {
-    const container = document.getElementById('theme-palette-picker-container');
-    if (!container) return;
+    const containers = document.querySelectorAll('#theme-palette-picker-container, #settings-theme-palette-picker-container');
+    if (!containers || containers.length === 0) return;
 
-    container.innerHTML = `
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-        ${this.palettes.map(p => `
-          <button type="button" 
-                  class="palette-chip-btn p-2 rounded-xl border flex flex-col items-start gap-1 transition-all cursor-pointer ${this.palette === p.id ? 'border-primary ring-2 ring-primary/30 bg-surface-container-high' : 'border-white/[0.06] bg-surface-container hover:bg-surface-container-high'}"
-                  data-set-palette="${p.id}">
-            <div class="flex items-center gap-1.5 w-full">
-              <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style="background: ${p.color};"></span>
-              <span class="text-[11px] font-bold text-on-surface truncate">${p.name}</span>
-            </div>
-            <span class="text-[9.5px] text-on-surface-variant truncate w-full">${p.mode === 'light' ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
-        `).join('')}
-      </div>
-    `;
+    containers.forEach(container => {
+      container.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          ${this.palettes.map(p => `
+            <button type="button" 
+                    class="palette-chip-btn p-2 rounded-xl border flex flex-col items-start gap-1 transition-all cursor-pointer ${this.palette === p.id ? 'border-primary ring-2 ring-primary/30 bg-surface-container-high' : 'border-white/[0.06] bg-surface-container hover:bg-surface-container-high'}"
+                    data-set-palette="${p.id}">
+              <div class="flex items-center gap-1.5 w-full">
+                <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style="background: ${p.color};"></span>
+                <span class="text-[11px] font-bold text-on-surface truncate">${p.name}</span>
+              </div>
+              <span class="text-[9.5px] text-on-surface-variant truncate w-full">${p.mode === 'light' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+          `).join('')}
+        </div>
+      `;
 
-    container.querySelectorAll('[data-set-palette]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.setPalette(btn.dataset.setPalette);
-        this.renderThemePickerInModal();
+      container.querySelectorAll('[data-set-palette]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.setPalette(btn.dataset.setPalette);
+          this.renderThemePickerInModal();
+        });
       });
     });
   },

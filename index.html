@@ -269,36 +269,46 @@
        FIXED TOP APP BAR (All screens)
        ====================================================================== -->
   <header class="app-header fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_12px_rgba(0,0,0,0.2)] pt-safe lg:left-64">
-    <div class="h-16 px-margin-mobile lg:px-8 flex items-center justify-between">
-      <!-- Left: Mobile Brand & Altitude Whisper -->
-      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-        <button type="button" class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
-          <span class="material-symbols-outlined text-[22px]">menu</span>
+    <div class="h-16 px-3 sm:px-4 lg:px-8 flex items-center justify-between gap-2">
+      <!-- Left: Mobile Brand & Elevation Subtitle -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0 shrink">
+        <button type="button" class="lg:hidden w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
+          <span class="material-symbols-outlined text-[20px]">menu</span>
         </button>
         <a href="#dash" class="flex items-center gap-2 min-w-0 group" id="mobile-brand-link" title="JUIT Student Hub · Solan Hills (1,550m)">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/25 via-primary/10 to-secondary/20 border border-primary/30 flex items-center justify-center text-primary shadow-sm shrink-0 group-hover:scale-105 transition-transform">
-            <span class="material-symbols-outlined text-[19px]">school</span>
+            <span class="material-symbols-outlined text-[18px]">school</span>
           </div>
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="font-headline-sm text-base sm:text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors whitespace-nowrap">JUIT Hub</span>
-            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium text-secondary bg-surface-container-high/90 border border-secondary/20 shrink-0 whitespace-nowrap shadow-xs" title="Campus Elevation: 1,550m above sea level">
-              <span class="material-symbols-outlined text-[12px] text-secondary">landscape</span>
+          <div class="flex flex-col min-w-0 leading-tight">
+            <div class="flex items-center gap-1.5">
+              <span class="font-headline-sm text-sm sm:text-base font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors whitespace-nowrap">JUIT Hub</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary hidden sm:inline-block"></span>
+            </div>
+            <span class="inline-flex items-center gap-0.5 text-[10px] font-mono text-secondary tracking-tight whitespace-nowrap" title="Campus Elevation: 1,550m above sea level">
+              <span class="material-symbols-outlined text-[11px] text-secondary">landscape</span>
               <span>1,550m</span>
             </span>
           </div>
         </a>
+
+        <!-- Desktop active section breadcrumb -->
+        <div class="hidden lg:flex items-center gap-2 pl-3 border-l border-white/[0.08]" id="desktop-breadcrumb-container">
+          <span class="text-xs font-medium text-on-surface-variant/80" id="desktop-view-title">Campus Core</span>
+          <span class="text-on-surface-variant/40 text-xs">/</span>
+          <span class="text-xs font-semibold text-primary" id="desktop-view-subtitle">Dashboard</span>
+        </div>
       </div>
 
       <!-- Right: Action Controls & Live Clock -->
-      <div class="flex items-center gap-2 shrink-0">
-        <div id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shrink-0 shadow-xs" title="Campus Network & Offline Cache Status">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shrink-0 shadow-xs" title="Campus Network & Offline Cache Status">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" id="connection-status-dot"></span>
           </span>
           <span id="connection-status-text" class="font-semibold tracking-wide">.online</span>
         </div>
-        <div class="hidden md:flex flex-col text-right mr-2">
+        <div class="hidden md:flex flex-col text-right mr-1 sm:mr-2">
           <span class="font-mono text-xs text-primary font-semibold" id="live-clock-time">09:47 AM</span>
           <span class="font-label-sm text-[10px] text-on-surface-variant" id="live-clock-date">Tuesday, 22 Sep</span>
         </div>
@@ -307,12 +317,12 @@
           <span>Search</span>
           <kbd class="px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono text-[10px]">⌘K</kbd>
         </button>
-        <button type="button" class="w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors relative cursor-pointer" id="btn-open-notifications" aria-label="View notifications">
-          <span class="material-symbols-outlined text-[22px]">notifications</span>
-          <span class="hidden absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" id="notif-badge-counter"></span>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors relative cursor-pointer" id="btn-open-notifications" aria-label="View notifications">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" id="notif-badge-counter"></span>
         </button>
-        <button type="button" class="w-9 h-9 rounded-full bg-surface-container-high border border-white/[0.08] flex items-center justify-center text-primary overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" id="btn-open-profile-settings" aria-label="User Profile & Settings">
-          <span class="material-symbols-outlined text-[20px]">person</span>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-surface-container-high border border-white/[0.08] flex items-center justify-center text-primary overflow-hidden hover:ring-2 hover:ring-primary/40 transition-all cursor-pointer" id="btn-open-profile-settings" aria-label="User Profile & Settings">
+          <span class="material-symbols-outlined text-[18px]">person</span>
         </button>
       </div>
     </div>
@@ -1827,18 +1837,22 @@
             <div class="rounded-xl bg-surface-container-low p-space-lg border border-white/[0.06] shadow-sm space-y-4">
               <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold flex items-center gap-2">
                 <span class="material-symbols-outlined text-secondary text-[20px]">palette</span>
-                <span>Visual Theme</span>
+                <span>Visual Theme & Himalayan Palettes</span>
               </h3>
-              <p class="font-body-sm text-xs text-on-surface-variant">Toggle between high-contrast dark obsidian and clean frost light themes.</p>
+              <p class="font-body-sm text-xs text-on-surface-variant">Choose from 8 distinct campus palettes or toggle dark/light modes.</p>
               <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-white/[0.06]">
                 <div>
                   <span class="font-label-md text-sm text-on-surface block font-semibold" id="settings-theme-label">Dark Obsidian</span>
-                  <span class="font-label-sm text-[11px] text-on-surface-variant">Optimal for night study</span>
+                  <span class="font-label-sm text-[11px] text-on-surface-variant">Theme Mode</span>
                 </div>
                 <button type="button" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-white/[0.08] text-xs font-semibold text-primary flex items-center gap-1 transition-colors cursor-pointer" id="btn-settings-theme-toggle">
                   <span class="material-symbols-outlined text-[16px]">dark_mode</span>
-                  <span>Switch</span>
+                  <span>Switch Mode</span>
                 </button>
+              </div>
+              <div class="pt-1">
+                <span class="text-xs font-semibold text-on-surface block mb-2">Campus Color Palettes (8 Curated Themes)</span>
+                <div id="settings-theme-palette-picker-container" class="space-y-1"></div>
               </div>
             </div>
 

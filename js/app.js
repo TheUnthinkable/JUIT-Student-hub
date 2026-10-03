@@ -144,6 +144,29 @@ const App = {
       activePanel.classList.add('active');
     }
 
+    // Update desktop header breadcrumb dynamically
+    const viewMetadata = {
+      'dash': { section: 'Campus Core', title: 'Dashboard' },
+      'timetable': { section: 'Campus Core', title: 'Classes & Timetable' },
+      'campus': { section: 'Campus Core', title: '3D Campus Wayfinder' },
+      'mess': { section: 'Campus Core', title: 'Annapurna Dining' },
+      'resources': { section: 'Campus Core', title: 'Academic Vault' },
+      'utilities': { section: 'Student Logistics', title: 'Student Utilities' },
+      'announcements': { section: 'Student Logistics', title: 'Campus Notices' },
+      'events-clubs': { section: 'Student Logistics', title: 'Life & Events' },
+      'bus': { section: 'Student Logistics', title: 'NH-5 Bus Transit' },
+      'calendar': { section: 'Student Logistics', title: 'Academic Calendar' },
+      'academics': { section: 'Student Logistics', title: 'Attendance Tracker' },
+      'portals': { section: 'Student Logistics', title: 'Campus Portals' },
+      'settings': { section: 'Preferences', title: 'Hub Settings' },
+      'admin': { section: 'System', title: 'Admin Controls' }
+    };
+    const meta = viewMetadata[viewId] || { section: 'JUIT Hub', title: 'Campus' };
+    const dtTitle = document.getElementById('desktop-view-title');
+    const dtSub = document.getElementById('desktop-view-subtitle');
+    if (dtTitle) dtTitle.textContent = meta.section;
+    if (dtSub) dtSub.textContent = meta.title;
+
     // Module-specific hooks
     if (viewId === 'dash') {
       this.refreshDashboard();
