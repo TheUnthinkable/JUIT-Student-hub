@@ -1868,13 +1868,13 @@ const App = {
 
       if (connPill && connDot && connText) {
         if (isOnline) {
-          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mr-1';
-          connDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
-          connText.textContent = 'Online';
+          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shrink-0 shadow-xs';
+          connDot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-500';
+          connText.textContent = '.online';
         } else {
-          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 mr-1';
-          connDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse';
-          connText.textContent = 'Offline (Cached)';
+          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0 shadow-xs';
+          connDot.className = 'relative inline-flex rounded-full h-2 w-2 bg-amber-400 animate-pulse';
+          connText.textContent = '.offline (cached)';
         }
       }
 

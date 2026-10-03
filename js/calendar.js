@@ -115,7 +115,7 @@ const CalendarController = {
         }" data-category="${cat.id}">
           <span class="material-symbols-outlined text-[15px]">${cat.icon}</span>
           <span>${cat.label}</span>
-          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-on-primary/20 text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">${count}</span>
+          <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono ${isActive ? 'bg-on-primary/20 text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">${count}</span>
         </button>
       `;
     }).join('');
@@ -170,26 +170,26 @@ const CalendarController = {
     const gCalUrl = this.getGCalUrl(targetEvent, targetEvent.parsed);
 
     spotlightContainer.innerHTML = `
-      <div class="relative rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-low p-5 sm:p-6 border border-white/[0.1] shadow-lg overflow-hidden">
+      <div class="relative rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-low p-4 sm:p-5 border border-white/[0.1] shadow-lg overflow-hidden">
         <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-          <div class="flex items-start gap-4">
-            <div class="w-12 h-12 rounded-2xl ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-primary/20 text-primary border border-primary/30'} flex items-center justify-center shrink-0 shadow-inner">
-              <span class="material-symbols-outlined text-[26px]">${targetEvent.isActiveNow ? 'crisis_alert' : 'upcoming'}</span>
+          <div class="flex items-start gap-3.5 min-w-0">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-primary/20 text-primary border border-primary/30'} flex items-center justify-center shrink-0 shadow-inner">
+              <span class="material-symbols-outlined text-[24px] sm:text-[26px]">${targetEvent.isActiveNow ? 'crisis_alert' : 'upcoming'}</span>
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 flex-wrap mb-1">
-                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-300' : 'bg-primary-container text-on-primary-container'}">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-wider ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-primary-container text-on-primary-container border border-primary/20'}">
                   ${targetEvent.isActiveNow ? '● Live Milestone' : 'Upcoming Next'}
                 </span>
                 <span class="text-xs font-semibold text-secondary">${countdown.statusText}</span>
               </div>
-              <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold tracking-tight">${targetEvent.title}</h3>
-              <p class="font-body-sm text-xs sm:text-body-sm text-on-surface-variant mt-0.5">${targetEvent.target} • <span class="font-mono text-primary font-medium">${targetEvent.dates}</span></p>
+              <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold tracking-tight truncate">${targetEvent.title}</h3>
+              <p class="font-body-sm text-xs text-on-surface-variant mt-0.5 line-clamp-2">${targetEvent.target} • <span class="font-mono text-primary font-medium">${targetEvent.dates}</span></p>
             </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
-            <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm">
+          <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
+            <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 font-label-md text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm" title="Add this milestone to your Google Calendar">
               <span class="material-symbols-outlined text-[15px]">event</span>
               <span>Sync to Google Calendar</span>
             </a>
@@ -453,36 +453,38 @@ const CalendarController = {
 
           const monthName = parsed ? parsed.monthStr : 'DATE';
           const dayDisplay = parsed ? (parsed.startDay === parsed.endDay ? `${parsed.startDay}` : `${parsed.startDay}–${parsed.endDay}`) : ev.dates;
+          const isMultiDay = (dayDisplay && (dayDisplay.includes('–') || dayDisplay.includes('-') || dayDisplay.length > 2));
+          const dayFontSize = isMultiDay ? 'text-[11px] sm:text-xs font-bold tracking-tight' : 'text-base sm:text-lg font-extrabold';
 
           return `
-            <div class="group relative rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-200 border border-white/[0.06] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${
+            <div class="calendar-agenda-item group relative rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-200 border border-white/[0.06] p-3.5 sm:p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-sm ${
               countdown.isCurrent ? 'ring-1 ring-emerald-500/40 bg-emerald-500/[0.03]' : ''
             }">
-              <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+              <div class="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0">
                 <!-- Date Pill Block -->
-                <div class="w-16 h-16 rounded-xl bg-surface-container flex flex-col items-center justify-center shrink-0 border border-white/[0.06] shadow-sm text-center" style="border-left: 3px solid ${cat.color};">
-                  <span class="font-mono text-[10px] font-bold uppercase tracking-wider leading-none" style="color: ${cat.color};">${monthName}</span>
-                  <span class="font-mono text-base font-bold text-on-surface mt-1 leading-none">${dayDisplay}</span>
+                <div class="w-14 sm:w-16 h-14 sm:h-16 px-1 rounded-xl bg-surface-container flex flex-col items-center justify-center shrink-0 border border-white/[0.06] shadow-sm text-center" style="border-left: 3px solid ${cat.color};">
+                  <span class="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wider leading-none" style="color: ${cat.color};">${monthName}</span>
+                  <span class="font-mono ${dayFontSize} text-on-surface mt-1 leading-none">${dayDisplay}</span>
                 </div>
 
                 <!-- Event Details -->
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center gap-2 flex-wrap mb-1">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold" style="background: ${cat.bg}; color: ${cat.color}; border: 1px solid ${cat.border};">
+                <div class="min-w-0 flex-1 space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold" style="background: ${cat.bg}; color: ${cat.color}; border: 1px solid ${cat.border};">
                       <span class="material-symbols-outlined text-[13px]">${cat.icon}</span>
                       <span>${cat.label}</span>
                     </span>
 
                     ${countdown.statusText ? `
-                      <span class="px-2 py-0.5 rounded-full text-[11px] font-mono font-medium ${countdown.pillClass}">
+                      <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-medium ${countdown.pillClass}">
                         ${countdown.statusText}
                       </span>
                     ` : ''}
                   </div>
 
-                  <h4 class="font-headline-sm text-sm sm:text-base text-on-surface font-semibold group-hover:text-primary transition-colors leading-snug">${ev.title}</h4>
-                  <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">${ev.target}</p>
-                  <p class="font-mono text-[11px] text-primary/80 mt-1 flex items-center gap-1">
+                  <h4 class="font-headline-sm text-sm sm:text-base text-on-surface font-semibold group-hover:text-primary transition-colors leading-snug truncate">${ev.title}</h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant line-clamp-2 leading-relaxed">${ev.target}</p>
+                  <p class="font-mono text-[11px] text-primary/80 flex items-center gap-1.5 font-medium">
                     <span class="material-symbols-outlined text-[13px]">calendar_today</span>
                     <span>${ev.dates}</span>
                   </p>
@@ -490,7 +492,7 @@ const CalendarController = {
               </div>
 
               <!-- Action Buttons -->
-              <div class="flex items-center gap-2 self-end sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04] w-full sm:w-auto justify-end">
+              <div class="flex items-center gap-2 shrink-0 self-end sm:self-center ml-auto pt-1 sm:pt-0">
                 <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-md text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-sm" title="Add to Google Calendar">
                   <span class="material-symbols-outlined text-[14px]">event</span>
                   <span>+ GCal</span>

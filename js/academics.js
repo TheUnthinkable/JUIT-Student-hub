@@ -13,7 +13,10 @@ const AcademicsController = {
   // Simulation state for selected batch
   batchSimulation: {
     deltaAttended: 0,
-    deltaMissed: 0
+    deltaMissed: 0,
+    targetPercent: 80,
+    manualAttended: null,
+    manualConducted: null
   },
 
   // Courses data for SGPA calculation
@@ -158,7 +161,8 @@ const AcademicsController = {
   },
 
   /* ================= MATHEMATICAL 80% RULE HELPER ================= */
-  calculateJuit80Rule(attended, conducted) {
+  calculateJuit80Rule(attended, conducted, customTarget = null) {
+    const T = (customTarget !== null && customTarget !== undefined) ? customTarget : (this.targetPercent || 80);
     if (conducted === 0) {
       return {
         percent: 100,
@@ -171,34 +175,33 @@ const AcademicsController = {
     }
 
     const percent = (attended / conducted) * 100;
-    const T = this.targetPercent; // 80%
 
     if (percent >= T) {
-      // Safe bunks: floor((attended - 0.80 * conducted) / 0.80)
+      // Safe bunks: floor((attended - T/100 * conducted) / (T/100))
       const safeBunks = Math.floor((attended - (T / 100) * conducted) / (T / 100));
       return {
         percent: percent,
         status: 'safe',
-        statusLabel: 'Safe Standing (≥80%)',
-        safeBunks: safeBunks,
+        statusLabel: `Safe Standing (≥${T}%)`,
+        safeBunks: Math.max(0, safeBunks),
         consecutiveNeeded: 0,
         summaryText: safeBunks > 0
           ? `🛡️ Compliant: You can safely miss up to <strong>${safeBunks}</strong> ${safeBunks === 1 ? 'class' : 'classes'} and still remain at or above the mandatory ${T}% requirement.`
           : `🎯 Boundary Alert: Exactly at ${T}.0%. Attend your next class to maintain safe examination eligibility.`
       };
     } else {
-      // Consecutive classes needed: ceil((0.80 * conducted - attended) / (1 - 0.80))
+      // Consecutive classes needed: ceil((T/100 * conducted - attended) / (1 - T/100))
       const consecutiveNeeded = Math.ceil(((T / 100) * conducted - attended) / (1 - (T / 100)));
-      const isBorderline = percent >= 75.0;
+      const isBorderline = percent >= Math.max(50, T - 5.0);
       return {
         percent: percent,
         status: isBorderline ? 'borderline' : 'critical',
-        statusLabel: isBorderline ? 'Borderline Risk (75–80%)' : 'Critical Debar Risk (<75%)',
+        statusLabel: isBorderline ? `Borderline Risk (${(T - 5).toFixed(0)}–${T}%)` : `Critical Debar Risk (<${(T - 5).toFixed(0)}%)`,
         safeBunks: 0,
-        consecutiveNeeded: consecutiveNeeded,
+        consecutiveNeeded: Math.max(1, consecutiveNeeded),
         summaryText: isBorderline
           ? `⚠️ Borderline Risk (${percent.toFixed(1)}%): Attend next <strong>${consecutiveNeeded}</strong> consecutive classes to clear the ${T}% cutoff without medical dispensary waiver.`
-          : `🚨 Critical Debarment Risk (${percent.toFixed(1)}%): Mandatory to attend next <strong>${consecutiveNeeded}</strong> consecutive classes. JUIT rules state hall tickets are withheld for <80% attendance.`
+          : `🚨 Critical Debarment Risk (${percent.toFixed(1)}%): Mandatory to attend next <strong>${consecutiveNeeded}</strong> consecutive classes. JUIT rules state hall tickets are withheld for <${T}% attendance.`
       };
     }
   },
@@ -210,9 +213,12 @@ const AcademicsController = {
 
     // Active batch data with simulation applied
     const activeBatchData = this.batchMasterList.find(b => b.code === this.activeBatch) || this.batchMasterList[0];
-    const simAttended = Math.max(0, activeBatchData.attended + this.batchSimulation.deltaAttended);
-    const simConducted = Math.max(0, activeBatchData.conducted + this.batchSimulation.deltaAttended + this.batchSimulation.deltaMissed);
-    const activeMetrics = this.calculateJuit80Rule(simAttended, simConducted);
+    const baseAttended = (this.batchSimulation.manualAttended !== null && !isNaN(this.batchSimulation.manualAttended)) ? this.batchSimulation.manualAttended : activeBatchData.attended;
+    const baseConducted = (this.batchSimulation.manualConducted !== null && !isNaN(this.batchSimulation.manualConducted)) ? this.batchSimulation.manualConducted : activeBatchData.conducted;
+    const simAttended = Math.max(0, baseAttended + (this.batchSimulation.deltaAttended || 0));
+    const simConducted = Math.max(simAttended, Math.max(1, baseConducted + (this.batchSimulation.deltaAttended || 0) + (this.batchSimulation.deltaMissed || 0)));
+    const simTarget = this.batchSimulation.targetPercent || 80;
+    const activeMetrics = this.calculateJuit80Rule(simAttended, simConducted, simTarget);
 
     // Filter master list for matrix table
     let filteredList = this.batchMasterList.filter(b => {
@@ -227,7 +233,7 @@ const AcademicsController = {
 
       // Status filter
       if (this.batchFilter !== 'all') {
-        const metrics = this.calculateJuit80Rule(b.attended, b.conducted);
+        const metrics = this.calculateJuit80Rule(b.attended, b.conducted, simTarget);
         if (this.batchFilter === 'safe' && metrics.status !== 'safe') return false;
         if (this.batchFilter === 'borderline' && metrics.status !== 'borderline') return false;
         if (this.batchFilter === 'critical' && metrics.status !== 'critical') return false;
@@ -237,20 +243,24 @@ const AcademicsController = {
 
     // Counts for filter pills
     const totalBatches = this.batchMasterList.length;
-    const safeCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted).status === 'safe').length;
-    const borderlineCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted).status === 'borderline').length;
-    const criticalCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted).status === 'critical').length;
+    const safeCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted, simTarget).status === 'safe').length;
+    const borderlineCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted, simTarget).status === 'borderline').length;
+    const criticalCount = this.batchMasterList.filter(b => this.calculateJuit80Rule(b.attended, b.conducted, simTarget).status === 'critical').length;
 
     // Quick batch chips row
     const batchChipsHtml = this.batchMasterList.map(b => {
       const isSelected = b.code === this.activeBatch;
-      const bMetrics = this.calculateJuit80Rule(b.attended, b.conducted);
+      const bMetrics = this.calculateJuit80Rule(b.attended, b.conducted, simTarget);
       const dotColor = bMetrics.status === 'safe' ? '#10b981' : (bMetrics.status === 'borderline' ? '#f59e0b' : '#ef4444');
       return `
-        <button type="button" class="batch-select-chip ${isSelected ? 'active' : ''}" data-batch="${b.code}" title="${b.stream} (${bMetrics.percent.toFixed(1)}%)">
-          <span class="chip-status-dot" style="background: ${dotColor};"></span>
+        <button type="button" class="batch-select-chip px-3 py-1.5 rounded-xl font-mono text-xs font-semibold border transition-all cursor-pointer inline-flex items-center gap-2 shrink-0 ${
+          isSelected
+            ? 'bg-primary text-on-primary border-primary shadow-sm font-bold'
+            : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface border-white/[0.06]'
+        }" data-batch="${b.code}" title="${b.stream} (${bMetrics.percent.toFixed(1)}%)">
+          <span class="w-2 h-2 rounded-full shrink-0" style="background: ${dotColor};"></span>
           <span>${b.code}</span>
-          ${isSelected ? '<span class="chip-active-sub">(Active)</span>' : ''}
+          ${isSelected ? '<span class="text-[10px] font-mono px-1 rounded bg-black/20">Active</span>' : ''}
         </button>
       `;
     }).join('');
@@ -258,53 +268,55 @@ const AcademicsController = {
     // Matrix table rows
     const matrixRowsHtml = filteredList.map(b => {
       const isSelected = b.code === this.activeBatch;
-      const metrics = this.calculateJuit80Rule(b.attended, b.conducted);
+      const metrics = this.calculateJuit80Rule(b.attended, b.conducted, simTarget);
       const pctFormatted = metrics.percent.toFixed(1);
-      
+
       let badgeHtml = '';
       let reqHtml = '';
       if (metrics.status === 'safe') {
-        badgeHtml = `<span class="hud-status-badge status-good"><span class="hud-dot green"></span> Safe (≥80%)</span>`;
-        reqHtml = `<span style="color: #10b981; font-weight: 700;">+${metrics.safeBunks} safe classes</span>`;
+        badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Safe (≥${simTarget}%)</span>`;
+        reqHtml = `<span class="text-emerald-400 font-bold font-mono">+${metrics.safeBunks} safe bunks</span>`;
       } else if (metrics.status === 'borderline') {
-        badgeHtml = `<span class="hud-status-badge status-warning"><span class="hud-dot yellow"></span> Borderline</span>`;
-        reqHtml = `<span style="color: #f59e0b; font-weight: 700;">Need next ${metrics.consecutiveNeeded} classes</span>`;
+        badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Borderline</span>`;
+        reqHtml = `<span class="text-amber-400 font-bold font-mono">Need next ${metrics.consecutiveNeeded}</span>`;
       } else {
-        badgeHtml = `<span class="hud-status-badge status-critical"><span class="hud-dot red"></span> Debar Risk</span>`;
-        reqHtml = `<span style="color: #ef4444; font-weight: 700;">Need next ${metrics.consecutiveNeeded} classes</span>`;
+        badgeHtml = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Debar Risk</span>`;
+        reqHtml = `<span class="text-rose-400 font-bold font-mono">Need next ${metrics.consecutiveNeeded}</span>`;
       }
 
       return `
-        <tr class="batch-matrix-row ${isSelected ? 'row-active-batch' : ''}" data-batch="${b.code}">
-          <td>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <strong style="color: ${isSelected ? 'var(--accent-primary)' : 'var(--text-primary)'}; font-family: var(--font-mono);">${b.code}</strong>
-              ${isSelected ? '<span class="kbd-shortcut" style="color: var(--accent-primary);">Active</span>' : ''}
+        <tr class="batch-matrix-row transition-colors hover:bg-surface-container/60 cursor-pointer ${isSelected ? 'bg-primary/10 border-l-2 border-l-primary' : ''}" data-batch="${b.code}">
+          <td class="p-3">
+            <div class="flex items-center gap-1.5">
+              <strong class="font-mono text-sm ${isSelected ? 'text-primary' : 'text-on-surface'}">${b.code}</strong>
+              ${isSelected ? '<span class="px-1.5 py-0.2 rounded text-[10px] bg-primary/20 text-primary font-bold">Active</span>' : ''}
             </div>
-            <div style="font-size: 0.76rem; color: var(--text-muted);">${b.stream}</div>
+            <div class="text-[11px] text-on-surface-variant truncate max-w-[150px]">${b.stream}</div>
           </td>
-          <td>
-            <span style="font-size: 0.85rem; color: var(--text-secondary);">${b.dept}</span>
+          <td class="p-3 text-on-surface-variant text-xs">${b.dept}</td>
+          <td class="p-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-surface-container border border-white/[0.04] text-on-surface-variant">
+              ${b.weekly}h (${b.l}L • ${b.t}T • ${b.p}P)
+            </span>
           </td>
-          <td>
-            <span class="hud-metric-pill">${b.weekly}h / wk (${b.l}L • ${b.t}T • ${b.p}P)</span>
+          <td class="p-3 font-mono text-xs font-semibold text-on-surface">
+            ${b.attended} <span class="text-on-surface-variant font-normal">/ ${b.conducted}</span>
           </td>
-          <td>
-            <div style="font-size: 0.88rem; font-weight: 600;">${b.attended} <span style="color: var(--text-muted); font-weight: 400;">/ ${b.conducted}</span></div>
-          </td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <strong style="color: ${metrics.status === 'safe' ? '#10b981' : (metrics.status === 'borderline' ? '#f59e0b' : '#ef4444')}; font-size: 0.95rem;">${pctFormatted}%</strong>
-              <div class="matrix-progress-wrap">
-                <div class="matrix-progress-bar" style="width: ${Math.min(100, metrics.percent)}%; background: ${metrics.status === 'safe' ? '#10b981' : (metrics.status === 'borderline' ? '#f59e0b' : '#ef4444')};"></div>
-                <div class="matrix-threshold-line" title="80% cutoff"></div>
+          <td class="p-3">
+            <div class="flex items-center gap-2.5">
+              <strong class="font-mono text-xs font-bold" style="color: ${metrics.status === 'safe' ? '#10b981' : (metrics.status === 'borderline' ? '#f59e0b' : '#ef4444')};">${pctFormatted}%</strong>
+              <div class="relative w-20 h-2 bg-surface-container-high rounded-full overflow-hidden shrink-0">
+                <div class="h-full rounded-full transition-all" style="width: ${Math.min(100, metrics.percent)}%; background: ${metrics.status === 'safe' ? '#10b981' : (metrics.status === 'borderline' ? '#f59e0b' : '#ef4444')};"></div>
+                <div class="absolute top-0 bottom-0 w-0.5 bg-white shadow-xs" style="left: ${simTarget}%;"></div>
               </div>
             </div>
           </td>
-          <td>${badgeHtml}</td>
-          <td>${reqHtml}</td>
-          <td style="text-align: right;">
-            <button type="button" class="btn-micro btn-inspect-batch ${isSelected ? 'btn-selected' : ''}" data-batch="${b.code}">
+          <td class="p-3">${badgeHtml}</td>
+          <td class="p-3">${reqHtml}</td>
+          <td class="p-3 text-right">
+            <button type="button" class="btn-inspect-batch px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              isSelected ? 'bg-primary text-on-primary font-bold shadow-xs' : 'bg-surface-container-high hover:bg-surface-container-highest text-primary'
+            }" data-batch="${b.code}">
               ${isSelected ? 'Selected' : 'Inspect'}
             </button>
           </td>
@@ -312,189 +324,206 @@ const AcademicsController = {
       `;
     }).join('');
 
-    // Status classes for hero dial
-    const heroDialClass = activeMetrics.status === 'safe' ? 'dial-good' : (activeMetrics.status === 'borderline' ? 'dial-warning' : 'dial-danger');
     const heroTextColor = activeMetrics.status === 'safe' ? '#10b981' : (activeMetrics.status === 'borderline' ? '#f59e0b' : '#ef4444');
     const isSavedActive = (this.activeBatch === (localStorage.getItem('juit_selected_batch') || '26BT10'));
 
     container.innerHTML = `
       <!-- QUICK BATCHES STRIP -->
-      <div class="batch-strip-card">
-        <div class="batch-strip-header">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--accent-primary);">format_list_bulleted</span>
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Select Batch for Compliance Breakdown:</span>
+      <div class="rounded-2xl bg-surface-container-low p-3.5 sm:p-4 border border-white/[0.06] shadow-sm space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">view_comfy_alt</span>
+            <span class="text-xs font-bold text-on-surface uppercase tracking-wider">Select Batch for Compliance Breakdown:</span>
           </div>
-          <span style="font-size: 0.78rem; color: var(--text-muted);">ODD 2026 Academic Term</span>
+          <span class="text-[11px] font-mono text-secondary bg-surface-container px-2 py-0.5 rounded-full border border-white/[0.04]">ODD 2026 Term</span>
         </div>
-        <div class="batch-chips-scroll" id="batch-chips-container">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5" id="batch-chips-container">
           ${batchChipsHtml}
         </div>
       </div>
 
-      <!-- HERO BATCH HUD CARD -->
-      <div class="hero-batch-card">
-        <div class="hero-batch-top">
+      <!-- HERO BATCH COMPLIANCE CARD -->
+      <div class="rounded-2xl bg-gradient-to-br from-surface-container-high/90 via-surface-container to-surface-container-low p-4 sm:p-6 border border-white/[0.08] shadow-md space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <span class="batch-hero-badge">${activeBatchData.code}</span>
-              <span class="batch-dept-tag">${activeBatchData.dept}</span>
-              <span class="batch-stream-tag">${activeBatchData.stream}</span>
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span class="px-2.5 py-0.5 rounded-lg bg-primary/20 text-primary border border-primary/30 font-mono text-xs font-bold">${activeBatchData.code}</span>
+              <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-on-surface-variant font-medium">${activeBatchData.dept}</span>
+              <span class="px-2 py-0.5 rounded text-[11px] bg-surface-container text-secondary font-medium">${activeBatchData.stream}</span>
             </div>
-            <h3 class="batch-hero-title">Attendance Compliance & 80% Rule Indicator</h3>
-            <p class="batch-hero-desc">
-              Continuous monitoring under JUIT Regulation clause 4.2. Examination hall tickets require a minimum 80% aggregate attendance across all registered components.
-            </p>
+            <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold tracking-tight">Attendance Compliance & 80% Rule Indicator</h3>
+            <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">Continuous monitoring under JUIT Regulation clause 4.2. Examination hall tickets require ≥${simTarget}% aggregate attendance.</p>
           </div>
-
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <button type="button" class="btn-secondary" id="btn-set-user-batch" ${isSavedActive ? 'disabled' : ''} style="font-size: 0.82rem; padding: 7px 14px;">
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" id="btn-set-user-batch" class="px-3 py-1.5 rounded-xl ${isSavedActive ? 'bg-secondary/20 text-secondary border border-secondary/30' : 'bg-surface-container-high hover:bg-surface-container-highest text-primary border border-white/[0.08]'} text-xs font-semibold transition-all cursor-pointer shadow-sm">
               ${isSavedActive ? '✓ Your Active Hub Batch' : '★ Set as My Active Batch'}
             </button>
-            <a href="#timetable" class="btn-primary" style="font-size: 0.82rem; padding: 7px 14px; text-decoration: none;">
-              📅 View Batch Timetable
+            <a href="#timetable" class="px-3 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary/90 text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+              <span class="material-symbols-outlined text-[15px]">calendar_month</span>
+              <span>Batch Timetable</span>
             </a>
           </div>
         </div>
 
         <!-- 4 Metric Cards Grid -->
-        <div class="hero-metrics-grid">
-          <!-- Metric 1: Dial -->
-          <div class="hero-metric-tile">
-            <div class="hero-dial-wrap ${heroDialClass}">
-              <span class="hero-dial-value" style="color: ${heroTextColor};">${activeMetrics.percent.toFixed(1)}%</span>
-              <span class="hero-dial-label">Attendance</span>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- Metric 1: Percent & Status -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/[0.06] flex flex-col justify-between space-y-2">
+            <span class="text-[11px] font-mono text-on-surface-variant font-semibold uppercase">Attendance Standing</span>
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl sm:text-3xl font-extrabold font-mono" style="color: ${heroTextColor};">${activeMetrics.percent.toFixed(1)}%</span>
             </div>
-            <div style="text-align: center; margin-top: 8px;">
-              <span class="hud-status-badge ${activeMetrics.status === 'safe' ? 'status-good' : (activeMetrics.status === 'borderline' ? 'status-warning' : 'status-critical')}">
-                ${activeMetrics.statusLabel}
-              </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold self-start ${activeMetrics.status === 'safe' ? 'bg-emerald-500/20 text-emerald-400' : (activeMetrics.status === 'borderline' ? 'bg-amber-500/20 text-amber-300' : 'bg-rose-500/20 text-rose-400')}">
+              ${activeMetrics.statusLabel}
+            </span>
+          </div>
+
+          <!-- Metric 2: Classes Attended -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/[0.06] flex flex-col justify-between space-y-2">
+            <span class="text-[11px] font-mono text-on-surface-variant font-semibold uppercase">Classes Attended</span>
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-extrabold font-mono" style="color: ${heroTextColor};">${simAttended}</span>
+              <span class="text-xs text-on-surface-variant font-mono">/ ${simConducted} held</span>
+            </div>
+            <div class="relative w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-300" style="width: ${Math.min(100, activeMetrics.percent)}%; background: ${heroTextColor};"></div>
+              <div class="absolute top-0 bottom-0 w-0.5 bg-white shadow-xs" style="left: ${simTarget}%;"></div>
             </div>
           </div>
 
-          <!-- Metric 2: Conducted vs Attended -->
-          <div class="hero-metric-tile">
-            <div class="metric-label">Classes Attended</div>
-            <div class="metric-val-row">
-              <span class="metric-big-val" style="color: ${heroTextColor};">${simAttended}</span>
-              <span class="metric-sub-val">/ ${simConducted} conducted</span>
+          <!-- Metric 3: Scheduled Weekly Load -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/[0.06] flex flex-col justify-between space-y-2">
+            <span class="text-[11px] font-mono text-on-surface-variant font-semibold uppercase">Scheduled Weekly Load</span>
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-extrabold font-mono text-on-surface">${activeBatchData.weekly}</span>
+              <span class="text-xs text-on-surface-variant font-mono">hrs / week</span>
             </div>
-            <div class="progress-bar-wrap" style="margin-top: 10px;">
-              <div class="progress-bar-fill" style="width: ${Math.min(100, activeMetrics.percent)}%; background: ${heroTextColor};"></div>
-              <div class="progress-threshold-line" style="left: 80%;" title="80% Target"></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-              <span>0</span>
-              <span style="color: var(--accent-primary); font-weight: 700;">80% Target</span>
-              <span>100%</span>
+            <div class="flex items-center gap-1 text-[10px] font-mono text-on-surface-variant">
+              <span class="px-1.5 py-0.5 rounded bg-surface-container-high">${activeBatchData.l}L</span>
+              <span class="px-1.5 py-0.5 rounded bg-surface-container-high">${activeBatchData.t}T</span>
+              <span class="px-1.5 py-0.5 rounded bg-surface-container-high">${activeBatchData.p}P</span>
             </div>
           </div>
 
-          <!-- Metric 3: Weekly Timetable Load -->
-          <div class="hero-metric-tile">
-            <div class="metric-label">Scheduled Weekly Load</div>
-            <div class="metric-val-row">
-              <span class="metric-big-val" style="color: var(--text-primary);">${activeBatchData.weekly}</span>
-              <span class="metric-sub-val">hrs / week</span>
-            </div>
-            <div class="batch-breakdown-pills">
-              <span class="sub-pill">📘 ${activeBatchData.l} Lectures</span>
-              <span class="sub-pill">💡 ${activeBatchData.t} Tutorials</span>
-              <span class="sub-pill">🧪 ${activeBatchData.p} Labs</span>
-            </div>
-          </div>
-
-          <!-- Metric 4: 80% Rule Calculation -->
-          <div class="hero-metric-tile">
-            <div class="metric-label">JUIT 80% Requirement</div>
+          <!-- Metric 4: 80% Rule Requirement -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/[0.06] flex flex-col justify-between space-y-2">
+            <span class="text-[11px] font-mono text-on-surface-variant font-semibold uppercase">Rule Requirement</span>
             ${activeMetrics.status === 'safe' ? `
-              <div class="metric-val-row">
-                <span class="metric-big-val" style="color: #10b981;">+${activeMetrics.safeBunks}</span>
-                <span class="metric-sub-val">Safe bunks available</span>
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400">+${activeMetrics.safeBunks}</span>
+                <span class="text-xs text-emerald-400 font-mono">safe bunks</span>
               </div>
-              <p style="font-size: 0.76rem; color: #10b981; margin: 8px 0 0;">Can miss up to ${activeMetrics.safeBunks} classes and still stay above 80%.</p>
+              <span class="text-[11px] text-emerald-400 font-medium">Safe to miss up to ${activeMetrics.safeBunks} classes</span>
             ` : `
-              <div class="metric-val-row">
-                <span class="metric-big-val" style="color: #ef4444;">${activeMetrics.consecutiveNeeded}</span>
-                <span class="metric-sub-val">Consecutive classes needed</span>
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-2xl sm:text-3xl font-extrabold font-mono text-rose-400">${activeMetrics.consecutiveNeeded}</span>
+                <span class="text-xs text-rose-400 font-mono">needed</span>
               </div>
-              <p style="font-size: 0.76rem; color: #ef4444; margin: 8px 0 0;">Must attend without any skips to clear 80% cutoff.</p>
+              <span class="text-[11px] text-rose-400 font-medium">Attend next ${activeMetrics.consecutiveNeeded} consecutive classes</span>
             `}
           </div>
         </div>
 
-        <!-- Requirement Advisory Banner -->
-        <div class="batch-advisory-banner ${activeMetrics.status === 'safe' ? 'banner-safe' : (activeMetrics.status === 'borderline' ? 'banner-warning' : 'banner-critical')}">
-          <div style="font-size: 1.3rem;">
-            ${activeMetrics.status === 'safe' ? '🛡️' : (activeMetrics.status === 'borderline' ? '⚠️' : '🚨')}
-          </div>
-          <div style="flex: 1;">
-            <div style="font-weight: 700; font-size: 0.92rem; margin-bottom: 2px;">
-              ${activeMetrics.status === 'safe' ? 'Compliant with JUIT Attendance Criterion' : (activeMetrics.status === 'borderline' ? 'Attendance in Borderline Range' : 'Critical Debarment Warning')}
-            </div>
-            <div style="font-size: 0.82rem; line-height: 1.45;">
-              ${activeMetrics.summaryText}
-            </div>
+        <!-- Advisory Banner -->
+        <div class="p-3.5 rounded-xl border flex items-start gap-3 ${activeMetrics.status === 'safe' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : (activeMetrics.status === 'borderline' ? 'bg-amber-500/10 border-amber-500/30 text-amber-200' : 'bg-rose-500/10 border-rose-500/30 text-rose-200')}">
+          <span class="text-xl shrink-0">${activeMetrics.status === 'safe' ? '🛡️' : (activeMetrics.status === 'borderline' ? '⚠️' : '🚨')}</span>
+          <div class="min-w-0 flex-1 text-xs leading-relaxed">
+            <strong class="font-bold block mb-0.5">${activeMetrics.status === 'safe' ? 'Compliant with JUIT Attendance Mandate' : (activeMetrics.status === 'borderline' ? 'Warning: Borderline Attendance Range' : 'Critical Debarment Warning')}</strong>
+            <span>${activeMetrics.summaryText}</span>
           </div>
         </div>
 
-        <!-- Simulation Toolbar -->
-        <div class="simulation-toolbar">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="material-symbols-outlined" style="font-size: 17px; color: var(--accent-primary);">tune</span>
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">What-If Attendance Simulator:</span>
-            ${(this.batchSimulation.deltaAttended !== 0 || this.batchSimulation.deltaMissed !== 0) ? `
-              <span class="badge-sim-active">Simulating (${this.batchSimulation.deltaAttended >= 0 ? '+' : ''}${this.batchSimulation.deltaAttended} Attended, +${this.batchSimulation.deltaMissed} Missed)</span>
-            ` : ''}
+        <!-- WHAT-IF ATTENDANCE SIMULATOR WITH EXACT AMOUNT INPUTS -->
+        <div class="p-4 rounded-xl bg-surface-container/60 border border-white/[0.06] space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">tune</span>
+              <span class="text-xs font-bold text-on-surface uppercase tracking-wider">What-If Attendance Simulator: Type Exact Amounts</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" class="px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary text-[11px] font-semibold transition-colors cursor-pointer" id="btn-sim-preset-80">Target 80%</button>
+              <button type="button" class="px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary text-[11px] font-semibold transition-colors cursor-pointer" id="btn-sim-preset-75">Target 75%</button>
+              <button type="button" class="btn-sim-action px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-error/20 hover:text-error text-on-surface-variant text-[11px] font-semibold transition-colors cursor-pointer" id="btn-sim-reset">Reset</button>
+            </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <button type="button" class="btn-sim-action btn-sim-attend" id="btn-sim-attend-plus" title="Simulate attending the next scheduled class">+1 Attend Class</button>
-            <button type="button" class="btn-sim-action btn-sim-miss" id="btn-sim-miss-plus" title="Simulate missing the next scheduled class">+1 Miss Class</button>
-            <button type="button" class="btn-sim-action btn-sim-reset" id="btn-sim-reset" title="Reset simulation to real data">Reset</button>
+
+          <!-- Exact Inputs Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div>
+              <label class="text-[11px] text-on-surface-variant block mb-1 font-medium">Target Attendance %</label>
+              <div class="relative">
+                <input type="number" id="sim-target-percent-input" min="50" max="100" step="1" value="${simTarget}" class="w-full h-9 px-3 pr-7 bg-surface-container rounded-lg font-mono text-xs text-on-surface border border-white/[0.08] focus:border-primary outline-none" />
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-mono text-on-surface-variant">%</span>
+              </div>
+            </div>
+            <div>
+              <label class="text-[11px] text-secondary block mb-1 font-medium">Future Classes to Attend</label>
+              <div class="flex items-center gap-1">
+                <input type="number" id="sim-attend-count-input" min="0" max="100" step="1" value="${this.batchSimulation.deltaAttended || 0}" class="w-full h-9 px-3 bg-surface-container rounded-lg font-mono text-xs text-secondary border border-white/[0.08] focus:border-secondary outline-none" />
+                <button type="button" class="btn-sim-action h-9 px-2 rounded-lg bg-secondary/15 hover:bg-secondary/25 text-secondary text-xs font-bold" id="btn-sim-attend-plus" title="+1">+1</button>
+              </div>
+            </div>
+            <div>
+              <label class="text-[11px] text-rose-400 block mb-1 font-medium">Future Classes to Miss</label>
+              <div class="flex items-center gap-1">
+                <input type="number" id="sim-miss-count-input" min="0" max="100" step="1" value="${this.batchSimulation.deltaMissed || 0}" class="w-full h-9 px-3 bg-surface-container rounded-lg font-mono text-xs text-rose-400 border border-white/[0.08] focus:border-rose-400 outline-none" />
+                <button type="button" class="btn-sim-action h-9 px-2 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-bold" id="btn-sim-miss-plus" title="+1">+1</button>
+              </div>
+            </div>
+            <div>
+              <label class="text-[11px] text-on-surface-variant block mb-1 font-medium">Base Attended / Held</label>
+              <div class="flex items-center gap-1">
+                <input type="number" id="sim-base-attended-input" min="0" max="300" step="1" value="${baseAttended}" class="w-1/2 h-9 px-2 bg-surface-container rounded-lg font-mono text-xs text-on-surface border border-white/[0.08] outline-none text-center" title="Base Attended" />
+                <span class="text-on-surface-variant font-mono text-xs">/</span>
+                <input type="number" id="sim-base-conducted-input" min="1" max="300" step="1" value="${baseConducted}" class="w-1/2 h-9 px-2 bg-surface-container rounded-lg font-mono text-xs text-on-surface border border-white/[0.08] outline-none text-center" title="Base Conducted" />
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] font-mono text-on-surface-variant flex items-center justify-between pt-1 border-t border-white/[0.04] flex-wrap gap-2">
+            <span>💡 Real-time dynamic recalculation: type any exact amount above to project your standing instantly.</span>
+            <span class="text-primary font-semibold" id="sim-active-summary-tag">Simulated Standing: ${activeMetrics.percent.toFixed(1)}%</span>
           </div>
         </div>
       </div>
 
       <!-- ALL BATCHES MATRIX TABLE SECTION -->
-      <div class="batch-matrix-section">
-        <div class="batch-matrix-header">
+      <div class="rounded-2xl bg-surface-container-low border border-white/[0.08] p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 style="font-size: 1.15rem; margin: 0 0 4px; color: #fff;">All Batches Live Attendance Matrix</h3>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">
-              Real-time compliance status for all 16 first-year batches under the 80% attendance mandate.
-            </p>
+            <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold">All Batches Live Attendance Matrix</h3>
+            <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">Real-time compliance status for all 16 batches under the ${simTarget}% university mandate.</p>
           </div>
 
           <!-- Filters Row -->
-          <div class="matrix-filter-controls">
-            <div class="filter-pills-row">
-              <button type="button" class="filter-pill ${this.batchFilter === 'all' ? 'active' : ''}" data-filter="all">All (${totalBatches})</button>
-              <button type="button" class="filter-pill ${this.batchFilter === 'safe' ? 'active' : ''}" data-filter="safe">Safe ≥80% (${safeCount})</button>
-              <button type="button" class="filter-pill ${this.batchFilter === 'borderline' ? 'active' : ''}" data-filter="borderline">Borderline (${borderlineCount})</button>
-              <button type="button" class="filter-pill ${this.batchFilter === 'critical' ? 'active' : ''}" data-filter="critical">Debar Risk (${criticalCount})</button>
+          <div class="matrix-filter-controls flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-1 p-1 rounded-xl bg-surface-container border border-white/[0.04]">
+              <button type="button" class="filter-pill px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${this.batchFilter === 'all' ? 'bg-primary text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-filter="all">All (${totalBatches})</button>
+              <button type="button" class="filter-pill px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${this.batchFilter === 'safe' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-filter="safe">Safe ≥${simTarget}% (${safeCount})</button>
+              <button type="button" class="filter-pill px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${this.batchFilter === 'borderline' ? 'bg-amber-500/20 text-amber-300 font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-filter="borderline">Borderline (${borderlineCount})</button>
+              <button type="button" class="filter-pill px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${this.batchFilter === 'critical' ? 'bg-rose-500/20 text-rose-400 font-bold' : 'text-on-surface-variant hover:text-on-surface'}" data-filter="critical">Debar Risk (${criticalCount})</button>
             </div>
-            <div style="position: relative;">
-              <input type="text" id="batch-matrix-search" placeholder="Search batch (e.g. 26BT12)..." value="${this.batchSearchQuery}" class="select-styled" style="padding-left: 28px; width: 190px; font-size: 0.8rem; height: 32px;" />
-              <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.5;">🔍</span>
+            <div class="relative">
+              <input type="text" id="batch-matrix-search" placeholder="Search batch..." value="${this.batchSearchQuery}" class="h-9 pl-8 pr-3 bg-surface-container rounded-xl text-xs font-mono text-on-surface border border-white/[0.06] outline-none w-36 sm:w-44 focus:border-primary" />
+              <span class="material-symbols-outlined text-[16px] absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
             </div>
           </div>
         </div>
 
-        <div class="table-responsive-wrapper">
-          <table class="batch-matrix-table">
+        <div class="overflow-x-auto rounded-xl border border-white/[0.06] bg-surface-container/20">
+          <table class="w-full text-left border-collapse text-xs">
             <thead>
-              <tr>
-                <th>Batch & Stream</th>
-                <th>Department</th>
-                <th>Weekly Load</th>
-                <th>Attended / Total</th>
-                <th style="min-width: 170px;">Attendance %</th>
-                <th>Status</th>
-                <th>Required to Reach 80%</th>
-                <th style="text-align: right;">Action</th>
+              <tr class="border-b border-white/[0.08] bg-surface-container/60 text-[11px] font-mono text-on-surface-variant uppercase tracking-wider">
+                <th class="p-3 font-semibold">Batch & Stream</th>
+                <th class="p-3 font-semibold">Department</th>
+                <th class="p-3 font-semibold">Weekly Load</th>
+                <th class="p-3 font-semibold">Attended / Total</th>
+                <th class="p-3 font-semibold min-w-[140px]">Attendance %</th>
+                <th class="p-3 font-semibold">Status</th>
+                <th class="p-3 font-semibold">Requirement</th>
+                <th class="p-3 font-semibold text-right">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-white/[0.04]">
               ${matrixRowsHtml}
             </tbody>
           </table>
@@ -511,7 +540,10 @@ const AcademicsController = {
       chip.addEventListener('click', () => {
         const batchCode = chip.dataset.batch;
         this.activeBatch = batchCode;
-        this.batchSimulation = { deltaAttended: 0, deltaMissed: 0 };
+        this.batchSimulation.deltaAttended = 0;
+        this.batchSimulation.deltaMissed = 0;
+        this.batchSimulation.manualAttended = null;
+        this.batchSimulation.manualConducted = null;
         this.renderBatchAttendanceIndicator();
       });
     });
@@ -522,7 +554,10 @@ const AcademicsController = {
         e.stopPropagation();
         const batchCode = btn.dataset.batch;
         this.activeBatch = batchCode;
-        this.batchSimulation = { deltaAttended: 0, deltaMissed: 0 };
+        this.batchSimulation.deltaAttended = 0;
+        this.batchSimulation.deltaMissed = 0;
+        this.batchSimulation.manualAttended = null;
+        this.batchSimulation.manualConducted = null;
         this.renderBatchAttendanceIndicator();
         window.scrollTo({ top: 320, behavior: 'smooth' });
       });
@@ -530,10 +565,14 @@ const AcademicsController = {
 
     // Matrix table row click
     document.querySelectorAll('.batch-matrix-row').forEach(row => {
-      row.addEventListener('click', () => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-inspect-batch')) return;
         const batchCode = row.dataset.batch;
         this.activeBatch = batchCode;
-        this.batchSimulation = { deltaAttended: 0, deltaMissed: 0 };
+        this.batchSimulation.deltaAttended = 0;
+        this.batchSimulation.deltaMissed = 0;
+        this.batchSimulation.manualAttended = null;
+        this.batchSimulation.manualConducted = null;
         this.renderBatchAttendanceIndicator();
         window.scrollTo({ top: 320, behavior: 'smooth' });
       });
@@ -560,11 +599,52 @@ const AcademicsController = {
       });
     }
 
+    // Simulation: Exact Numeric Inputs Dynamic Adjustment
+    const handleExactInputs = () => {
+      const targetInput = document.getElementById('sim-target-percent-input');
+      const attendInput = document.getElementById('sim-attend-count-input');
+      const missInput = document.getElementById('sim-miss-count-input');
+      const baseAttInput = document.getElementById('sim-base-attended-input');
+      const baseCondInput = document.getElementById('sim-base-conducted-input');
+
+      const targetVal = parseFloat(targetInput?.value);
+      const attendVal = parseInt(attendInput?.value, 10);
+      const missVal = parseInt(missInput?.value, 10);
+      const baseAttVal = parseInt(baseAttInput?.value, 10);
+      const baseCondVal = parseInt(baseCondInput?.value, 10);
+
+      this.batchSimulation.targetPercent = (!isNaN(targetVal) && targetVal >= 50 && targetVal <= 100) ? targetVal : 80;
+      this.batchSimulation.deltaAttended = isNaN(attendVal) ? 0 : attendVal;
+      this.batchSimulation.deltaMissed = isNaN(missVal) ? 0 : missVal;
+      this.batchSimulation.manualAttended = isNaN(baseAttVal) ? null : baseAttVal;
+      this.batchSimulation.manualConducted = isNaN(baseCondVal) ? null : baseCondVal;
+
+      this.renderBatchAttendanceIndicator();
+    };
+
+    ['sim-target-percent-input', 'sim-attend-count-input', 'sim-miss-count-input', 'sim-base-attended-input', 'sim-base-conducted-input'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', handleExactInputs);
+        el.addEventListener('change', handleExactInputs);
+      }
+    });
+
+    // Preset 80% / 75%
+    document.getElementById('btn-sim-preset-80')?.addEventListener('click', () => {
+      this.batchSimulation.targetPercent = 80;
+      this.renderBatchAttendanceIndicator();
+    });
+    document.getElementById('btn-sim-preset-75')?.addEventListener('click', () => {
+      this.batchSimulation.targetPercent = 75;
+      this.renderBatchAttendanceIndicator();
+    });
+
     // Simulation: +1 Attend
     const btnSimAttend = document.getElementById('btn-sim-attend-plus');
     if (btnSimAttend) {
       btnSimAttend.addEventListener('click', () => {
-        this.batchSimulation.deltaAttended += 1;
+        this.batchSimulation.deltaAttended = (this.batchSimulation.deltaAttended || 0) + 1;
         this.renderBatchAttendanceIndicator();
       });
     }
@@ -573,7 +653,7 @@ const AcademicsController = {
     const btnSimMiss = document.getElementById('btn-sim-miss-plus');
     if (btnSimMiss) {
       btnSimMiss.addEventListener('click', () => {
-        this.batchSimulation.deltaMissed += 1;
+        this.batchSimulation.deltaMissed = (this.batchSimulation.deltaMissed || 0) + 1;
         this.renderBatchAttendanceIndicator();
       });
     }
@@ -582,7 +662,7 @@ const AcademicsController = {
     const btnSimReset = document.getElementById('btn-sim-reset');
     if (btnSimReset) {
       btnSimReset.addEventListener('click', () => {
-        this.batchSimulation = { deltaAttended: 0, deltaMissed: 0 };
+        this.batchSimulation = { deltaAttended: 0, deltaMissed: 0, targetPercent: 80, manualAttended: null, manualConducted: null };
         this.renderBatchAttendanceIndicator();
       });
     }
@@ -1160,11 +1240,13 @@ const AcademicsController = {
             <div>
               <span class="hub-pill-tag">STRATEGIC GOAL PLANNER</span>
               <h3 style="font-size: 1.2rem; margin: 4px 0 2px; color: #fff;">Cumulative CGPA Target Predictor</h3>
-              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Calculate the exact SGPA needed this semester to achieve your target CGPA.</p>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">Type your exact targets and observe required SGPA and projected CGPA adjust in real time.</p>
             </div>
-            <div class="cgpa-badge-ring target-ring">
-              <span class="cgpa-big-number" id="pred-result-sgpa" style="color: #8b5cf6;">${targetResult.requiredSgpa}</span>
-              <span class="cgpa-scale-label">Req SGPA</span>
+            <div class="flex items-center gap-3">
+              <div class="cgpa-badge-ring target-ring">
+                <span class="cgpa-big-number" id="pred-result-sgpa" style="color: #8b5cf6;">${targetResult.requiredSgpa}</span>
+                <span class="cgpa-scale-label">Req SGPA</span>
+              </div>
             </div>
           </div>
 
@@ -1175,16 +1257,27 @@ const AcademicsController = {
             </div>
             <div class="pred-input-group">
               <label>Current Cumulative CGPA</label>
-              <input type="number" id="pred-past-cgpa" value="${defaultPastCgpa.toFixed(2)}" min="0" max="10" step="0.05" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
+              <input type="number" id="pred-past-cgpa" value="${defaultPastCgpa.toFixed(2)}" min="0" max="10" step="0.01" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
             </div>
             <div class="pred-input-group">
               <label>Desired Target CGPA</label>
-              <input type="number" id="pred-target-cgpa" value="${defaultTargetCgpa.toFixed(2)}" min="0" max="10" step="0.05" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
+              <input type="number" id="pred-target-cgpa" value="${defaultTargetCgpa.toFixed(2)}" min="0" max="10" step="0.01" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
             </div>
             <div class="pred-input-group">
               <label>Current Term Credits</label>
               <input type="number" id="pred-current-credits" value="${currentCreditsNum}" min="1" max="30" step="0.5" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
             </div>
+            <div class="pred-input-group">
+              <label>Simulate Term SGPA</label>
+              <input type="number" id="pred-expected-sgpa" value="${sgpaResult.sgpa}" min="0" max="10" step="0.05" class="select-styled" style="width: 100%; font-size: 0.85rem;" />
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-surface-container/60 border border-white/[0.04] flex items-center justify-between text-xs font-mono">
+            <span class="text-on-surface-variant">Projected Cumulative CGPA:</span>
+            <strong id="pred-result-projected-cgpa" class="text-secondary font-bold text-sm">
+              ${(((defaultPastCgpa * defaultPastCredits) + (parseFloat(sgpaResult.sgpa) * currentCreditsNum)) / (defaultPastCredits + currentCreditsNum)).toFixed(2)}
+            </strong>
           </div>
 
           <div class="target-diagnosis-banner" id="pred-diagnosis-banner">
@@ -1335,17 +1428,18 @@ const AcademicsController = {
       });
     }
 
-    // Target Predictor Live Inputs
-    const updateTargetPrediction = () => {
-      const pastCredits = parseFloat(document.getElementById('pred-past-credits').value) || 0;
-      const pastCgpa = parseFloat(document.getElementById('pred-past-cgpa').value) || 0;
-      const targetCgpa = parseFloat(document.getElementById('pred-target-cgpa').value) || 0;
-      const currentCredits = parseFloat(document.getElementById('pred-current-credits').value) || 19.5;
+    // Target Predictor Live Inputs with Mutual Dynamic Adjustments
+    const updateFromTarget = () => {
+      const pastCredits = parseFloat(document.getElementById('pred-past-credits')?.value) || 0;
+      const pastCgpa = parseFloat(document.getElementById('pred-past-cgpa')?.value) || 0;
+      const targetCgpa = parseFloat(document.getElementById('pred-target-cgpa')?.value) || 0;
+      const currentCredits = parseFloat(document.getElementById('pred-current-credits')?.value) || 19.5;
 
       const res = this.calculateTargetCgpa(pastCredits, pastCgpa, targetCgpa, currentCredits);
       const resNumber = document.getElementById('pred-result-sgpa');
       const diagBanner = document.getElementById('pred-diagnosis-banner');
       const diagText = document.getElementById('pred-diagnosis-text');
+      const projCgpaBadge = document.getElementById('pred-result-projected-cgpa');
 
       if (resNumber) resNumber.textContent = res.requiredSgpa;
       if (diagText) diagText.innerHTML = res.message;
@@ -1356,14 +1450,88 @@ const AcademicsController = {
           )
         );
       }
+
+      // If required SGPA is achievable (0 to 10), sync expected SGPA input
+      const reqNum = parseFloat(res.requiredSgpa);
+      const expSgpaInput = document.getElementById('pred-expected-sgpa');
+      if (expSgpaInput && !isNaN(reqNum) && reqNum >= 0 && reqNum <= 10) {
+        expSgpaInput.value = reqNum.toFixed(2);
+      }
+      if (projCgpaBadge) {
+        const totalCred = pastCredits + currentCredits;
+        const projected = totalCred > 0 ? (((pastCredits * pastCgpa) + (Math.min(10, Math.max(0, reqNum || 0)) * currentCredits)) / totalCred).toFixed(2) : targetCgpa.toFixed(2);
+        projCgpaBadge.textContent = projected;
+      }
+
+      // Also update outer summary display if present
+      const calcCgpaEl = document.getElementById('calc-cgpa-result');
+      if (calcCgpaEl) calcCgpaEl.textContent = targetCgpa.toFixed(2);
+    };
+
+    const updateFromExpectedSgpa = () => {
+      const pastCredits = parseFloat(document.getElementById('pred-past-credits')?.value) || 0;
+      const pastCgpa = parseFloat(document.getElementById('pred-past-cgpa')?.value) || 0;
+      const expectedSgpa = parseFloat(document.getElementById('pred-expected-sgpa')?.value) || 0;
+      const currentCredits = parseFloat(document.getElementById('pred-current-credits')?.value) || 19.5;
+
+      const totalCred = pastCredits + currentCredits;
+      const projectedCgpa = totalCred > 0 ? (((pastCredits * pastCgpa) + (expectedSgpa * currentCredits)) / totalCred) : expectedSgpa;
+
+      const targetInput = document.getElementById('pred-target-cgpa');
+      if (targetInput) targetInput.value = projectedCgpa.toFixed(2);
+
+      const projCgpaBadge = document.getElementById('pred-result-projected-cgpa');
+      if (projCgpaBadge) projCgpaBadge.textContent = projectedCgpa.toFixed(2);
+
+      const resNumber = document.getElementById('pred-result-sgpa');
+      if (resNumber) resNumber.textContent = expectedSgpa.toFixed(2);
+
+      const diagBanner = document.getElementById('pred-diagnosis-banner');
+      const diagText = document.getElementById('pred-diagnosis-text');
+      if (diagText) {
+        diagText.innerHTML = `⚡ Typing SGPA <strong>${expectedSgpa.toFixed(2)}</strong> yields a cumulative CGPA of <strong>${projectedCgpa.toFixed(2)}</strong> across ${totalCred} total credits.`;
+      }
+      if (diagBanner) {
+        diagBanner.className = 'target-diagnosis-banner banner-achievable';
+      }
+
+      const calcCgpaEl = document.getElementById('calc-cgpa-result');
+      if (calcCgpaEl) calcCgpaEl.textContent = projectedCgpa.toFixed(2);
+      const calcSgpaEl = document.getElementById('calc-sgpa-result');
+      if (calcSgpaEl) calcSgpaEl.textContent = expectedSgpa.toFixed(2);
     };
 
     ['pred-past-credits', 'pred-past-cgpa', 'pred-target-cgpa', 'pred-current-credits'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
-        el.addEventListener('input', updateTargetPrediction);
+        el.addEventListener('input', updateFromTarget);
+        el.addEventListener('change', updateFromTarget);
       }
     });
+
+    const expSgpaEl = document.getElementById('pred-expected-sgpa');
+    if (expSgpaEl) {
+      expSgpaEl.addEventListener('input', updateFromExpectedSgpa);
+      expSgpaEl.addEventListener('change', updateFromExpectedSgpa);
+    }
+
+    // Connect past CGPA & credits in upper card if user edits them
+    const topPastCgpa = document.getElementById('cgpa-past-cgpa');
+    const topPastCred = document.getElementById('cgpa-past-credits');
+    if (topPastCgpa) {
+      topPastCgpa.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const predEl = document.getElementById('pred-past-cgpa');
+        if (predEl) { predEl.value = val; updateFromTarget(); }
+      });
+    }
+    if (topPastCred) {
+      topPastCred.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const predEl = document.getElementById('pred-past-credits');
+        if (predEl) { predEl.value = val; updateFromTarget(); }
+      });
+    }
   }
 };
 

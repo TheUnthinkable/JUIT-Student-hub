@@ -396,12 +396,12 @@ const CampusMap = {
     const isWalkwaysOnly = (this.activeMapMode === 'walkways');
 
     // Color palettes for map modes
-    const terrainFill = isNight ? '#050811' : '#0b101c';
-    const lawnFill = isNight ? '#0a1715' : '#0e241e';
+    const lawnFill = isNight ? '#081412' : '#0c221b';
     const lawnStroke = isNight ? '#122c26' : '#183c32';
-    const roadColor = isNight ? '#141a29' : '#1c2438';
+    const roadColor = isNight ? '#131926' : '#1b2436';
+    const roadCurb = isNight ? '#0b0f17' : '#101622';
     const roadCenter = isNight ? '#253248' : '#334155';
-    const spineColor = isWalkwaysOnly ? '#00e5ff' : '#22324e';
+    const spineColor = isWalkwaysOnly ? '#00e5ff' : '#1e2c45';
     const spineDash = isWalkwaysOnly ? '#38bdf8' : '#3b82f6';
 
     // Route SVG path markup
@@ -412,21 +412,30 @@ const CampusMap = {
       const endPt = this.activeRoute.pathCoords[this.activeRoute.pathCoords.length - 1];
 
       routeMarkup = `
-        <!-- Active Route Layer -->
+        <!-- 3D Active Walking Route Ribbon -->
         <g id="map-active-route-group">
-          <!-- Outer Pulsing Glow Line -->
-          <path d="${d}" fill="none" stroke="#00e5ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.3" filter="url(#route-blur)" />
+          <!-- 3D Ground Cast Shadow of Route Ribbon -->
+          <path d="${d}" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" transform="translate(0, 10)" filter="url(#route-blur)" />
           
-          <!-- Core Walking Path Line -->
-          <path d="${d}" fill="none" stroke="#00e5ff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" class="walking-route-path" />
+          <!-- Outer Pulsing Glow Line -->
+          <path d="${d}" fill="none" stroke="#00e5ff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" filter="url(#route-blur)" />
+          
+          <!-- 3D Elevated Walking Path Line -->
+          <path d="${d}" fill="none" stroke="#00e5ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="walking-route-path" />
 
           <!-- Origin Beacon Marker (Green Pulse) -->
-          <circle cx="${startPt.x}" cy="${startPt.y}" r="8" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-          <circle cx="${startPt.x}" cy="${startPt.y}" r="16" fill="none" stroke="#10b981" stroke-width="1.5" class="beacon-radar-pulse" />
+          <g transform="translate(${startPt.x}, ${startPt.y})">
+            <circle cx="0" cy="0" r="16" fill="none" stroke="#10b981" stroke-width="1.5" class="beacon-radar-pulse" />
+            <circle cx="0" cy="0" r="8" fill="#10b981" stroke="#ffffff" stroke-width="2.5" filter="url(#bldg-shadow)" />
+            <text x="0" y="-12" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="800" fill="#34d399">START</text>
+          </g>
 
           <!-- Destination Beacon Marker (Cyan Glow) -->
-          <circle cx="${endPt.x}" cy="${endPt.y}" r="8" fill="#00e5ff" stroke="#ffffff" stroke-width="2" />
-          <circle cx="${endPt.x}" cy="${endPt.y}" r="18" fill="none" stroke="#00e5ff" stroke-width="2" class="beacon-radar-pulse" />
+          <g transform="translate(${endPt.x}, ${endPt.y})">
+            <circle cx="0" cy="0" r="18" fill="none" stroke="#00e5ff" stroke-width="2" class="beacon-radar-pulse" />
+            <circle cx="0" cy="0" r="9" fill="#00e5ff" stroke="#ffffff" stroke-width="2.5" filter="url(#bldg-shadow)" />
+            <text x="0" y="-14" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="800" fill="#00e5ff">DESTINATION</text>
+          </g>
         </g>
       `;
     }
@@ -439,241 +448,366 @@ const CampusMap = {
         <filter id="route-blur" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation="4" result="blur" />
         </filter>
-        <filter id="bldg-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.55" />
+        <filter id="bldg-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000000" flood-opacity="0.65" />
         </filter>
-        <linearGradient id="spine-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.8"/>
-          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.9"/>
-          <stop offset="100%" stop-color="#10b981" stop-opacity="0.8"/>
+        <linearGradient id="topo-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="${isNight ? '#03060f' : '#080d1a'}"/>
+          <stop offset="50%" stop-color="${isNight ? '#070b16' : '#0c1425'}"/>
+          <stop offset="100%" stop-color="${isNight ? '#040711' : '#080d19'}"/>
+        </linearGradient>
+        <linearGradient id="cliff-face-upper" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="${isNight ? '#0a0f1d' : '#141d33'}"/>
+          <stop offset="100%" stop-color="${isNight ? '#04070f' : '#090e1c'}"/>
+        </linearGradient>
+        <linearGradient id="cliff-face-lower" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="${isNight ? '#090e1a' : '#121a2d'}"/>
+          <stop offset="100%" stop-color="${isNight ? '#03050c' : '#070b16'}"/>
+        </linearGradient>
+        <linearGradient id="skybridge-glass" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="rgba(0, 229, 255, 0.45)"/>
+          <stop offset="50%" stop-color="rgba(59, 130, 246, 0.7)"/>
+          <stop offset="100%" stop-color="rgba(16, 185, 129, 0.45)"/>
         </linearGradient>
       </defs>
 
       <!-- Interactive World Container (Smooth Pan & Zoom Layer) -->
       <g id="map-world-layer">
-        <!-- 1. Campus Himalayan Hillside Base Terrain -->
-        <rect width="1000" height="680" fill="${terrainFill}" />
+        <!-- 1. Campus Himalayan Hillside Base Gradient -->
+        <rect width="1000" height="680" fill="url(#topo-bg)" />
 
-      <!-- 2. Shivalik Topographic Elevation Isolines (1,550m Altitude) -->
-      <g opacity="${isNight ? '0.2' : '0.35'}">
-        <path d="M 0 90 Q 250 60 500 80 T 1000 65" fill="none" stroke="#1c2d3f" stroke-width="1.2" stroke-dasharray="4 4" />
-        <text x="940" y="60" font-family="'JetBrains Mono', monospace" font-size="8" fill="#475569">1,570m</text>
-        <path d="M 0 240 Q 300 210 600 230 T 1000 215" fill="none" stroke="#1c2d3f" stroke-width="1.2" stroke-dasharray="4 4" />
-        <text x="940" y="210" font-family="'JetBrains Mono', monospace" font-size="8" fill="#475569">1,550m</text>
-        <path d="M 0 440 Q 350 410 700 430 T 1000 420" fill="none" stroke="#1c2d3f" stroke-width="1.2" stroke-dasharray="4 4" />
-        <text x="940" y="415" font-family="'JetBrains Mono', monospace" font-size="8" fill="#475569">1,530m</text>
-      </g>
+        <!-- 2. 3D Shivalik Terraced Mountain Elevation Plates -->
+        <!-- Terrace 1: Upper Ridge Plateau (1,570m MSL - Helipad, Viewpoint, Girls Hostels) -->
+        <polygon points="40,30 960,30 965,190 35,210" fill="${isNight ? '#080e1c' : '#101a2e'}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <!-- Terrace 1 Drop Cliff Retaining Wall -->
+        <polygon points="35,210 965,190 965,220 35,240" fill="url(#cliff-face-upper)" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+        <line x1="35" y1="210" x2="965" y2="190" stroke="${isNight ? '#1e293b' : '#334155'}" stroke-width="2.5" />
+        <!-- Retaining Wall Buttress Pillars -->
+        <line x1="200" y1="206" x2="200" y2="236" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="400" y1="202" x2="400" y2="232" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="600" y1="198" x2="600" y2="228" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="800" y1="194" x2="800" y2="224" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
 
-      <!-- 3. Campus Landscaped Green Lawns & Courtyards -->
-      <g>
-        <!-- North Ridge Forest Buffer -->
-        <path d="M 0 50 Q 300 20 600 40 T 1000 30 L 1000 110 Q 600 120 0 110 Z" fill="${lawnFill}" opacity="0.6" />
-        
-        <!-- Central Academic Lawn Quad (between AB1, AB2, and LRC) -->
-        <rect x="230" y="235" width="410" height="90" rx="14" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.5" />
-        
-        <!-- Amphitheatre & South Sports Lawn -->
-        <rect x="680" y="445" width="230" height="150" rx="16" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.5" />
-        
-        <!-- Boys Hostels Hill Terrace Green -->
-        <rect x="90" y="430" width="180" height="150" rx="14" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.5" />
-      </g>
+        <!-- Terrace 2: Central Academic Promenade Plateau (1,550m MSL - AB1, AB2, AB3, LRC, Admin) -->
+        <polygon points="30,240 970,220 970,448 30,468" fill="${isNight ? '#0b1122' : '#131e36'}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+        <!-- Terrace 2 Drop Cliff Retaining Wall -->
+        <polygon points="30,468 970,448 970,476 30,496" fill="url(#cliff-face-lower)" stroke="rgba(0,0,0,0.5)" stroke-width="1"/>
+        <line x1="30" y1="468" x2="970" y2="448" stroke="${isNight ? '#1e293b' : '#334155'}" stroke-width="2.5" />
+        <!-- Retaining Wall Buttress Pillars -->
+        <line x1="180" y1="465" x2="180" y2="493" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="360" y1="461" x2="360" y2="489" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="540" y1="457" x2="540" y2="485" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
+        <line x1="720" y1="453" x2="720" y2="481" stroke="rgba(255,255,255,0.08)" stroke-width="2" />
 
-      <!-- 4. Himalayan Pine Trees (Evergreen Conifer Silhouettes) -->
-      <g fill="${isNight ? '#0b1f1a' : '#14342b'}" opacity="0.85">
-        <!-- North Forest Clusters -->
-        <polygon points="50,75 42,95 58,95" /> <polygon points="50,65 44,80 56,80" />
-        <polygon points="120,70 112,90 128,90" />
-        <polygon points="200,60 192,80 208,80" />
-        <polygon points="580,65 572,85 588,85" />
-        <polygon points="630,55 622,75 638,75" />
-        <polygon points="880,70 872,90 888,90" />
-        <polygon points="930,60 922,80 938,80" />
-        <!-- Mid-Hill Pine Clusters -->
-        <polygon points="60,380 52,400 68,400" />
-        <polygon points="75,410 67,430 83,430" />
-        <polygon points="920,440 912,460 928,460" />
-        <polygon points="940,480 932,500 948,500" />
-        <polygon points="460,265 454,280 466,280" />
-        <polygon points="510,265 504,280 516,280" />
-      </g>
+        <!-- Terrace 3: Lower Terraces Plateau (1,530m MSL - Annapurna Messes, Boys Hostels, Sports Arena) -->
+        <polygon points="20,496 980,476 980,670 20,670" fill="${isNight ? '#070c17' : '#0e172a'}"/>
 
-      <!-- 5. Campus Road Networks (Asphalt Arteries & Driveways) -->
-      <!-- Waknaghat Highway connecting to Gate 1 and climbing up past Health Centre to LRC & Ridge -->
-      <path d="M 20 220 Q 90 225 140 220 T 250 205 T 410 200 T 620 170 T 780 195 T 980 210" 
-            fill="none" stroke="${roadColor}" stroke-width="18" stroke-linecap="round"/>
-      <path d="M 20 220 Q 90 225 140 220 T 250 205 T 410 200 T 620 170 T 780 195 T 980 210" 
-            fill="none" stroke="${roadCenter}" stroke-width="1.8" stroke-dasharray="8 6" />
+        <!-- Elevation Altitude Chips on Terraces -->
+        <g opacity="${isNight ? '0.45' : '0.75'}">
+          <g transform="translate(860, 48)">
+            <rect x="0" y="0" width="105" height="22" rx="6" fill="#080e1a" stroke="#334155" stroke-width="1"/>
+            <text x="52" y="15" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="700" fill="#38bdf8">⛰️ 1,570m Ridge</text>
+          </g>
+          <g transform="translate(860, 245)">
+            <rect x="0" y="0" width="105" height="22" rx="6" fill="#080e1a" stroke="#334155" stroke-width="1"/>
+            <text x="52" y="15" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="700" fill="#00e5ff">⛰️ 1,550m Spine</text>
+          </g>
+          <g transform="translate(860, 502)">
+            <rect x="0" y="0" width="105" height="22" rx="6" fill="#080e1a" stroke="#334155" stroke-width="1"/>
+            <text x="52" y="15" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="700" fill="#94a3b8">⛰️ 1,530m Valley</text>
+          </g>
+        </g>
 
-      <!-- Connector Road to Lower Residential & Mess Complex -->
-      <path d="M 140 220 L 140 280 L 190 450 L 190 530" 
-            fill="none" stroke="${roadColor}" stroke-width="14" stroke-linecap="round"/>
-      <path d="M 190 470 L 800 470 L 800 530" 
-            fill="none" stroke="${roadColor}" stroke-width="14" stroke-linecap="round"/>
-
-      <!-- 6. Grand Academic Spine Promenade (Paved Colonnade) -->
-      <!-- Wide Covered Walkway connecting AB1, Central Rotunda, AB2 and AB3 -->
-      <path d="M 240 330 L 780 330" 
-            fill="none" stroke="${spineColor}" stroke-width="${isWalkwaysOnly ? '18' : '14'}" stroke-linecap="round" />
-      <path d="M 240 330 L 780 330" 
-            fill="none" stroke="${spineDash}" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.8" />
-
-      <!-- Elevated Covered Skybridge connecting AB1 (2nd floor) and AB2 (2nd floor) -->
-      <path d="M 410 365 L 480 355" fill="none" stroke="#3b82f6" stroke-width="9" stroke-linecap="round" opacity="0.9" />
-      <path d="M 410 365 L 480 355" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3 3" />
-      <text x="445" y="352" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="7" font-weight="700" fill="#93c5fd">SKYBRIDGE</text>
-
-      <!-- Walkway Connecting Spine to LRC & Administrative Plaza -->
-      <path d="M 450 330 L 450 205" 
-            fill="none" stroke="${spineColor}" stroke-width="10" stroke-linecap="round" />
-      <!-- Walkway to Annapurna Messes & Amphitheatre -->
-      <path d="M 490 330 L 490 480" 
-            fill="none" stroke="${spineColor}" stroke-width="10" stroke-linecap="round" />
-
-      <!-- Central Campus Clock & Rotunda Plaza -->
-      <circle cx="450" cy="330" r="14" fill="#131d2e" stroke="#3b82f6" stroke-width="2" />
-      <circle cx="450" cy="330" r="4" fill="#00e5ff" />
-      <text x="450" y="310" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#94a3b8">CENTRAL SPINA</text>
-
-      <!-- Regulation Basketball Court Markings on Sports Area -->
-      <g transform="translate(745, 515)" opacity="0.7">
-        <rect x="0" y="0" width="85" height="48" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
-        <line x1="42.5" y1="0" x2="42.5" y2="48" stroke="#38bdf8" stroke-width="1" />
-        <circle cx="42.5" cy="24" r="7" fill="none" stroke="#38bdf8" stroke-width="1" />
-        <path d="M 0 12 L 18 12 A 6 6 0 0 1 18 36 L 0 36 Z" fill="none" stroke="#38bdf8" stroke-width="1" />
-        <path d="M 85 12 L 67 12 A 6 6 0 0 0 67 36 L 85 36 Z" fill="none" stroke="#38bdf8" stroke-width="1" />
-      </g>
-
-      <!-- Helipad Landing Circle on Ridge -->
-      <g transform="translate(670, 138)" opacity="0.85">
-        <circle cx="0" cy="0" r="18" fill="#141c2b" stroke="#ffffff" stroke-width="1.8" />
-        <text x="0" y="6" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="16" font-weight="900" fill="#ffffff">H</text>
-      </g>
-
-      <!-- Active Walking Route Polyline & Beacons -->
-      ${routeMarkup}
-
-      <!-- 7. Architectural Building Nodes Layer -->
-      <g id="map-buildings-layer">
-        ${this.buildings.map(b => {
-          const meta = this.layoutMeta[b.id] || { x: b.coordinates.x, y: b.coordinates.y, w: 140, h: 54, height3D: 24, code: b.code, badge: 'Landmark', color: b.color || '#3b82f6', name: b.name, sub: '' };
-          const { x, y, w, h, code, badge, color, name, sub, featured, height3D, photo } = meta;
+        <!-- 3. 3D Campus Landscaped Green Lawns & Courtyards -->
+        <g>
+          <!-- Central Academic Lawn Quad with 3D Bevel Edge -->
+          <polygon points="230,248 640,248 640,320 230,320" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.8" />
+          <polygon points="230,320 640,320 640,324 230,324" fill="#06120e" />
           
-          const isCategoryMatch = isCategoryActive(this.activeCategory, b.id);
-          const isHighlighted = (this.activeBuilding && this.activeBuilding.id === b.id);
-          const isVenueMatch = (this.highlightedVenue && this.buildingContainsVenue(b, this.highlightedVenue));
-          const opacity = isCategoryMatch ? '1' : '0.2';
-          const depth = (this.is3DMode ? (height3D || 26) : 0);
+          <!-- Amphitheatre & Sports Lawn -->
+          <polygon points="680,485 910,485 910,610 680,610" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.8" />
+          <polygon points="680,610 910,610 910,614 680,614" fill="#06120e" />
+          
+          <!-- Boys Hostels Hill Terrace Green -->
+          <polygon points="90,490 270,490 270,610 90,610" fill="${lawnFill}" stroke="${lawnStroke}" stroke-width="1.8" />
+          <polygon points="90,610 270,610 270,614 90,614" fill="#06120e" />
+        </g>
 
-          // 3D Extruded Architectural Geometry
-          const extrusionMarkup = (this.is3DMode && depth > 0) ? `
-            <!-- 3D Base Drop Shadow -->
-            <rect x="6" y="${h + depth - 4}" width="${w - 12}" height="12" rx="4" fill="rgba(0,0,0,0.6)" filter="url(#route-blur)" />
+        <!-- 4. 3D Volumetric Conifer Pine Trees -->
+        <g opacity="0.9">
+          <!-- Conifer Pines with Tiered Shading -->
+          ${[
+            [50,75], [120,70], [200,60], [580,65], [630,55], [880,70], [930,60],
+            [60,400], [75,430], [920,440], [940,490], [460,270], [510,270]
+          ].map(([tx, ty]) => `
+            <g transform="translate(${tx}, ${ty})">
+              <!-- Tree Shadow -->
+              <ellipse cx="6" cy="18" rx="10" ry="4" fill="rgba(0,0,0,0.4)" filter="url(#route-blur)"/>
+              <!-- Tier 1 -->
+              <polygon points="0,0 -9,16 0,16" fill="${isNight ? '#0e2920' : '#1b4a3a'}"/>
+              <polygon points="0,0 0,16 9,16" fill="${isNight ? '#071612' : '#0f2c23'}"/>
+              <!-- Tier 2 -->
+              <polygon points="0,-7 -7,6 0,6" fill="${isNight ? '#123328' : '#225d49'}"/>
+              <polygon points="0,-7 0,6 7,6" fill="${isNight ? '#091c16' : '#12362b'}"/>
+              <!-- Trunk -->
+              <rect x="-1.5" y="16" width="3" height="5" fill="#3b2314"/>
+            </g>
+          `).join('')}
+        </g>
+
+        <!-- 5. 3D Curving Mountain Roadways with Curbs -->
+        <!-- Downhill Curb Shadow & Curb Slab -->
+        <path d="M 20 223 Q 90 228 140 223 T 250 208 T 410 203 T 620 173 T 780 198 T 980 213" 
+              fill="none" stroke="${roadCurb}" stroke-width="21" stroke-linecap="round"/>
+        <!-- Asphalt Surface -->
+        <path d="M 20 220 Q 90 225 140 220 T 250 205 T 410 200 T 620 170 T 780 195 T 980 210" 
+              fill="none" stroke="${roadColor}" stroke-width="17" stroke-linecap="round"/>
+        <!-- Road Center Dashed Line -->
+        <path d="M 20 220 Q 90 225 140 220 T 250 205 T 410 200 T 620 170 T 780 195 T 980 210" 
+              fill="none" stroke="${roadCenter}" stroke-width="1.8" stroke-dasharray="8 6" />
+
+        <!-- Connector Road to Lower Residential & Mess Complex -->
+        <path d="M 140 220 L 140 280 L 190 450 L 190 530" fill="none" stroke="${roadCurb}" stroke-width="16" stroke-linecap="round"/>
+        <path d="M 140 220 L 140 280 L 190 450 L 190 530" fill="none" stroke="${roadColor}" stroke-width="13" stroke-linecap="round"/>
+        <path d="M 190 470 L 800 470 L 800 530" fill="none" stroke="${roadCurb}" stroke-width="16" stroke-linecap="round"/>
+        <path d="M 190 470 L 800 470 L 800 530" fill="none" stroke="${roadColor}" stroke-width="13" stroke-linecap="round"/>
+
+        <!-- 6. 3D Grand Academic Spine Promenade (Colonnade Walkway) -->
+        <path d="M 240 334 L 780 334" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="16" stroke-linecap="round" />
+        <path d="M 240 330 L 780 330" fill="none" stroke="${spineColor}" stroke-width="${isWalkwaysOnly ? '18' : '14'}" stroke-linecap="round" />
+        <path d="M 240 330 L 780 330" fill="none" stroke="${spineDash}" stroke-width="2.5" stroke-dasharray="8 5" opacity="0.85" />
+
+        <!-- 3D Paved Walkway Connectors -->
+        <path d="M 450 330 L 450 205" fill="none" stroke="${spineColor}" stroke-width="10" stroke-linecap="round" />
+        <path d="M 490 330 L 490 480" fill="none" stroke="${spineColor}" stroke-width="10" stroke-linecap="round" />
+
+        <!-- Central Campus Clock & Rotunda Plaza (3D Raised Cylinder) -->
+        <g transform="translate(450, 330)">
+          <!-- Ground Shadow -->
+          <circle cx="2" cy="5" r="17" fill="rgba(0,0,0,0.6)" filter="url(#route-blur)"/>
+          <!-- Rotunda Base Depth -->
+          <polygon points="-15,0 15,0 15,6 -15,6" fill="#0a101d" />
+          <!-- Rotunda Disc -->
+          <circle cx="0" cy="0" r="15" fill="#131d2e" stroke="#3b82f6" stroke-width="2" />
+          <circle cx="0" cy="0" r="4" fill="#00e5ff" />
+          <text x="0" y="-18" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.5" font-weight="700" fill="#94a3b8">CENTRAL SPINA</text>
+        </g>
+
+        <!-- 3D Elevated Covered Skybridge (AB1 <-> AB2) with Concrete Columns -->
+        <g id="map-3d-skybridge">
+          <!-- Skybridge Ground Shadow -->
+          <path d="M 410 375 L 480 365" fill="none" stroke="rgba(0,0,0,0.7)" stroke-width="11" stroke-linecap="round" filter="url(#route-blur)"/>
+          <!-- Vertical Concrete Support Pylons -->
+          <rect x="424" y="362" width="6" height="18" fill="#1e293b" stroke="#0f172a" stroke-width="0.8"/>
+          <rect x="462" y="356" width="6" height="18" fill="#1e293b" stroke="#0f172a" stroke-width="0.8"/>
+          <!-- 3D Enclosed Glass Bridge Corridor -->
+          <polygon points="410,358 480,348 480,362 410,372" fill="url(#skybridge-glass)" stroke="#38bdf8" stroke-width="1.4"/>
+          <!-- Bridge Floor Slab -->
+          <polygon points="410,372 480,362 482,365 412,375" fill="#0f172a"/>
+          <text x="445" y="362" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="800" fill="#ffffff">3D SKYBRIDGE</text>
+        </g>
+
+        <!-- 3D Tagore Open Air Theatre (OAT) Stepped Stone Amphitheatre -->
+        <g transform="translate(535, 455)">
+          <!-- Tier 4 Outer Ring -->
+          <path d="M -45,-5 A 45 26 0 0 0 45 -5" fill="none" stroke="#2a334a" stroke-width="5" />
+          <!-- Tier 3 Ring -->
+          <path d="M -35,-4 A 35 20 0 0 0 35 -4" fill="none" stroke="#334155" stroke-width="4.5" />
+          <!-- Tier 2 Ring -->
+          <path d="M -25,-3 A 25 14 0 0 0 25 -3" fill="none" stroke="#475569" stroke-width="4" />
+          <!-- Tier 1 Inner Stage -->
+          <ellipse cx="0" cy="0" rx="14" ry="7" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5" />
+          <text x="0" y="3" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="800" fill="#a78bfa">STAGE</text>
+        </g>
+
+        <!-- 3D Sports Arena & Regulation Basketball Court -->
+        <g transform="translate(745, 515)" opacity="0.85">
+          <!-- 3D Court Perimeter Bank -->
+          <polygon points="0,0 85,0 85,48 0,48" fill="#1b2438" stroke="#38bdf8" stroke-width="1.5" />
+          <polygon points="0,48 85,48 88,52 3,52" fill="#0d1320" />
+          <line x1="42.5" y1="0" x2="42.5" y2="48" stroke="#38bdf8" stroke-width="1" />
+          <circle cx="42.5" cy="24" r="7" fill="none" stroke="#38bdf8" stroke-width="1" />
+          <path d="M 0 12 L 18 12 A 6 6 0 0 1 18 36 L 0 36 Z" fill="none" stroke="#38bdf8" stroke-width="1" />
+          <path d="M 85 12 L 67 12 A 6 6 0 0 0 67 36 L 85 36 Z" fill="none" stroke="#38bdf8" stroke-width="1" />
+        </g>
+
+        <!-- 3D Shivalik Ridge Helipad Landing Pad -->
+        <g transform="translate(670, 138)" opacity="0.95">
+          <!-- 3D Octagonal Concrete Pad -->
+          <polygon points="-22,-8 -8,-22 8,-22 22,-8 22,8 8,22 -8,22 -22,8" fill="#1b2333" stroke="#ffffff" stroke-width="1.8" />
+          <polygon points="-22,8 22,8 24,14 -20,14" fill="#0d121c"/>
+          <circle cx="0" cy="0" r="14" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 2" />
+          <text x="0" y="5.5" text-anchor="middle" font-family="'Outfit', sans-serif" font-size="15" font-weight="900" fill="#ffffff">H</text>
+        </g>
+
+        <!-- Active Walking Route Polyline & 3D Beacons -->
+        ${routeMarkup}
+
+        <!-- 7. 3D Architectural Building Blocks Layer -->
+        <g id="map-buildings-layer">
+          ${this.buildings.map(b => {
+            const meta = this.layoutMeta[b.id] || { x: b.coordinates.x, y: b.coordinates.y, w: 140, h: 54, height3D: 28, code: b.code, badge: 'Landmark', color: b.color || '#3b82f6', name: b.name, sub: '' };
+            const { x, y, w, h, code, badge, color, name, sub, featured, height3D, photo } = meta;
             
-            <!-- 3D Front Facade with Storey Windows -->
-            <polygon points="0,${h} ${w},${h} ${w},${h + depth} 0,${h + depth}" fill="#0f172a" stroke="rgba(255,255,255,0.08)" stroke-width="0.8" />
-            <line x1="0" y1="${h + depth * 0.45}" x2="${w}" y2="${h + depth * 0.45}" stroke="${color}" stroke-opacity="0.4" stroke-dasharray="4 6" stroke-width="1.2" />
-            <line x1="0" y1="${h + depth * 0.8}" x2="${w}" y2="${h + depth * 0.8}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4" stroke-width="0.8" />
-            
-            <!-- 3D Right Depth Wall with Shadowing -->
-            <polygon points="${w},0 ${w},${h} ${w + 8},${h + depth} ${w + 8},${depth}" fill="#080e1a" stroke="rgba(255,255,255,0.05)" stroke-width="0.8" />
-          ` : '';
+            const isCategoryMatch = isCategoryActive(this.activeCategory, b.id);
+            const isHighlighted = (this.activeBuilding && this.activeBuilding.id === b.id);
+            const isVenueMatch = (this.highlightedVenue && this.buildingContainsVenue(b, this.highlightedVenue));
+            const opacity = isCategoryMatch ? '1' : '0.22';
+            const depth = height3D || 32;
 
-          // Animated Glowing Bouncing Location Pin
-          const pinY = (this.is3DMode && depth > 0) ? -28 : -20;
-          const anchorPin = (isHighlighted || isVenueMatch) ? `
-            <g transform="translate(${w / 2}, ${pinY})" class="venue-beacon-pin">
-              <!-- Radar Wave Rings -->
-              <circle cx="0" cy="0" r="10" fill="none" stroke="${color}" stroke-width="2" class="beacon-radar-pulse" />
-              <circle cx="0" cy="0" r="22" fill="none" stroke="${color}" stroke-width="1.2" class="beacon-radar-pulse" />
-              
-              <!-- Pin Pill Badge -->
-              <rect x="-46" y="-18" width="92" height="22" rx="6" fill="#0284c7" stroke="#ffffff" stroke-width="1.5" filter="url(#bldg-shadow)" />
-              <text x="0" y="-3" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="800" fill="#ffffff">
-                ${this.highlightedVenue ? `📍 ${this.highlightedVenue}` : '📍 Selected'}
-              </text>
-              <polygon points="0,4 -5,-2 5,-2" fill="#0284c7" />
-            </g>
-          ` : '';
+            // 3D Architectural Geometry Facades
+            const frontFacadeFill = isNight ? '#0b111e' : (featured ? '#151d30' : '#101726');
+            const sideFacadeFill = isNight ? '#060a14' : (featured ? '#0b101c' : '#080d17');
+            const roofFill = isNight ? '#101728' : (featured ? '#1a233a' : '#141d30');
+            const cardBorder = (isHighlighted || isVenueMatch) ? '#00e5ff' : (featured ? color : '#293754');
+            const borderWidth = (isHighlighted || isVenueMatch) ? '2.8' : (featured ? '2.2' : '1.4');
 
-          // Card Background and Border styling
-          let cardBg = isNight ? '#0b1120' : (featured ? '#161c2e' : '#111728');
-          let cardBorder = (isHighlighted || isVenueMatch) ? '#00e5ff' : (featured ? color : '#232f48');
-          let borderWidth = (isHighlighted || isVenueMatch) ? '2.8' : (featured ? '2' : '1.3');
+            // Specific 3D Rooftop Architectural Features
+            let rooftopFeature = '';
+            if (b.id === 'lrc') {
+              // 3D Pyramid Glass Atrium Skylight
+              rooftopFeature = `
+                <polygon points="${w/2 - 18},${h/2} ${w/2},${h/2 - 12} ${w/2 + 18},${h/2} ${w/2},${h/2 + 12}" fill="rgba(0, 229, 255, 0.35)" stroke="#00e5ff" stroke-width="1"/>
+                <line x1="${w/2}" y1="${h/2 - 12}" x2="${w/2}" y2="${h/2 + 12}" stroke="#ffffff" stroke-width="0.8"/>
+              `;
+            } else if (b.id === 'block2') {
+              // 3D Tiered Lecture Theatre Roof Monitors (LT1, LT2, LT3)
+              rooftopFeature = `
+                <rect x="${w - 48}" y="12" width="38" height="20" rx="3" fill="#0d1424" stroke="#3b82f6" stroke-width="1"/>
+                <text x="${w - 29}" y="25" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="800" fill="#93c5fd">LT1–3</text>
+              `;
+            } else if (b.id === 'block1') {
+              // Physics Lab Antenna / HVAC Chiller
+              rooftopFeature = `
+                <circle cx="${w - 22}" cy="18" r="6" fill="#1b253b" stroke="#38bdf8" stroke-width="1"/>
+                <circle cx="${w - 22}" cy="18" r="2" fill="#00e5ff"/>
+              `;
+            } else if (b.id === 'block3') {
+              // Biotech Rooftop Green Botanical Area
+              rooftopFeature = `
+                <rect x="${w - 44}" y="12" width="34" height="18" rx="3" fill="#0d241d" stroke="#10b981" stroke-width="1"/>
+                <text x="${w - 27}" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="7" font-weight="700" fill="#34d399">BIO-LAB</text>
+              `;
+            }
 
-          // Photo indicator badge
-          const photoBadge = photo ? `
-            <g transform="translate(${w - 54}, ${h - 18})" opacity="0.85">
-              <rect width="46" height="13" rx="3" fill="rgba(0,0,0,0.7)" stroke="${color}" stroke-width="0.6"/>
-              <text x="23" y="9.5" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#ffffff">📷 PHOTO</text>
-            </g>
-          ` : '';
+            // Animated Glowing Bouncing Location Beacon Pin
+            const pinY = -34;
+            const anchorPin = (isHighlighted || isVenueMatch) ? `
+              <g transform="translate(${w / 2}, ${pinY})" class="venue-beacon-pin">
+                <!-- 3D Radar Wave Rings -->
+                <circle cx="0" cy="0" r="12" fill="none" stroke="${color}" stroke-width="2.2" class="beacon-radar-pulse" />
+                <circle cx="0" cy="0" r="26" fill="none" stroke="${color}" stroke-width="1.4" class="beacon-radar-pulse" />
+                
+                <!-- 3D Floating Pin Pill Badge -->
+                <rect x="-52" y="-20" width="104" height="24" rx="8" fill="#0284c7" stroke="#ffffff" stroke-width="2" filter="url(#bldg-shadow)" />
+                <text x="0" y="-4" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="9.5" font-weight="800" fill="#ffffff">
+                  ${this.highlightedVenue ? `📍 ${this.highlightedVenue}` : '📍 Selected'}
+                </text>
+                <polygon points="0,5 -6,-2 6,-2" fill="#0284c7" />
+              </g>
+            ` : '';
 
-          return `
-            <g class="bldg-node ${this.is3DMode ? 'bldg-node-3d' : ''} ${isHighlighted || isVenueMatch ? 'highlighted' : ''}" 
-               data-id="${b.id}" 
-               transform="translate(${x}, ${y})"
-               opacity="${opacity}"
-               filter="url(#bldg-shadow)"
-               style="cursor: pointer;">
-              
-              <!-- 3D Isometric Extruded Walls -->
-              ${extrusionMarkup}
+            // Real Photo Badge
+            const photoBadge = photo ? `
+              <g transform="translate(${w - 54}, ${h - 18})" opacity="0.9">
+                <rect width="46" height="13" rx="3" fill="rgba(0,0,0,0.75)" stroke="${color}" stroke-width="0.8"/>
+                <text x="23" y="9.5" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7.5" font-weight="700" fill="#ffffff">📷 PHOTO</text>
+              </g>
+            ` : '';
 
-              ${anchorPin}
+            return `
+              <g class="bldg-node bldg-node-3d ${isHighlighted || isVenueMatch ? 'highlighted' : ''}" 
+                 data-id="${b.id}" 
+                 transform="translate(${x}, ${y})"
+                 opacity="${opacity}"
+                 style="cursor: pointer;">
+                
+                <!-- 1. 3D Ground Cast Drop Shadow -->
+                <polygon points="8,${h + depth + 4} ${w + 14},${h + depth + 4} ${w + 14},${depth + 6} 0,${h}" fill="rgba(0,0,0,0.65)" filter="url(#route-blur)" />
+                
+                <!-- 2. 3D Front Facade (South Facing Perspective) -->
+                <polygon points="0,${h} ${w},${h} ${w},${h + depth} 0,${h + depth}" 
+                         fill="${frontFacadeFill}" 
+                         stroke="rgba(255,255,255,0.12)" 
+                         stroke-width="0.8" />
+                
+                <!-- Storey Window Rows & Structural Floors -->
+                <line x1="6" y1="${h + depth * 0.35}" x2="${w - 6}" y2="${h + depth * 0.35}" stroke="${color}" stroke-opacity="0.45" stroke-dasharray="5 7" stroke-width="1.4" />
+                <line x1="6" y1="${h + depth * 0.72}" x2="${w - 6}" y2="${h + depth * 0.72}" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 6" stroke-width="1" />
+                
+                <!-- 3D Entrance Portico Canopy -->
+                <polygon points="${w/2 - 14},${h + depth - 8} ${w/2 + 14},${h + depth - 8} ${w/2 + 14},${h + depth} ${w/2 - 14},${h + depth}" fill="#0284c7" opacity="0.8" />
+                <line x1="${w/2 - 12}" y1="${h + depth}" x2="${w/2 + 12}" y2="${h + depth}" stroke="#00e5ff" stroke-width="2" />
+                
+                <!-- 3. 3D Right Depth Wall (East Shaded Face) -->
+                <polygon points="${w},0 ${w},${h} ${w + 12},${h + depth} ${w + 12},${depth}" 
+                         fill="${sideFacadeFill}" 
+                         stroke="rgba(0,0,0,0.5)" 
+                         stroke-width="0.8" />
+                <!-- Architectural Depth Vertical Fins -->
+                <line x1="${w + 6}" y1="${depth * 0.5}" x2="${w + 6}" y2="${h + depth * 0.5}" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
 
-              <!-- Architectural Building Roof / Face Box -->
-              <rect x="0" y="0" width="${w}" height="${h}" rx="9" 
-                    fill="${cardBg}" 
-                    stroke="${cardBorder}" 
-                    stroke-width="${borderWidth}" />
-              
-              <!-- Department Color Accent Bar -->
-              <rect x="0" y="0" width="5" height="${h}" rx="2" fill="${color}" />
+                <!-- 4. 3D Top Roof Slab -->
+                <rect x="0" y="0" width="${w}" height="${h}" rx="8" 
+                      fill="${roofFill}" 
+                      stroke="${cardBorder}" 
+                      stroke-width="${borderWidth}" />
+                
+                <!-- Parapet Roof Edge Trim -->
+                <rect x="2" y="2" width="${w - 4}" height="${h - 4}" rx="6" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
 
-              <!-- Building Code Pill Badge -->
-              <rect x="10" y="8" width="48" height="17" rx="4" fill="rgba(0,0,0,0.6)" stroke="${color}" stroke-width="1" />
-              <text x="34" y="20" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="800" fill="#ffffff">
-                ${code}
-              </text>
+                <!-- Department Color Accent Bar -->
+                <rect x="0" y="0" width="5.5" height="${h}" rx="2" fill="${color}" />
 
-              <!-- Level / Tag Pill -->
-              <text x="${w - 10}" y="20" text-anchor="end" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="700" fill="${color}">
-                ${badge}
-              </text>
+                <!-- Specific Rooftop Feature (Skylight / Atrium) -->
+                ${rooftopFeature}
 
-              <!-- Building Name -->
-              <text x="12" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="700" fill="#f8fafc">
-                ${name}
-              </text>
-              <text x="12" y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.8" font-weight="500" fill="#94a3b8">
-                ${sub ? sub.substring(0, 27) : ''}
-              </text>
+                <!-- Building Code Pill Badge -->
+                <rect x="10" y="8" width="50" height="18" rx="4" fill="rgba(0,0,0,0.65)" stroke="${color}" stroke-width="1.2" />
+                <text x="35" y="20.5" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="800" fill="#ffffff">
+                  ${code}
+                </text>
 
-              <!-- Real Photo Badge -->
-              ${photoBadge}
-            </g>
-          `;
-        }).join('')}
-      </g>
+                <!-- Level / Tag Pill -->
+                <text x="${w - 10}" y="20.5" text-anchor="end" font-family="'Plus Jakarta Sans', sans-serif" font-size="8.5" font-weight="700" fill="${color}">
+                  ${badge}
+                </text>
 
-      <!-- 8. Campus Map Header Branding & Compass Orientation -->
-      <g transform="translate(24, 24)">
-        <rect x="0" y="0" width="370" height="36" rx="8" fill="#0f172a" stroke="rgba(255,255,255,0.12)" />
-        <circle cx="18" cy="18" r="5" fill="#00e5ff" />
-        <text x="32" y="22" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="700" fill="#f8fafc">
-          Jaypee University of Information Technology
-        </text>
-        <text x="290" y="22" font-family="'Plus Jakarta Sans', sans-serif" font-size="9.5" font-weight="600" fill="#38bdf8">
-          Waknaghat
-        </text>
-      </g>
+                <!-- Building Name -->
+                <text x="12" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-size="10.5" font-weight="700" fill="#f8fafc">
+                  ${name}
+                </text>
+                <text x="12" y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="7.8" font-weight="500" fill="#94a3b8">
+                  ${sub ? sub.substring(0, 27) : ''}
+                </text>
+
+                <!-- Real Photo Badge -->
+                ${photoBadge}
+
+                <!-- 3D Bouncing Beacon Pin -->
+                ${anchorPin}
+              </g>
+            `;
+          }).join('')}
+        </g>
+
+        <!-- 8. Campus Map Header Branding & Topography Altitude HUD -->
+        <g transform="translate(24, 24)">
+          <rect x="0" y="0" width="380" height="38" rx="10" fill="#0a101d" stroke="rgba(255,255,255,0.12)" filter="url(#bldg-shadow)"/>
+          <circle cx="18" cy="19" r="5" fill="#00e5ff" />
+          <text x="32" y="23" font-family="'Plus Jakarta Sans', sans-serif" font-size="11.5" font-weight="700" fill="#f8fafc">
+            Jaypee University of Information Technology
+          </text>
+          <text x="300" y="23" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600" fill="#38bdf8">
+            ⛰️ 1,550m MSL
+          </text>
+        </g>
       </g><!-- /#map-world-layer -->
 
-      <!-- North Compass Indicator (Fixed Overlay) -->
+      <!-- North 3D Isometric Compass Dial (Fixed Overlay) -->
       <g transform="translate(940, 24)">
-        <rect x="0" y="0" width="36" height="36" rx="8" fill="#0f172a" stroke="rgba(255,255,255,0.12)" />
-        <text x="18" y="22" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="800" fill="#00e5ff">
+        <rect x="0" y="0" width="38" height="38" rx="10" fill="#0a101d" stroke="rgba(255,255,255,0.12)" filter="url(#bldg-shadow)"/>
+        <text x="19" y="23" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="800" fill="#00e5ff">
           N ↑
         </text>
       </g>
@@ -1397,23 +1531,23 @@ const CampusMap = {
     }).join('');
 
     card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; flex-shrink: 0;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <div class="walking-avatar-circle" style="width: 40px; height: 40px; border-radius: 10px; background: rgba(0, 229, 255, 0.15); color: #00e5ff; display: flex; align-items: center; justify-content: center;">
+          <div class="walking-avatar-circle" style="width: 38px; height: 38px; border-radius: 10px; background: rgba(0, 229, 255, 0.15); color: #00e5ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
             <span class="material-symbols-outlined" style="font-size: 22px;">alt_route</span>
           </div>
           <div>
-            <h3 style="font-size: 1.2rem; margin: 0; color: #fff;">Turn-by-Turn Route Guidance</h3>
-            <span style="font-size: 0.78rem; color: var(--text-muted);">JUIT Waknaghat Campus Navigation Engine</span>
+            <h3 style="font-size: 1.15rem; margin: 0; color: #fff; font-weight: 700;">Campus Shortest Path & Guidance</h3>
+            <span style="font-size: 0.76rem; color: var(--text-muted);">JUIT Waknaghat 3D Navigation Engine</span>
           </div>
         </div>
-        <button type="button" class="btn-drawer-close" id="btn-close-route-modal">✕</button>
+        <button type="button" class="btn-drawer-close" id="btn-close-route-modal" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">✕</button>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; flex-shrink: 0;">
         <div>
-          <label style="display: block; font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Starting Origin</label>
-          <select class="select-styled" id="route-start-point" style="width: 100%; font-size: 0.85rem;">
+          <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Start From</label>
+          <select class="select-styled" id="route-start-point" style="width: 100%; font-size: 0.82rem; padding: 6px 8px;">
             <option value="spine" selected>Central Academic Spine Walkway</option>
             <option value="main_gate">Main Campus Gate 1 (ATM)</option>
             <option value="hostels_boys">Boys Hostels Quad (Parmar/Azad)</option>
@@ -1424,25 +1558,37 @@ const CampusMap = {
         </div>
 
         <div>
-          <label style="display: block; font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Destination</label>
-          <select class="select-styled" id="route-dest-point" style="width: 100%; font-size: 0.85rem;">
+          <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Destination</label>
+          <select class="select-styled" id="route-dest-point" style="width: 100%; font-size: 0.82rem; padding: 6px 8px;">
             ${bldgOptions}
           </select>
         </div>
       </div>
 
-      <!-- Accessibility Mode Switcher -->
-      <div style="display: flex; gap: 10px; background: #101422; padding: 6px; border-radius: 10px; border: 1px solid #1f273e; margin-bottom: 18px;">
-        <button type="button" class="route-mode-btn ${!isAccessiblePreferred ? 'active' : ''}" id="btn-route-fast" style="flex: 1;">
-          ⚡ Fastest Route (Colonnade & Stairs)
+      <!-- Accessibility / Speed Mode Buttons -->
+      <div style="display: flex; gap: 8px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px; flex-shrink: 0;">
+        <button type="button" class="route-mode-btn ${!isAccessiblePreferred ? 'active' : ''}" id="btn-route-fast" style="flex: 1; font-size: 0.78rem; padding: 6px 8px;">
+          ⚡ Fastest Direct Walk
         </button>
-        <button type="button" class="route-mode-btn ${isAccessiblePreferred ? 'active' : ''}" id="btn-route-accessible" style="flex: 1;">
-          ♿ 100% Ramp & Elevator Accessible
+        <button type="button" class="route-mode-btn ${isAccessiblePreferred ? 'active' : ''}" id="btn-route-accessible" style="flex: 1; font-size: 0.78rem; padding: 6px 8px;">
+          ♿ 100% Ramp Accessible
         </button>
       </div>
 
-      <div id="route-steps-container"></div>
+      <!-- Scrollable Steps Area (Guaranteed Scrollable Container) -->
+      <div id="route-steps-container" style="flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; max-height: calc(88vh - 250px); min-height: 160px; padding-right: 4px;"></div>
+
+      <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;">
+        <button type="button" class="btn-primary" id="btn-show-pin-on-map" style="width: 100%; padding: 10px 16px; font-size: 0.86rem; font-weight: 700; cursor: pointer; border-radius: 10px;">
+          📍 View Glowing Path on 3D Campus Map
+        </button>
+      </div>
     `;
+
+    const closeRouteModal = () => {
+      modal.classList.remove('open', 'active');
+      modal.classList.add('hidden');
+    };
 
     modal.classList.remove('hidden');
     modal.classList.add('open', 'active');
@@ -1465,40 +1611,34 @@ const CampusMap = {
       ] : [
         `1. Start at <strong>Central Spine Walkway</strong> directly opposite Academic Block 2.`,
         `2. Walk along the sheltered paved colonnade towards <strong>${targetB.name} (${targetB.code})</strong>.`,
-        `3. Enter via main portal archway and take the central staircase or skybridge corridor.`,
+        `3. Enter via main portal archway and take the central staircase or 3D skybridge corridor.`,
         `4. Room direction signs are mounted at each landing; proceed to ${targetRoomLabel || 'your lecture/lab corridor'}.`
       ];
 
       const stepsContainer = document.getElementById('route-steps-container');
       if (stepsContainer) {
         stepsContainer.innerHTML = `
-          <div style="background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
             <div>
-              <div style="font-weight: 700; color: #00e5ff; font-size: 0.95rem;">
+              <div style="font-weight: 700; color: #00e5ff; font-size: 0.92rem;">
                 Estimated Time: ~${this.activeRoute?.timeMinutes || 2} mins (${this.activeRoute?.distanceMeters || 135}m)
               </div>
-              <div style="font-size: 0.78rem; color: #94a3b8;">Sheltered hillside pathways • Elevation ~1,550m</div>
+              <div style="font-size: 0.75rem; color: #94a3b8;">Sheltered hillside pathways • Elevation ~1,550m</div>
             </div>
             <span class="hud-status-badge status-good">${isAccessible ? '100% Ramp Verified' : 'Optimal Direct'}</span>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; max-height: 220px; overflow-y: auto;">
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;">
             ${steps.map(s => `
-              <div style="background: #141826; border: 1px solid #1f273d; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #cbd5e1; line-height: 1.45;">
+              <div style="background: #141826; border: 1px solid #1f273d; border-radius: 8px; padding: 10px 14px; font-size: 0.83rem; color: #cbd5e1; line-height: 1.45;">
                 ${s}
               </div>
             `).join('')}
           </div>
-
-          <div style="display: flex; gap: 10px;">
-            <button type="button" class="btn-primary" id="btn-show-pin-on-map" style="flex: 1; padding: 10px 16px;">
-              📍 View Glowing Path on Campus Map
-            </button>
-          </div>
         `;
 
         document.getElementById('btn-show-pin-on-map')?.addEventListener('click', () => {
-          modal.classList.remove('open', 'active');
+          closeRouteModal();
           this.focusBuilding(targetB, destRoom, false);
           document.getElementById('map-viewport-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
@@ -1508,9 +1648,7 @@ const CampusMap = {
     renderSteps(isAccessiblePreferred);
 
     // Modal Events
-    document.getElementById('btn-close-route-modal')?.addEventListener('click', () => {
-      modal.classList.remove('open', 'active');
-    });
+    document.getElementById('btn-close-route-modal')?.addEventListener('click', closeRouteModal);
 
     document.getElementById('route-dest-point')?.addEventListener('change', () => {
       const isAcc = document.getElementById('btn-route-accessible')?.classList.contains('active');
@@ -1535,8 +1673,16 @@ const CampusMap = {
     });
 
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('open', 'active');
+      if (e.target === modal) closeRouteModal();
     });
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeRouteModal();
+        window.removeEventListener('keydown', onKeyDown);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
   },
 
   /* ================= TIMETABLE-TO-MAP INTEGRATION ================= */

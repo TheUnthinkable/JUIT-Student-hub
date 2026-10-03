@@ -275,21 +275,28 @@
         <button type="button" class="lg:hidden w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface hover:text-primary transition-colors cursor-pointer" id="btn-mobile-menu-toggle" aria-label="Open Navigation Drawer">
           <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <a href="#dash" class="flex flex-col min-w-0 justify-center" id="mobile-brand-link">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span class="font-headline-sm text-base sm:text-lg lg:text-headline-sm text-primary font-bold tracking-tight shrink-0 whitespace-nowrap">JUIT Hub</span>
-            <span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>
-            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-secondary bg-surface-container-high border border-white/[0.06] shrink-0 font-medium whitespace-nowrap">1,550m</span>
+        <a href="#dash" class="flex items-center gap-2 min-w-0 group" id="mobile-brand-link" title="JUIT Student Hub · Solan Hills (1,550m)">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/25 via-primary/10 to-secondary/20 border border-primary/30 flex items-center justify-center text-primary shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[19px]">school</span>
           </div>
-          <span class="font-caption-editorial text-[11px] sm:text-caption-editorial text-on-surface-variant italic leading-none mt-0.5 truncate">Solan Hills · Waknaghat</span>
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="font-headline-sm text-base sm:text-lg font-bold tracking-tight text-on-surface group-hover:text-primary transition-colors whitespace-nowrap">JUIT Hub</span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium text-secondary bg-surface-container-high/90 border border-secondary/20 shrink-0 whitespace-nowrap shadow-xs" title="Campus Elevation: 1,550m above sea level">
+              <span class="material-symbols-outlined text-[12px] text-secondary">landscape</span>
+              <span>1,550m</span>
+            </span>
+          </div>
         </a>
       </div>
 
       <!-- Right: Action Controls & Live Clock -->
       <div class="flex items-center gap-2 shrink-0">
-        <div id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mr-1" title="Campus Network & Cache Status">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="connection-status-dot"></span>
-          <span id="connection-status-text">Online</span>
+        <div id="connection-status-pill" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shrink-0 shadow-xs" title="Campus Network & Offline Cache Status">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" id="connection-status-dot"></span>
+          </span>
+          <span id="connection-status-text" class="font-semibold tracking-wide">.online</span>
         </div>
         <div class="hidden md:flex flex-col text-right mr-2">
           <span class="font-mono text-xs text-primary font-semibold" id="live-clock-time">09:47 AM</span>
@@ -1422,12 +1429,12 @@
               <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Semester milestones, examination schedules, gazetted holidays, and vacations.</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-              <button type="button" id="btn-export-ics-main" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer border border-white/[0.06] shadow-sm">
-                <span class="material-symbols-outlined text-[15px]">file_download</span>
+              <button type="button" id="btn-export-ics-main" class="px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface hover:text-primary font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer border border-white/[0.08] shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">file_download</span>
                 <span>Export .ics</span>
               </button>
-              <button type="button" id="btn-add-personal-main" class="px-3 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm">
-                <span class="material-symbols-outlined text-[15px]">add</span>
+              <button type="button" id="btn-add-personal-main" class="px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 font-label-md text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">add</span>
                 <span>Add Note</span>
               </button>
             </div>
@@ -2169,23 +2176,48 @@
     </div>
   </div>
 
-  <!-- Route Navigation Modal -->
-  <div class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4" id="map-route-modal">
-    <div class="modal-card w-full max-w-md p-5 space-y-4" id="map-route-modal-card">
-      <div class="flex items-center justify-between">
-        <h3 class="font-headline-sm text-headline-sm font-semibold">Campus Route</h3>
-        <button type="button" id="btn-close-route-modal" class="text-on-surface-variant hover:text-primary cursor-pointer"><span class="material-symbols-outlined">close</span></button>
+  <!-- Route Navigation Modal (Shortest Path / Turn-by-Turn Guidance) -->
+  <div class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain" id="map-route-modal">
+    <div class="modal-card w-full max-w-lg p-5 space-y-4 max-h-[90vh] flex flex-col my-auto shadow-2xl rounded-2xl overflow-hidden bg-surface-container-low border border-white/[0.08]" id="map-route-modal-card">
+      <div class="flex items-center justify-between pb-2 border-b border-white/[0.06] shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[20px]">alt_route</span>
+          </div>
+          <div>
+            <h3 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Campus Shortest Path & Guidance</h3>
+            <span class="text-[11px] text-on-surface-variant">JUIT Waknaghat Hillside Navigation</span>
+          </div>
+        </div>
+        <button type="button" id="btn-close-route-modal" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-primary flex items-center justify-center transition-colors cursor-pointer" aria-label="Close Route Modal">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
       </div>
-      <div class="space-y-2 text-sm">
-        <div class="flex items-center gap-2"><span>Start:</span><strong id="route-start-point" class="text-primary">AB1</strong></div>
-        <div class="flex items-center gap-2"><span>Dest:</span><strong id="route-dest-point" class="text-secondary">CR-02</strong></div>
-        <div class="flex gap-2 pt-1">
-          <button type="button" id="btn-route-fast" class="px-2 py-1 rounded bg-surface-container text-xs">Fast</button>
-          <button type="button" id="btn-route-accessible" class="px-2 py-1 rounded bg-surface-container text-xs">Accessible</button>
+      <div class="space-y-2.5 text-xs shrink-0">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[10px] uppercase font-bold text-on-surface-variant block mb-1">Start From</label>
+            <select id="route-start-point" class="w-full bg-surface-container p-2 rounded-xl border border-white/[0.06] text-xs text-on-surface outline-none">
+              <option value="spine" selected>Central Academic Spine</option>
+              <option value="main_gate">Main Campus Gate 1 (ATM)</option>
+              <option value="hostels_boys">Boys Hostels Quad</option>
+              <option value="hostels_girls">Girls Hostels Plaza</option>
+              <option value="annapurna_a">Annapurna Dining Hall A</option>
+              <option value="lrc">LRC Central Library Ground</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] uppercase font-bold text-on-surface-variant block mb-1">Destination</label>
+            <select id="route-dest-point" class="w-full bg-surface-container p-2 rounded-xl border border-white/[0.06] text-xs text-on-surface outline-none"></select>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-0.5">
+          <button type="button" id="btn-route-fast" class="flex-1 py-1.5 px-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-primary border border-primary/20 transition-all cursor-pointer">⚡ Shortest Fast Walk</button>
+          <button type="button" id="btn-route-accessible" class="flex-1 py-1.5 px-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-on-surface-variant border border-transparent transition-all cursor-pointer">♿ 100% Ramp Accessible</button>
         </div>
       </div>
-      <div id="route-steps-container" class="space-y-1.5 max-h-48 overflow-y-auto text-xs text-on-surface-variant"></div>
-      <button type="button" id="btn-view-route-details" class="btn-attendance-toggle attended w-full justify-center">Show Full Route Details</button>
+      <div id="route-steps-container" class="space-y-2 flex-1 overflow-y-auto overscroll-contain max-h-[44vh] min-h-[140px] pr-1 text-xs text-on-surface-variant touch-pan-y"></div>
+      <button type="button" id="btn-view-route-details" class="btn-attendance-toggle attended w-full justify-center py-2.5 text-xs font-bold shrink-0">📍 View Glowing Path on 3D Campus Map</button>
     </div>
   </div>
 
@@ -2336,12 +2368,16 @@
               </select>
             </div>
             <div>
-              <label class="text-xs text-on-surface-variant block mb-1 font-medium">Theme Display</label>
+              <label class="text-xs text-on-surface-variant block mb-1 font-medium">Quick Theme Mode</label>
               <button type="button" class="w-full py-2.5 px-3 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/[0.08] text-xs font-semibold text-on-surface flex items-center justify-center gap-1.5 transition-colors cursor-pointer" id="btn-modal-theme-toggle">
                 <span class="material-symbols-outlined text-[16px] text-primary" id="modal-theme-icon">dark_mode</span>
-                <span id="account-theme-name">Dark Obsidian</span>
+                <span id="account-theme-name">Shivalik Amber</span>
               </button>
             </div>
+          </div>
+          <div>
+            <label class="text-xs text-on-surface-variant block mb-1 font-medium">Campus Color Palette & Aesthetics (8 Distinct Themes)</label>
+            <div id="theme-palette-picker-container" class="space-y-1"></div>
           </div>
         </div>
 
