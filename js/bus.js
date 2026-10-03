@@ -940,29 +940,46 @@ const BusGuideController = {
 
   init() {
     this.bindEvents();
+    this.renderFilterPills();
+    this.renderShuttleWidget();
     this.renderMain();
+
+    // Auto-update shuttle countdown ticker every 30 seconds
+    setInterval(() => {
+      this.renderShuttleWidget();
+    }, 30000);
   },
 
   bindEvents() {
     // Search input
     const searchInput = document.getElementById('bus-search-input');
+    const clearSearchBtn = document.getElementById('btn-clear-bus-search');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this.searchQuery = e.target.value.trim().toLowerCase();
+        if (clearSearchBtn) {
+          clearSearchBtn.classList.toggle('hidden', !this.searchQuery);
+        }
         this.renderRoutesList();
       });
     }
 
-    // Filter pills
+    if (clearSearchBtn && searchInput) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        this.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        this.renderRoutesList();
+      });
+    }
+
+    // Filter pills event delegation
     const filterPillsContainer = document.getElementById('bus-filter-pills');
     if (filterPillsContainer) {
       filterPillsContainer.addEventListener('click', (e) => {
         const btn = e.target.closest('.bus-filter-pill');
         if (!btn) return;
-        this.activeFilter = btn.dataset.filter || 'all';
-        filterPillsContainer.querySelectorAll('.bus-filter-pill').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        this.renderRoutesList();
+        this.setFilter(btn.dataset.filter || 'all');
       });
     }
 
@@ -974,6 +991,195 @@ const BusGuideController = {
       });
     });
     this.loadChecklistState();
+  },
+
+  setFilter(filterId) {
+    this.activeFilter = filterId;
+    this.renderFilterPills();
+    this.renderRoutesList();
+    const grid = document.getElementById('bus-destinations-grid');
+    if (grid && window.innerWidth < 768) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  },
+
+  renderFilterPills() {
+    const container = document.getElementById('bus-filter-pills');
+    if (!container) return;
+
+    const saved = this.getSavedRoutes();
+    const pills = [
+      { id: 'all', label: 'All Destinations', count: this.routes.length, icon: 'grid_view' },
+      { id: 'uphill', label: '▲ Uphill (Shimla)', count: this.routes.filter(r => r.direction === 'uphill').length, icon: 'north', color: 'text-sky-400' },
+      { id: 'downhill', label: '▼ Downhill (Solan/Chd)', count: this.routes.filter(r => r.direction === 'downhill').length, icon: 'south', color: 'text-emerald-400' },
+      { id: 'direct', label: '⚡ Direct Buses', count: this.routes.filter(r => r.transfers === 0).length, icon: 'bolt' },
+      { id: 'getaway', label: '🏔️ Hill Getaways', count: this.routes.filter(r => ['Hill Station', 'Adventure & Snow'].includes(r.category)).length, icon: 'landscape' },
+      { id: 'hub', label: '✈️ Transit & Rail', count: this.routes.filter(r => ['Transit Hub', 'Rail & Air', 'Inter-State'].includes(r.category)).length, icon: 'flight_takeoff' },
+      { id: 'saved', label: '★ Saved Offline', count: saved.length, icon: 'star', color: 'text-amber-400' }
+    ];
+
+    container.innerHTML = pills.map(p => {
+      const isActive = (this.activeFilter === p.id);
+      return `
+        <button type="button" class="bus-filter-pill inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 border select-none ${isActive ? 'bg-primary text-on-primary border-primary shadow-sm' : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-white/[0.06]'}" data-filter="${p.id}">
+          <span class="${p.color || ''}">${p.label}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-black/30 text-white' : 'bg-surface-container-high text-on-surface-variant'}">${p.count}</span>
+        </button>
+      `;
+    }).join('');
+
+    // Update active highlight on Highway Platform Compass cards
+    const uphBtn = document.getElementById('btn-platform-uphill');
+    const dwnBtn = document.getElementById('btn-platform-downhill');
+    if (uphBtn) {
+      const isUph = (this.activeFilter === 'uphill');
+      uphBtn.classList.toggle('ring-2', isUph);
+      uphBtn.classList.toggle('ring-sky-400', isUph);
+      uphBtn.classList.toggle('bg-sky-500/10', isUph);
+    }
+    if (dwnBtn) {
+      const isDwn = (this.activeFilter === 'downhill');
+      dwnBtn.classList.toggle('ring-2', isDwn);
+      dwnBtn.classList.toggle('ring-emerald-400', isDwn);
+      dwnBtn.classList.toggle('bg-emerald-500/10', isDwn);
+    }
+  },
+
+  renderShuttleWidget() {
+    const container = document.getElementById('bus-shuttle-live-container');
+    if (!container) return;
+
+    const now = new Date();
+    const curMins = now.getHours() * 60 + now.getMinutes();
+
+    // Operating hours: 07:00 AM (420m) to 08:30 PM (1230m)
+    const startMins = 420;
+    const endMins = 1230;
+    const interval = 20;
+
+    let nextMins = null;
+    let statusBadge = '🟢 Regular Service';
+    let timeDesc = '';
+
+    if (curMins < startMins) {
+      nextMins = startMins;
+      statusBadge = '⏳ Starts at 07:00 AM';
+      const diff = startMins - curMins;
+      timeDesc = `First campus shuttle departs in ${diff} mins`;
+    } else if (curMins > endMins) {
+      nextMins = startMins;
+      statusBadge = '🌙 Service Concluded Today';
+      timeDesc = `Shuttles restart tomorrow morning at 07:00 AM (Shared cabs available at Gate 1)`;
+    } else {
+      const elapsedSinceStart = curMins - startMins;
+      const nextIntervalIndex = Math.ceil(elapsedSinceStart / interval);
+      nextMins = startMins + nextIntervalIndex * interval;
+      if (nextMins <= curMins) nextMins += interval;
+      if (nextMins > endMins) {
+        statusBadge = '🌙 Last Van Tonight';
+        nextMins = endMins;
+      }
+      const diff = nextMins - curMins;
+      timeDesc = `Next van departing in ${diff <= 0 ? '1 min' : `${diff} mins`}`;
+    }
+
+    const formatMins = (m) => {
+      const h = Math.floor(m / 60);
+      const min = m % 60;
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return `${h12}:${String(min).padStart(2, '0')} ${ampm}`;
+    };
+
+    const depTimeStr = formatMins(nextMins);
+
+    container.innerHTML = `
+      <div class="rounded-2xl bg-surface-container-low p-3.5 sm:p-4 border border-white/[0.06] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-start sm:items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-300 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[22px]">airport_shuttle</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Campus Gate 1 ↔ Waknaghat Chowk Shuttle</h3>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 text-[11px] font-bold">
+                ${statusBadge}
+              </span>
+              <span class="inline-flex items-center font-mono text-[11px] px-2 py-0.5 rounded-md bg-surface-container-high text-primary font-bold">₹10 Fare</span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-0.5">
+              <strong class="text-white">${depTimeStr} Departure</strong> • ${timeDesc} • Departs near Security Post
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+          <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-xs border border-white/[0.08] transition-colors cursor-pointer" onclick="BusGuideController.toggleShuttleScheduleModal()">
+            <span class="material-symbols-outlined text-[15px]">schedule</span>
+            <span>Shuttle Schedule</span>
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  toggleShuttleScheduleModal() {
+    const modal = document.getElementById('universal-modal');
+    const content = document.getElementById('universal-modal-content');
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span class="material-symbols-outlined" style="font-size: 24px;">airport_shuttle</span>
+          </div>
+          <div>
+            <h3 style="font-size: 1.15rem; margin: 0; color: var(--text-primary); font-weight: 700;">Campus Shuttle Schedule</h3>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">JUIT Gate 1 Security Post ↔ Waknaghat Junction (NH-5)</span>
+          </div>
+        </div>
+        <button type="button" class="btn-close-drawer" onclick="PortalsController.closeModal()">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem;">
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="color: var(--accent-primary);">🌅 Morning Corridor (07:00 AM – 11:30 AM)</strong>
+            <span style="color: var(--text-muted); font-family: monospace;">Every 20 mins</span>
+          </div>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.4;">
+            Continuous 20-minute shuttle service transporting hostellers and day scholars to and from Waknaghat NH-5 highway stop.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="color: #38bdf8;">☀️ Afternoon Corridor (11:30 AM – 04:30 PM)</strong>
+            <span style="color: var(--text-muted); font-family: monospace;">Every 20 mins</span>
+          </div>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.4;">
+            Regular round-trip runs synchronizing with midday Solan and Shimla bus arrivals.
+          </p>
+        </div>
+
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <strong style="color: #34d399;">🌆 Evening Return Corridor (04:30 PM – 08:30 PM)</strong>
+            <span style="color: var(--text-muted); font-family: monospace;">Every 15–20 mins</span>
+          </div>
+          <p style="margin: 0; color: var(--text-secondary); line-height: 1.4;">
+            High frequency pickups at Waknaghat chowk bringing students returning from Solan/Shimla back to campus gate.
+          </p>
+        </div>
+
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 12px; color: #fca5a5; font-size: 0.8rem;">
+          🌙 <strong>After 08:30 PM Notice:</strong> Campus shuttle service halts. Shared local cabs operate from Waknaghat union stand (Fare: ₹250 flat to campus).
+        </div>
+      </div>
+    `;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('open', 'active');
   },
 
   getSavedRoutes() {
@@ -1002,13 +1208,12 @@ const BusGuideController = {
     }
     localStorage.setItem('juit_saved_bus_routes', JSON.stringify(saved));
     
-    // Update active modal or list star icons
+    this.renderFilterPills();
     this.renderRoutesList();
     if (this.selectedRouteId === id) {
       this.renderRouteModalContent(id);
     }
 
-    // Show subtle feedback
     const toast = document.createElement('div');
     toast.className = 'bus-toast-notification';
     toast.innerText = saved.includes(id) ? '★ Route saved to your offline favorites!' : 'Route removed from favorites.';
@@ -1024,7 +1229,7 @@ const BusGuideController = {
     const r = this.routes.find(x => x.id === id);
     if (!r) return;
 
-    const shareText = `🚌 JUIT Bus Guide: JUIT → ${r.name}\n📍 Board at: Waknaghat Junction (${r.directionLabel})\n⚡ Route: ${r.simpleRouteSummary}\n⏱️ Time: ${r.approxTime}\n💰 Fare: ${r.approxFare}\n👉 Shared from JUIT Student Hub`;
+    const shareText = `🚌 JUIT Transit Guide: JUIT → ${r.name}\n📍 Board at: Waknaghat Junction (${r.directionLabel})\n⚡ Route: ${r.simpleRouteSummary}\n⏱️ Time: ${r.approxTime}\n💰 Fare: ${r.approxFare}\n👉 Shared from JUIT Student Hub`;
 
     if (navigator.share) {
       navigator.share({
@@ -1052,6 +1257,9 @@ const BusGuideController = {
     const saved = this.getSavedRoutes();
 
     return this.routes.filter(r => {
+      // Direction filter
+      if (f === 'uphill' && r.direction !== 'uphill') return false;
+      if (f === 'downhill' && r.direction !== 'downhill') return false;
       // Category filter
       if (f === 'direct' && r.transfers !== 0) return false;
       if (f === 'transfer' && r.transfers === 0) return false;
@@ -1061,7 +1269,7 @@ const BusGuideController = {
 
       // Query search
       if (!q) return true;
-      const haystack = `${r.name} ${r.tagline} ${r.category} ${r.tags.join(' ')} ${r.simpleRouteSummary}`.toLowerCase();
+      const haystack = `${r.name} ${r.tagline} ${r.category} ${r.tags.join(' ')} ${r.simpleRouteSummary} ${r.highwaySide}`.toLowerCase();
       return haystack.includes(q);
     });
   },
@@ -1074,10 +1282,11 @@ const BusGuideController = {
 
     if (filtered.length === 0) {
       container.innerHTML = `
-        <div class="col-span-12" style="text-align: center; padding: 40px 20px; background: rgba(23, 27, 38, 0.6); border-radius: 12px; border: 1px dashed var(--border-subtle);">
-          <span class="material-symbols-outlined text-[36px]" style="color: var(--text-muted); margin-bottom: 8px;">directions_bus</span>
-          <h3 style="font-size: 1.1rem; color: var(--text-primary); margin: 0 0 6px;">No matching destinations found</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0;">Try searching for Shimla, Solan, Chandigarh, Kasauli, Delhi, or station names.</p>
+        <div class="col-span-12 rounded-2xl p-8 text-center bg-surface-container-low border border-dashed border-white/[0.1] space-y-2">
+          <span class="material-symbols-outlined text-[36px] text-outline">directions_bus</span>
+          <h3 class="font-headline-sm text-base font-bold text-on-surface">No matching destinations found</h3>
+          <p class="text-xs text-on-surface-variant max-w-sm mx-auto">Try clearing search filters or searching for Shimla, Solan, Chandigarh, Kasauli, Delhi, or train stations.</p>
+          <button type="button" class="mt-2 px-3 py-1.5 rounded-xl bg-primary text-on-primary font-bold text-xs cursor-pointer" onclick="BusGuideController.setFilter('all')">Show All Destinations</button>
         </div>
       `;
       return;
@@ -1088,54 +1297,81 @@ const BusGuideController = {
     container.innerHTML = filtered.map(r => {
       const isSaved = saved.includes(r.id);
       const isDirect = r.transfers === 0;
-      const dirColor = r.direction === 'uphill' ? '#38bdf8' : '#34d399';
+      const isUphill = r.direction === 'uphill';
+      const dirColor = isUphill ? '#38bdf8' : '#34d399';
+      const dirBg = isUphill ? 'bg-sky-500/15 text-sky-300 border-sky-500/30' : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
 
       return `
-        <div class="bus-destination-card" data-route-id="${r.id}" onclick="BusGuideController.openRouteGuide('${r.id}')">
-          <div class="bus-card-top">
-            <div class="bus-dest-header">
-              <div class="bus-badge-strip">
-                <span class="bus-dir-badge" style="background: ${r.direction === 'uphill' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(52, 211, 153, 0.12)'}; color: ${dirColor}; border-color: ${dirColor}40;">
-                  ${r.directionLabel}
+        <div class="bus-destination-card group rounded-2xl bg-surface-container-low hover:bg-surface-container p-4 border border-white/[0.06] hover:border-white/[0.15] shadow-sm transition-all duration-200 flex flex-col justify-between gap-3 cursor-pointer select-none" data-route-id="${r.id}" onclick="BusGuideController.openRouteGuide('${r.id}')">
+          
+          <!-- Top Row: Direction Badges & Save Star -->
+          <div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold border ${dirBg}">
+                  <span class="material-symbols-outlined text-[13px]">${isUphill ? 'north' : 'south'}</span>
+                  <span>${isUphill ? 'Uphill (Shimla)' : 'Downhill (Solan)'}</span>
                 </span>
-                <span class="bus-transfer-badge ${isDirect ? 'direct' : 'transfer'}">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-bold ${isDirect ? 'bg-secondary/15 text-secondary border border-secondary/30' : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'}">
                   ${isDirect ? '✓ Direct Bus' : `⚡ Change at ${r.transferPoint || 'Hub'}`}
                 </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-medium bg-surface-container-highest text-on-surface-variant">
+                  ${r.category}
+                </span>
               </div>
-              <h3 class="bus-dest-name">${r.name}</h3>
-              <p class="bus-dest-tagline">${r.tagline}</p>
+              <button type="button" class="btn-star-route w-8 h-8 rounded-xl bg-surface-container flex items-center justify-center text-outline hover:text-amber-400 transition-colors shrink-0 ${isSaved ? 'text-amber-400 bg-amber-500/15' : ''}" 
+                onclick="BusGuideController.toggleSaveRoute('${r.id}', event)" 
+                title="${isSaved ? 'Remove from saved' : 'Save route for offline'}">
+                <span class="material-symbols-outlined text-[18px]">${isSaved ? 'star' : 'star_border'}</span>
+              </button>
             </div>
-            <button type="button" class="btn-star-route ${isSaved ? 'active' : ''}" 
-              onclick="BusGuideController.toggleSaveRoute('${r.id}', event)" 
-              title="${isSaved ? 'Remove from saved' : 'Save route for offline'}">
-              <span class="material-symbols-outlined">${isSaved ? 'star' : 'star_border'}</span>
-            </button>
+
+            <!-- Destination Name & Tagline -->
+            <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">
+              ${r.name}
+            </h3>
+            <p class="text-xs text-on-surface-variant mt-0.5 line-clamp-2 leading-relaxed">
+              ${r.tagline}
+            </p>
           </div>
 
-          <!-- Quick Travel Specs -->
-          <div class="bus-card-specs">
-            <div class="spec-pill">
-              <span class="material-symbols-outlined text-[15px]">schedule</span>
-              <span>${r.approxTime}</span>
+          <!-- Quick Travel Metrics Bar -->
+          <div class="grid grid-cols-3 gap-2 py-2 px-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/[0.04] text-center text-xs">
+            <div>
+              <span class="text-[10px] text-outline block">EST. DURATION</span>
+              <span class="font-bold text-on-surface font-mono mt-0.5 block truncate">${r.approxTime}</span>
             </div>
-            <div class="spec-pill">
-              <span class="material-symbols-outlined text-[15px]">payments</span>
-              <span>${r.approxFare}</span>
+            <div>
+              <span class="text-[10px] text-outline block">BUS FARE</span>
+              <span class="font-bold text-primary font-mono mt-0.5 block truncate">${r.approxFare.split('(')[0]}</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-outline block">FREQUENCY</span>
+              <span class="font-bold text-emerald-400 font-mono mt-0.5 block truncate">${r.typicalFrequency.split('—')[0]}</span>
             </div>
           </div>
 
-          <!-- Route Preview Step Strip -->
-          <div class="bus-route-simple-strip">
-            <div class="strip-label">Route:</div>
-            <div class="strip-text">${r.simpleRouteSummary}</div>
+          <!-- Conductor Phrase Bubble -->
+          ${r.conductorPhrase ? `
+            <div class="flex items-center gap-1.5 p-2 rounded-xl bg-surface-container text-xs text-on-surface">
+              <span class="material-symbols-outlined text-primary text-[15px] shrink-0">record_voice_over</span>
+              <span class="text-[11px] text-on-surface-variant truncate"><strong>Ask:</strong> ${r.conductorPhrase}</span>
+            </div>
+          ` : ''}
+
+          <!-- Card Footer & Action Buttons -->
+          <div class="pt-2 border-t border-white/[0.05] flex items-center justify-between text-xs">
+            <span class="font-bold text-primary group-hover:underline flex items-center gap-1">
+              <span>View Route & Stops</span>
+              <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+            </span>
+            <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+              <button type="button" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-outline hover:text-on-surface transition-colors" onclick="BusGuideController.shareRoute('${r.id}', event)" title="Share route">
+                <span class="material-symbols-outlined text-[15px]">share</span>
+              </button>
+            </div>
           </div>
 
-          <div class="bus-card-footer">
-            <span class="bus-learn-more">View Complete Travel Guide →</span>
-            <button type="button" class="btn-share-mini" onclick="BusGuideController.shareRoute('${r.id}', event)" title="Share route with friends">
-              <span class="material-symbols-outlined text-[16px]">share</span>
-            </button>
-          </div>
         </div>
       `;
     }).join('');

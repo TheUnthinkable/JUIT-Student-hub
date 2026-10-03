@@ -7,6 +7,7 @@ const TimetableController = {
   data: {},
   activeSemesterId: 'odd_btech_1_sem',
   activeBatch: '26BT10', // Default to 26BT10 matching reference screenshot
+  densityMode: 'compact', // 'compact' | 'expanded'
   activeDay: 'TUE',
   viewMode: 'today', // 'today' | 'day' | 'week'
   searchQuery: '',
@@ -40,6 +41,9 @@ const TimetableController = {
     const dayMap = ['MON', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     this.activeDay = dayMap[dayIndex] || 'TUE';
 
+    // Restore density preference
+    this.densityMode = localStorage.getItem('juit_timetable_density') || 'compact';
+
     // Restore saved preferences if valid
     const savedSem = localStorage.getItem('juit_selected_sem');
     if (savedSem && this.data[savedSem]) {
@@ -63,6 +67,7 @@ const TimetableController = {
     this.renderQuickBatchChips();
     this.renderViewModeTabs();
     this.renderDayPills();
+    this.updateDensityButtonUI();
     this.renderSchedule();
     this.bindEvents();
 
@@ -72,6 +77,24 @@ const TimetableController = {
         this.updateTimeTracker();
       }
     }, 30000);
+  },
+
+  updateDensityButtonUI() {
+    const textEl = document.getElementById('text-timetable-density');
+    const iconEl = document.getElementById('icon-timetable-density');
+    const btn = document.getElementById('btn-timetable-density');
+    if (!btn) return;
+    if (this.densityMode === 'compact') {
+      if (textEl) textEl.textContent = 'Compact View';
+      if (iconEl) iconEl.textContent = 'table_rows';
+      btn.classList.add('bg-primary/15', 'text-primary', 'border-primary/25');
+      btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    } else {
+      if (textEl) textEl.textContent = 'Detailed View';
+      if (iconEl) iconEl.textContent = 'view_agenda';
+      btn.classList.remove('bg-primary/15', 'text-primary', 'border-primary/25');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    }
   },
 
   getCurrentMinutes() {
@@ -467,13 +490,11 @@ const TimetableController = {
       const count = dayClasses.length;
 
       return `
-        <div class="${isActive ? 'bg-surface-container-high ring-1 ring-primary shadow-md' : 'bg-surface-container-low hover:bg-surface-container'} p-1.5 sm:p-3 rounded-xl text-center cursor-pointer transition-colors border border-outline-variant/15 select-none" data-day="${d}">
-          <div class="flex items-center justify-center gap-1">
-            <p class="font-headline-sm text-xs sm:text-headline-sm font-bold ${isActive ? 'text-primary' : 'text-on-surface'}">${d}</p>
-            ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span>' : ''}
-          </div>
-          <p class="font-label-sm text-[10px] sm:text-label-sm ${isActive ? 'text-secondary font-medium' : 'text-outline'} mt-0.5 whitespace-nowrap"><span class="sm:hidden">${count} cls</span><span class="hidden sm:inline">${count} ${count === 1 ? 'class' : 'classes'}</span></p>
-        </div>
+        <button type="button" class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex-1 min-w-[68px] select-none border ${isActive ? 'bg-primary text-on-primary border-primary shadow-sm' : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-white/[0.06]'}" data-day="${d}" title="${this.dayFullNames[d] || d} (${count} classes)">
+          <span>${d}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-black/30 text-white' : 'bg-surface-container-high text-on-surface-variant'}">${count}</span>
+          ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0" title="Today"></span>' : ''}
+        </button>
       `;
     }).join('');
 
@@ -709,6 +730,22 @@ const TimetableController = {
         const breakSub = isLunch ? 'Annapurna Mess is serving hot lunch' : 'LRC Library study cubicles available';
         const tagLabel = isLunch ? 'MESS ACTIVE' : 'FREE TIME';
 
+        if (this.densityMode === 'compact') {
+          return `
+            <div class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-surface-container-lowest/60 border border-white/[0.04] text-xs text-outline my-0.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="material-symbols-outlined text-[16px] ${isLunch ? 'text-amber-400' : 'text-outline'} shrink-0">${isLunch ? 'restaurant' : 'coffee'}</span>
+                <span class="font-semibold text-on-surface-variant truncate">${breakTitle}</span>
+                <span class="font-mono text-[11px] text-outline shrink-0">• ${item.timeLabel}</span>
+              </div>
+              ${isLunch
+                ? `<a class="inline-flex items-center gap-1 text-secondary hover:underline font-semibold text-[11px] shrink-0" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>Mess Menu</span><span class="material-symbols-outlined text-[13px]">arrow_forward</span></a>`
+                : `<a class="inline-flex items-center gap-1 text-secondary hover:underline font-semibold text-[11px] shrink-0" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Vault</span><span class="material-symbols-outlined text-[13px]">arrow_forward</span></a>`
+              }
+            </div>
+          `;
+        }
+
         return `
           <div class="bg-surface-container-lowest/80 p-3 sm:p-space-md rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-white/[0.05] shadow-sm w-full max-w-full">
             <div class="flex items-center gap-3 min-w-0">
@@ -777,9 +814,9 @@ const TimetableController = {
 
       let liveStatusBadge = '';
       if (c.status === 'LIVE_NOW') {
-        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] sm:text-[11px] font-bold animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>LIVE NOW (${c.timeDiff}m left)</span>`;
+        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>LIVE NOW (${c.timeDiff}m left)</span>`;
       } else if (c.status === 'NEXT_UP') {
-        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/40 text-[10px] sm:text-[11px] font-semibold">⏳ NEXT UP (${c.timeDiff}m)</span>`;
+        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/40 text-[10px] font-semibold">⏳ NEXT UP (${c.timeDiff}m)</span>`;
       }
 
       const timeParts = (c.time || '').split(/[-–—]/).map(t => t.trim());
@@ -790,6 +827,7 @@ const TimetableController = {
 
       const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
       let vaultBtn = '';
+      let compactVaultBtn = '';
       if (vaultRes) {
         if (vaultRes.hasMultiple) {
           vaultBtn = `
@@ -800,6 +838,14 @@ const TimetableController = {
               <span>${vaultRes.shortTitle || 'Tutorials'}</span>
             </button>
           `;
+          compactVaultBtn = `
+            <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors cursor-pointer" 
+              data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
+              data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}' title="${vaultRes.title}">
+              <span class="material-symbols-outlined text-[14px]">folder_open</span>
+              <span class="hidden md:inline">${vaultRes.shortTitle || 'Tutorials'}</span>
+            </button>
+          `;
         } else {
           vaultBtn = `
             <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
@@ -807,9 +853,78 @@ const TimetableController = {
               <span>${vaultRes.shortTitle || 'Notes'}</span>
             </a>
           `;
+          compactVaultBtn = `
+            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
+              <span class="material-symbols-outlined text-[14px]">download</span>
+              <span class="hidden md:inline">${vaultRes.shortTitle || 'Notes'}</span>
+            </a>
+          `;
         }
       }
 
+      // -------------------------------------------------------------
+      // COMPACT EXECUTIVE ROW LAYOUT (Default: Zero scrolling required)
+      // -------------------------------------------------------------
+      if (this.densityMode === 'compact') {
+        return `
+          <div class="class-schedule-card class-schedule-row bg-surface-container-low hover:bg-surface-container p-2 sm:p-2.5 rounded-xl shadow-sm transition-all duration-150 flex items-center justify-between gap-2 sm:gap-3 border border-white/[0.06] hover:border-white/[0.14] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary bg-primary/10' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
+            
+            <!-- Left: Time Pillar + Type Badge -->
+            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+              <div class="w-18 sm:w-22 text-left font-mono">
+                <span class="text-xs font-bold text-primary block leading-tight whitespace-nowrap">${startTime}</span>
+                <span class="text-[10px] text-on-surface-variant block leading-tight whitespace-nowrap">${endTime}</span>
+              </div>
+              <span class="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-lg text-[10px] sm:text-[11px] font-bold ${typeBadgeStyle} shrink-0">
+                <span class="material-symbols-outlined text-[13px]">${typeIcon}</span>
+                <span class="hidden sm:inline">${typeLabel.split(' ')[0]}</span>
+              </span>
+            </div>
+
+            <!-- Middle: Course Code + Subject Title + Faculty -->
+            <div class="flex-1 min-w-0 pr-1">
+              <div class="flex items-center gap-1.5 flex-wrap leading-tight">
+                <span class="font-mono text-[11px] font-bold text-on-surface bg-surface-container-highest px-1.5 py-0.2 rounded border border-white/[0.06] shrink-0">${c.code}</span>
+                <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface truncate">
+                  ${c.cleanSubject}
+                </h3>
+                ${liveStatusBadge}
+              </div>
+              <div class="flex items-center gap-2 text-[11px] text-on-surface-variant mt-0.5 truncate">
+                ${c.faculty ? `<span class="truncate">Prof. ${c.faculty}</span>` : ''}
+                ${c.venue ? `<span class="font-mono text-primary font-semibold shrink-0">📍 Rm ${c.venue}</span>` : ''}
+                ${coAttending ? `<span class="hidden md:inline text-outline truncate">• ${coAttending}</span>` : ''}
+              </div>
+            </div>
+
+            <!-- Right: Action Buttons (Location, Attend, Notes, Inspect) -->
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0" onclick="event.stopPropagation()">
+              ${c.venue ? `
+                <button type="button" class="venue-locator-pill inline-flex items-center gap-0.5 sm:gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface text-xs font-bold border border-white/[0.08] transition-colors" data-venue="${c.venue}" title="Show on 3D Map">
+                  <span class="material-symbols-outlined text-rose-400 text-[14px]">location_on</span>
+                  <span class="font-mono text-primary text-[11px]">Rm ${c.venue}</span>
+                </button>
+              ` : ''}
+
+              <button type="button" class="btn-attendance-toggle inline-flex items-center gap-1 px-2 py-1 rounded-lg font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track Attendance">
+                <span class="material-symbols-outlined text-[14px]">${attIcon}</span>
+                <span class="hidden sm:inline">${attBtnLabel}</span>
+              </button>
+
+              ${compactVaultBtn}
+
+              <button type="button" class="btn-class-inspect w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06]" data-class-id="${c.uniqueId}" title="Class Details">
+                <span class="material-symbols-outlined text-[15px]">info</span>
+              </button>
+            </div>
+
+          </div>
+        `;
+      }
+
+      // -------------------------------------------------------------
+      // EXPANDED MULTI-COLUMN CARDS LAYOUT
+      // -------------------------------------------------------------
       return `
         <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-4 sm:p-5 rounded-2xl shadow-sm transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/[0.06] hover:border-white/[0.12] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary/80 bg-surface-container' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
           
@@ -817,26 +932,26 @@ const TimetableController = {
           <div class="flex items-start sm:items-center gap-3.5 sm:gap-5 flex-1 min-w-0">
             
             <!-- Time Pillar: High-contrast, spacious and easy to read -->
-            <div class="flex flex-col items-center justify-center shrink-0 w-28 sm:w-32 py-2.5 px-2 rounded-2xl bg-surface-container-lowest border border-white/[0.06] text-center select-none shadow-sm">
+            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-2 rounded-2xl bg-surface-container-lowest border border-white/[0.06] text-center select-none shadow-sm">
               <span class="font-mono text-sm sm:text-base font-bold text-primary tracking-tight">${startTime}</span>
               <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[11px]">
                 <span class="material-symbols-outlined text-[13px]">arrow_downward</span>
                 <span>to</span>
               </div>
               <span class="font-mono text-xs sm:text-sm font-semibold text-on-surface-variant">${endTime}</span>
-              <span class="mt-1.5 px-2 py-0.5 rounded-md font-mono text-[10px] sm:text-[11px] font-bold bg-surface-container-high text-outline">${durText}</span>
+              <span class="mt-1 px-1.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-surface-container-high text-outline">${durText}</span>
             </div>
 
             <!-- Subject & Academic Details -->
-            <div class="space-y-2 min-w-0 flex-1">
+            <div class="space-y-1.5 min-w-0 flex-1">
               
               <!-- Meta Badges: Type Pill + Course Code + Status -->
               <div class="flex flex-wrap items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold ${typeBadgeStyle}">
-                  <span class="material-symbols-outlined text-[15px]">${typeIcon}</span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-xs font-bold ${typeBadgeStyle}">
+                  <span class="material-symbols-outlined text-[14px]">${typeIcon}</span>
                   <span>${typeLabel}</span>
                 </span>
-                <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-mono text-xs font-bold bg-surface-container-highest text-on-surface border border-white/[0.06]">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-xl font-mono text-xs font-bold bg-surface-container-highest text-on-surface border border-white/[0.06]">
                   ${c.code}
                 </span>
                 ${c.durationSlots > 1 ? `<span class="inline-flex items-center px-2 py-0.5 rounded-lg font-mono text-[11px] bg-surface-container-highest text-on-surface-variant font-semibold">${c.durationSlots} hrs</span>` : ''}
@@ -844,21 +959,21 @@ const TimetableController = {
               </div>
 
               <!-- Prominent Subject Title -->
-              <h3 class="font-headline-sm text-base sm:text-lg md:text-xl font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
+              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
                 ${c.cleanSubject}
               </h3>
 
               <!-- Faculty & Batch Details -->
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-on-surface-variant pt-0.5">
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant pt-0.5">
                 ${c.faculty ? `
-                  <div class="inline-flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px] text-primary">person</span>
+                  <div class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px] text-primary">person</span>
                     <span class="font-semibold text-on-surface">Prof. ${c.faculty}</span>
                   </div>
                 ` : ''}
                 ${coAttending ? `
-                  <div class="inline-flex items-center gap-1.5 text-outline">
-                    <span class="material-symbols-outlined text-[16px]">groups</span>
+                  <div class="inline-flex items-center gap-1 text-outline">
+                    <span class="material-symbols-outlined text-[15px]">groups</span>
                     <span class="truncate max-w-[220px] sm:max-w-none font-medium">${coAttending}</span>
                   </div>
                 ` : ''}
@@ -868,26 +983,26 @@ const TimetableController = {
           </div>
 
           <!-- Right Side: Venue & Action Buttons -->
-          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-white/[0.06]">
+          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/[0.06]" onclick="event.stopPropagation()">
             
             <!-- Prominent Venue Locator Button -->
             ${c.venue ? `
-              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs sm:text-sm transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
-                <span class="material-symbols-outlined text-rose-400 text-[16px]">location_on</span>
+              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
+                <span class="material-symbols-outlined text-rose-400 text-[15px]">location_on</span>
                 <span class="text-primary font-mono">Room ${c.venue}</span>
               </button>
             ` : `
-              <div class="inline-flex items-center justify-center gap-1 px-3.5 py-2 rounded-xl bg-surface-container text-outline text-xs font-medium">
-                <span class="material-symbols-outlined text-[16px]">location_off</span>
+              <div class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container text-outline text-xs font-medium">
+                <span class="material-symbols-outlined text-[15px]">location_off</span>
                 <span>Venue TBA</span>
               </div>
             `}
 
             <!-- Actions Row: Attendance + Study Notes + Info -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5">
               <!-- Attendance Button -->
-              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-label-md text-xs sm:text-sm font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
-                <span class="material-symbols-outlined text-[16px]">${attIcon}</span>
+              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
+                <span class="material-symbols-outlined text-[15px]">${attIcon}</span>
                 <span>${attBtnLabel}</span>
               </button>
 
@@ -895,8 +1010,8 @@ const TimetableController = {
               ${vaultBtn}
 
               <!-- Info Inspector -->
-              <button type="button" class="btn-class-inspect w-9 h-9 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
-                <span class="material-symbols-outlined text-[18px]">info</span>
+              <button type="button" class="btn-class-inspect w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
+                <span class="material-symbols-outlined text-[16px]">info</span>
               </button>
             </div>
 
@@ -1102,24 +1217,19 @@ const TimetableController = {
       const displayCode = deptCodeMatch ? deptCodeMatch[0] : (rawCode || 'CLASS');
 
       ganttSlotsHtml += `
-        <div class="class-gantt-slot h-full ${bgClass} rounded-2xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all hover:scale-[1.02] hover:brightness-110 active:scale-[0.99] border shadow-sm select-none relative overflow-hidden group shrink-0 ${isCurrentClass ? 'ring-2 ring-white ring-offset-2 ring-offset-neutral-900 animate-pulse' : ''}"
-             style="width: ${slotPct}%; min-width: 120px;"
+        <div class="class-gantt-slot h-full ${bgClass} rounded-xl p-1.5 flex flex-col justify-between cursor-pointer transition-all hover:brightness-110 active:scale-[0.99] border shadow-sm select-none relative overflow-hidden group shrink-0 ${isCurrentClass ? 'ring-2 ring-white ring-offset-1 ring-offset-neutral-900 animate-pulse' : ''}"
+             style="width: ${slotPct}%; min-width: 105px;"
              data-target-id="${c.uniqueId}"
              title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'} (Click to jump to class)">
           
           <!-- Top Row: Clean Course Code & Type Badge -->
           <div class="flex items-center justify-between gap-1 leading-none">
-            <span class="font-mono text-xs sm:text-sm font-black tracking-tight text-white drop-shadow-sm whitespace-nowrap">${displayCode}</span>
-            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/35 text-white uppercase tracking-wider shrink-0">${typeLabel}</span>
-          </div>
-
-          <!-- Middle Row: Clean Subject Name -->
-          <div class="font-bold text-[11px] sm:text-xs text-white/95 truncate leading-tight my-0.5">
-            ${subShort}
+            <span class="font-mono text-xs font-black tracking-tight text-white whitespace-nowrap">${displayCode}</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-black/35 text-white uppercase tracking-wider shrink-0">${typeLabel}</span>
           </div>
 
           <!-- Bottom Row: Time and Room Location -->
-          <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/90 leading-none pt-1 border-t border-white/20">
+          <div class="flex items-center justify-between text-[10px] font-mono text-white/90 leading-none pt-0.5 border-t border-white/20">
             <span class="truncate">${timeSpanStr}</span>
             <span class="shrink-0 font-bold ml-1">${c.venue ? 'Rm ' + c.venue : ''}</span>
           </div>
@@ -1133,35 +1243,35 @@ const TimetableController = {
       const remMins = dayEnd - currentMarker;
       const remPct = (((remMins) / dayTotal) * 100).toFixed(1);
       ganttSlotsHtml += `
-        <div class="h-full bg-surface-container/50 hover:bg-surface-container/80 border border-white/[0.04] rounded-2xl flex flex-col items-center justify-center p-2 text-center text-on-surface-variant transition-all select-none shrink-0" style="width: ${remPct}%; min-width: 65px;" title="Free Evening (${remMins}m)">
-          <span class="font-bold text-xs text-outline flex items-center gap-1 justify-center">
+        <div class="h-full bg-surface-container/50 hover:bg-surface-container/80 border border-white/[0.04] rounded-xl flex flex-col items-center justify-center p-1.5 text-center text-on-surface-variant transition-all select-none shrink-0" style="width: ${remPct}%; min-width: 60px;" title="Free Evening (${remMins}m)">
+          <span class="font-bold text-[11px] text-outline flex items-center gap-1 justify-center">
             <span>🌆</span>
             <span>Evening</span>
           </span>
-          <span class="font-mono text-[10px] text-outline/80 mt-0.5">${remMins}m</span>
+          <span class="font-mono text-[9px] text-outline/80 mt-0.5">${remMins}m</span>
         </div>
       `;
     }
 
     trackerContainer.innerHTML = `
-      <div class="bg-surface-container-low rounded-2xl p-3 sm:p-4 border border-white/[0.06] shadow-md space-y-2.5">
+      <div class="bg-surface-container-low rounded-xl p-2.5 sm:p-3 border border-white/[0.06] shadow-sm space-y-1.5">
         
         <!-- Load Bar Header & Legend -->
-        <div class="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-white/[0.05]">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-[18px]">view_timeline</span>
-            <span class="font-label-md text-xs sm:text-sm font-bold text-on-surface">Daily Period Tracker</span>
-            <span class="hidden sm:inline-block text-xs text-on-surface-variant">· 09:00 AM to 06:00 PM Timeline</span>
+        <div class="flex items-center justify-between gap-2 flex-wrap pb-0.5">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-primary text-[17px]">view_timeline</span>
+            <span class="font-label-md text-xs font-bold text-on-surface">Daily Period Tracker</span>
+            <span class="hidden sm:inline-block text-[11px] text-on-surface-variant">· 09:00 AM to 06:00 PM</span>
           </div>
-          <div class="flex items-center gap-2 text-[11px] font-semibold">
-            <span class="inline-flex items-center gap-1 text-amber-400"><span class="w-2.5 h-2.5 rounded bg-amber-500"></span> Lecture</span>
-            <span class="inline-flex items-center gap-1 text-sky-400"><span class="w-2.5 h-2.5 rounded bg-sky-500"></span> Tutorial</span>
-            <span class="inline-flex items-center gap-1 text-emerald-400"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Lab</span>
+          <div class="flex items-center gap-2 text-[10px] sm:text-[11px] font-semibold">
+            <span class="inline-flex items-center gap-1 text-amber-400"><span class="w-2 h-2 rounded bg-amber-500"></span> Lec</span>
+            <span class="inline-flex items-center gap-1 text-sky-400"><span class="w-2 h-2 rounded bg-sky-500"></span> Tut</span>
+            <span class="inline-flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 rounded bg-emerald-500"></span> Lab</span>
           </div>
         </div>
 
         <!-- Hourly Timeline Ticks Scale (10 Hourly Markers) -->
-        <div class="relative w-full h-4 font-mono text-[11px] sm:text-xs font-bold text-on-surface-variant select-none hidden sm:block">
+        <div class="relative w-full h-3 font-mono text-[10px] sm:text-[11px] font-semibold text-on-surface-variant select-none hidden sm:block">
           <span class="absolute left-0">09:00 AM</span>
           <span class="absolute left-[11.1%] -translate-x-1/2">10:00</span>
           <span class="absolute left-[22.2%] -translate-x-1/2">11:00</span>
@@ -1173,7 +1283,7 @@ const TimetableController = {
           <span class="absolute left-[88.9%] -translate-x-1/2">05:00</span>
           <span class="absolute right-0">06:00 PM</span>
         </div>
-        <div class="flex sm:hidden justify-between font-mono text-[11px] font-bold text-on-surface-variant select-none px-1">
+        <div class="flex sm:hidden justify-between font-mono text-[10px] font-bold text-on-surface-variant select-none px-1">
           <span>9 AM</span>
           <span>11 AM</span>
           <span>1 PM</span>
@@ -1182,27 +1292,27 @@ const TimetableController = {
           <span>6 PM</span>
         </div>
 
-        <!-- The Large Interactive Load Bar -->
-        <div class="h-20 sm:h-24 w-full bg-surface-container-lowest rounded-2xl p-1.5 flex gap-1.5 relative overflow-x-auto overflow-y-hidden border border-white/[0.08] shadow-inner no-scrollbar">
+        <!-- The Compact Interactive Load Bar -->
+        <div class="h-11 sm:h-12 w-full bg-surface-container-lowest rounded-xl p-1 flex gap-1 relative overflow-x-auto overflow-y-hidden border border-white/[0.08] shadow-inner no-scrollbar">
           ${ganttSlotsHtml}
           ${(isToday && curMins >= dayStart && curMins <= dayEnd) ? `
-            <div class="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-30 pointer-events-none shadow-[0_0_10px_rgba(244,63,94,1)]" style="left: ${((curMins - dayStart) / dayTotal) * 100}%;">
-              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white"></div>
-              <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 rounded bg-rose-600 text-white font-mono text-[9px] font-bold">NOW</div>
+            <div class="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-30 pointer-events-none shadow-[0_0_8px_rgba(244,63,94,1)]" style="left: ${((curMins - dayStart) / dayTotal) * 100}%;">
+              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></div>
+              <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 rounded bg-rose-600 text-white font-mono text-[8px] font-bold">NOW</div>
             </div>
           ` : ''}
         </div>
 
         <!-- Live Period Status Row -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="w-2.5 h-2.5 rounded-full ${isToday ? (liveClass ? 'bg-emerald-400 animate-ping' : 'bg-primary') : 'bg-outline'} shrink-0"></span>
-            <span class="font-body-md text-xs sm:text-sm font-semibold text-on-surface truncate">${statusText}</span>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 pt-0.5 text-xs">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="w-2 h-2 rounded-full ${isToday ? (liveClass ? 'bg-emerald-400 animate-ping' : 'bg-primary') : 'bg-outline'} shrink-0"></span>
+            <span class="font-medium text-on-surface truncate text-xs">${statusText}</span>
           </div>
           ${(liveClass || nextClass) ? `
-            <button type="button" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-dark text-on-primary font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-sm shrink-0 self-start sm:self-auto" id="btn-jump-period">
+            <button type="button" class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-lg bg-primary hover:bg-primary-dark text-on-primary font-bold text-xs transition-colors cursor-pointer shadow-sm shrink-0 self-start sm:self-auto" id="btn-jump-period">
               <span>Jump to Class</span>
-              <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
             </button>
           ` : ''}
         </div>
@@ -1512,6 +1622,17 @@ const TimetableController = {
       btnClearSearch.addEventListener('click', () => {
         searchInput.value = '';
         this.searchQuery = '';
+        this.renderSchedule();
+      });
+    }
+
+    const densityBtn = document.getElementById('btn-timetable-density');
+    if (densityBtn && !densityBtn._bound) {
+      densityBtn._bound = true;
+      densityBtn.addEventListener('click', () => {
+        this.densityMode = this.densityMode === 'compact' ? 'expanded' : 'compact';
+        localStorage.setItem('juit_timetable_density', this.densityMode);
+        this.updateDensityButtonUI();
         this.renderSchedule();
       });
     }

@@ -640,74 +640,85 @@
       <!-- ==================================================================
            VIEW 2: CALM SCHEDULE (TIMETABLE)
            ================================================================== -->
-      <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-timetable">
-        <!-- Timetable Header Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface-container-low p-3.5 sm:p-4 rounded-2xl border border-white/[0.06] shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[24px]">calendar_clock</span>
+      <section class="app-view-panel flex flex-col w-full space-y-2.5 sm:space-y-3" id="view-timetable">
+        <!-- Compact Timetable Executive Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 bg-surface-container-low p-3 sm:p-3.5 rounded-2xl border border-white/[0.06] shadow-sm">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[22px]">calendar_clock</span>
             </div>
             <div>
               <div class="flex items-center gap-2 flex-wrap">
-                <h1 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">Academic Timetable</h1>
-                <span class="inline-flex items-center font-mono text-xs px-2.5 py-0.5 rounded-lg bg-primary/15 text-primary font-bold border border-primary/25" id="timetable-batch-display-label">Batch 26BT10</span>
+                <h1 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Academic Timetable</h1>
+                <span class="inline-flex items-center font-mono text-[11px] px-2 py-0.5 rounded-lg bg-primary/15 text-primary font-bold border border-primary/25" id="timetable-batch-display-label">Batch 26BT10</span>
                 <span class="inline-flex items-center font-label-sm text-[11px] px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface-variant font-medium" id="timetable-sem-badge">B.Tech. 1st Sem</span>
               </div>
-              <p class="text-xs text-on-surface-variant mt-0.5">Waknaghat Campus Lectures, Tutorials & Labs</p>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">Waknaghat Campus • Lectures, Tutorials & Labs</p>
             </div>
           </div>
           <!-- Semester & Batch Controls -->
           <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
-            <select class="select-styled w-full max-w-full text-xs sm:text-sm font-medium py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-sem-select" aria-label="Select Semester"></select>
-            <select class="select-styled w-full max-w-full text-xs sm:text-sm font-medium py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-batch-select" aria-label="Select Batch"></select>
+            <select class="select-styled w-full max-w-full text-xs font-medium py-1.5 px-2.5 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-sem-select" aria-label="Select Semester"></select>
+            <select class="select-styled w-full max-w-full text-xs font-medium py-1.5 px-2.5 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-batch-select" aria-label="Select Batch"></select>
           </div>
         </div>
 
-        <!-- Quick Batch Filter Chips -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="quick-batch-container">
-          <!-- Dynamically populated -->
-        </div>
-
-        <!-- Search & View Mode Switcher -->
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="relative w-full sm:w-80">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-            <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-9 pr-9 py-2 rounded-xl text-on-surface placeholder:text-outline font-body-sm text-body-sm border border-white/[0.06] focus:outline-none focus:border-primary" />
-            <button type="button" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[16px]">close</span></button>
+        <!-- Compact Unified Toolbar: Search + Quick Batches + View Mode Tabs + Density Toggle -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 bg-surface-container-lowest/60 p-2 rounded-xl border border-white/[0.04]">
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <!-- Search Input -->
+            <div class="relative flex-1 max-w-xs">
+              <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+              <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-8 pr-8 py-1.5 rounded-lg text-on-surface placeholder:text-outline font-body-sm text-xs border border-white/[0.06] focus:outline-none focus:border-primary" />
+              <button type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[14px]">close</span></button>
+            </div>
+            <!-- Quick Batch Filter Chips (Compact Scroll) -->
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0" id="quick-batch-container">
+              <!-- Dynamically populated -->
+            </div>
           </div>
-          <div class="grid grid-cols-3 w-full sm:w-auto rounded-xl bg-surface-container-low p-1 border border-white/[0.06]" id="timetable-view-mode-tabs">
-            <button type="button" class="term-btn active" data-mode="today">Today</button>
-            <button type="button" class="term-btn" data-mode="day">Day Flow</button>
-            <button type="button" class="term-btn" data-mode="week">Week Matrix</button>
+
+          <div class="flex items-center gap-1.5 shrink-0 justify-between md:justify-end">
+            <!-- Mode Switcher Tabs (Today, Day Flow, Week Matrix) -->
+            <div class="flex items-center rounded-lg bg-surface-container-low p-0.5 border border-white/[0.06]" id="timetable-view-mode-tabs">
+              <button type="button" class="term-btn active text-xs py-1 px-2.5" data-mode="today">Today</button>
+              <button type="button" class="term-btn text-xs py-1 px-2.5" data-mode="day">Day Flow</button>
+              <button type="button" class="term-btn text-xs py-1 px-2.5" data-mode="week">Week Matrix</button>
+            </div>
+            <!-- Layout Density Switcher: Compact vs Expanded -->
+            <button type="button" id="btn-timetable-density" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold border border-white/[0.06] transition-colors cursor-pointer" title="Toggle Compact / Detailed Layout">
+              <span class="material-symbols-outlined text-[15px]" id="icon-timetable-density">density_medium</span>
+              <span class="hidden sm:inline" id="text-timetable-density">Compact View</span>
+            </button>
           </div>
         </div>
 
-        <!-- Horizontal Day Flow Ribbon -->
-        <div class="grid grid-cols-6 gap-1.5 sm:gap-2 py-1" id="timetable-day-pills">
-          <!-- Dynamically rendered day cards (MON, TUE, WED, THU, FRI, SAT) -->
+        <!-- Sleek Horizontal Day Flow Segmented Control (Height: 38px) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full" id="timetable-day-pills">
+          <!-- Dynamically rendered day pills (MON, TUE, WED, THU, FRI, SAT) -->
         </div>
 
-        <!-- Timeline Section Heading -->
-        <div class="flex items-center justify-between pt-2" id="timetable-timeline-wrapper">
-          <div>
-            <h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="schedule-day-title">Tuesday Timeline</h2>
-            <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic" id="timetable-timeline-heading">Waknaghat Academic Blocks</span>
+        <!-- Timeline Section Heading & Jump Button -->
+        <div class="flex items-center justify-between pt-0.5 px-0.5" id="timetable-timeline-wrapper">
+          <div class="flex items-center gap-2">
+            <h2 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold" id="schedule-day-title">Tuesday Schedule</h2>
+            <span class="text-xs text-on-surface-variant hidden sm:inline" id="timetable-timeline-heading">• Waknaghat Academic Blocks</span>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" id="btn-jump-to-now" class="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-semibold border border-white/[0.08] transition-colors cursor-pointer">
+            <button type="button" id="btn-jump-to-now" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-bold border border-white/[0.08] transition-colors cursor-pointer">
               <span class="material-symbols-outlined text-[14px]">my_location</span>
               <span>Now</span>
             </button>
-            <span class="inline-flex items-center font-label-sm text-xs px-3 py-1 rounded-full bg-surface-container-high text-primary font-bold border border-primary/20" id="schedule-classes-count">5 Classes</span>
+            <span class="inline-flex items-center font-label-sm text-xs px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-bold border border-primary/20" id="schedule-classes-count">4 Classes</span>
           </div>
         </div>
 
-        <!-- Period Scrubber Tracker -->
+        <!-- Compact Period Scrubber Tracker -->
         <div id="timetable-live-tracker"></div>
 
-        <!-- Schedule Stream Cards -->
-        <div class="space-y-space-md" id="timetable-classes-list">
-          <!-- Dynamically populated by TimetableController with Stitch calm cards -->
+        <!-- Schedule Stream: High-Density Executive Class Rows -->
+        <div class="space-y-1.5" id="timetable-classes-list">
+          <!-- Dynamically populated by TimetableController with sleek compact rows -->
         </div>
       </section>
 
@@ -974,116 +985,178 @@
       <!-- ==================================================================
            VIEW 5: NH-5 HIGHWAY TRANSIT & BUS GUIDE (BUS)
            ================================================================== -->
-      <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-bus">
-        <div class="pt-space-sm pb-space-xs flex flex-col">
-          <span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Himalayan Highway Transit</span>
-          <h1 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-on-surface font-bold tracking-tight">NH-5 Bus Guide</h1>
-          <p class="font-body-md text-body-md text-on-surface-variant mt-1 leading-snug">
-            How to navigate state buses, local HRTC shuttles, and shared cabs directly from Waknaghat chowk.
-          </p>
-        </div>
-
-        <!-- Which Side of NH-5 Do I Stand On? -->
-        <div class="rounded-xl bg-surface-container-low p-space-lg shadow-md border border-white/[0.08] space-y-4">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-[22px]">help_center</span>
-            <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Which side of NH-5 do I stand on?</h3>
-          </div>
-
-          <!-- Uphill Side -->
-          <div class="rounded-lg bg-surface-container p-4 border-l-4 border-l-primary">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="material-symbols-outlined text-primary text-[20px]">north</span>
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold text-[15px]">Uphill Side (Mountain Rock Face)</span>
+      <section class="app-view-panel flex flex-col w-full space-y-3 sm:space-y-4" id="view-bus">
+        
+        <!-- Transit Header & Quick Emergency Desk -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface-container-low p-3.5 sm:p-4 rounded-2xl border border-white/[0.06] shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[24px]">directions_bus</span>
             </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant pl-7">
-              Buses going up to <strong class="text-on-surface font-semibold">Shimla, Kufri, Tutikandi ISBT, and Sanjauli</strong>. Wait near the wooden tea shack under the rock face.
-            </p>
-          </div>
-
-          <!-- Downhill Side -->
-          <div class="rounded-lg bg-surface-container p-4 border-l-4 border-l-secondary">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="material-symbols-outlined text-secondary text-[20px]">south</span>
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold text-[15px]">Downhill Side (Valley / Railing Side)</span>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">NH-5 Highway Transit Hub</h1>
+                <span class="inline-flex items-center font-label-sm text-[11px] px-2 py-0.5 rounded-lg bg-primary/15 text-primary font-bold border border-primary/25">Waknaghat Junction • 1,550m</span>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-0.5">Direct HRTC State Buses, Mountain Shuttles & Union Shared Cabs</p>
             </div>
-            <p class="font-body-sm text-body-sm text-on-surface-variant pl-7">
-              Buses heading down to <strong class="text-on-surface font-semibold">Kandaghat, Solan Mall Road, Kumarhatti, Chandigarh Sector 43, and Delhi ISBT</strong>.
-            </p>
+          </div>
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <a href="tel:01792239200" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-bold border border-primary/25 transition-colors cursor-pointer shadow-sm">
+              <span class="material-symbols-outlined text-[16px]">local_taxi</span>
+              <span>Waknaghat Cab: 01792-239200</span>
+            </a>
           </div>
         </div>
 
-        <!-- Campus Gate 1 Shuttle Live Widget -->
-        <div class="rounded-xl bg-surface-container p-space-md shadow-md border border-white/[0.06]">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[20px]">airport_shuttle</span>
-              <span class="font-headline-sm text-headline-sm text-on-surface font-semibold text-[16px]">Gate 1 Chowk Shuttle</span>
-            </div>
-            <span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-sm text-label-sm font-bold">Regular Run</span>
-          </div>
-          <div class="flex items-baseline gap-2 mb-1">
-            <span class="font-headline-md text-headline-md text-primary font-bold">5:15 PM</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant">Next van departure from Gate 1</span>
-          </div>
-          <p class="font-caption-editorial text-caption-editorial text-on-surface-variant italic">
-            💡 Van leaves from near security post. Fare is ₹10. Seats usually fill 5-7 minutes before scheduled push.
-          </p>
-        </div>
-
-        <!-- Street Wisdom Checklist -->
-        <div class="rounded-xl bg-surface-container-low p-space-md shadow-sm border border-white/[0.06] space-y-2">
-          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Street Wisdom Checklist</p>
-          <div class="flex items-start gap-2.5 p-2.5 rounded bg-surface-container">
-            <span class="material-symbols-outlined text-primary text-[18px] mt-0.5">payments</span>
-            <p class="font-body-sm text-body-sm text-on-surface leading-tight">
-              Carry small paper cash (₹20, ₹50 notes). Highway cell networks can dip inside deep turns, so UPI sometimes stalls mid-ticket.
-            </p>
-          </div>
-          <div class="flex items-start gap-2.5 p-2.5 rounded bg-surface-container">
-            <span class="material-symbols-outlined text-primary text-[18px] mt-0.5">record_voice_over</span>
-            <p class="font-body-sm text-body-sm text-on-surface leading-tight">
-              Always wave your hand early and shout “<em>Bhaiya Shimla jayegi?</em>” or “<em>Solan bypass?</em>” to the conductor standing at the footboard.
-            </p>
-          </div>
-          <div class="flex items-start gap-2.5 p-2.5 rounded bg-surface-container">
-            <span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">bedtime</span>
-            <p class="font-body-sm text-body-sm text-on-surface leading-tight">
-              Last safe return bus from Shimla Old ISBT drops at Waknaghat chowk around 8:40 PM. Do not rely on local transport past 9:00 PM without prior shared cab.
-            </p>
-          </div>
-        </div>
-
-        <!-- Waknaghat Cab Union Stand -->
-        <div class="rounded-xl bg-surface-container p-space-md flex items-center justify-between shadow-sm border border-white/[0.06]">
-          <div class="flex items-center gap-space-sm min-w-0">
-            <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
-              <span class="material-symbols-outlined text-[20px]">local_taxi</span>
-            </div>
-            <div class="truncate">
-              <p class="font-headline-sm text-headline-sm text-on-surface font-semibold text-[15px] truncate">Waknaghat Cab Union Stand</p>
-              <p class="font-caption-editorial text-caption-editorial text-on-surface-variant italic truncate">Standard fixed student rate: ₹250 to Kandaghat</p>
-            </div>
-          </div>
-          <a class="shrink-0 px-3.5 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-bold shadow hover:bg-primary-container transition-colors flex items-center gap-1.5" href="tel:01792239200">
-            <span class="material-symbols-outlined text-[16px]">call</span>
-            <span>Call Stand</span>
-          </a>
-        </div>
-
-        <!-- Bus Schedule Grid -->
-        <div class="space-y-3 pt-2">
+        <!-- Interactive Highway Platform Compass (Which side of NH-5 do I stand on?) -->
+        <div class="bg-surface-container-low p-3.5 sm:p-4 rounded-2xl border border-white/[0.06] shadow-sm space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Scheduled Departures</h3>
             <div class="flex items-center gap-2">
-              <div id="bus-filter-pills" class="flex gap-1"></div>
-              <input type="text" id="bus-search-input" placeholder="Filter destination..." class="select-styled py-1 text-xs" />
+              <span class="material-symbols-outlined text-primary text-[20px]">swap_driving_apps</span>
+              <h2 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Waknaghat Highway Junction Compass</h2>
+            </div>
+            <span class="text-[11px] text-on-surface-variant hidden sm:inline">Tap a side to filter departures</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+            <!-- Platform A: Uphill Side -->
+            <div class="group relative rounded-xl p-3.5 bg-surface-container-lowest/80 border border-sky-500/20 hover:border-sky-500/50 hover:bg-surface-container transition-all cursor-pointer shadow-sm" id="btn-platform-uphill" onclick="if(window.BusGuideController) BusGuideController.setFilter('uphill')">
+              <div class="flex items-start justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">north</span>
+                  </div>
+                  <div>
+                    <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-sky-400">▲ UPHILL SIDE (Mountain Rock Face)</h3>
+                    <p class="text-[11px] text-outline">Wait at roadside wooden tea shacks under rock face</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 shrink-0">Shimla Bound</span>
+              </div>
+              <p class="text-xs text-on-surface font-medium leading-relaxed">
+                Direct buses ascending to <strong class="text-white">Shoghi, Tara Devi, Shimla ISBT (Tutikandi), Old Bus Stand, and Kufri</strong>.
+              </p>
+              <div class="mt-2.5 pt-2 border-t border-white/[0.05] flex items-center justify-between text-[11px]">
+                <span class="text-on-surface-variant font-mono">Frequency: Every 10–15 mins</span>
+                <span class="text-sky-400 font-bold group-hover:underline flex items-center gap-0.5">Filter Uphill <span class="material-symbols-outlined text-[13px]">arrow_forward</span></span>
+              </div>
+            </div>
+
+            <!-- Platform B: Downhill Side -->
+            <div class="group relative rounded-xl p-3.5 bg-surface-container-lowest/80 border border-emerald-500/20 hover:border-emerald-500/50 hover:bg-surface-container transition-all cursor-pointer shadow-sm" id="btn-platform-downhill" onclick="if(window.BusGuideController) BusGuideController.setFilter('downhill')">
+              <div class="flex items-start justify-between gap-2 mb-1.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[18px]">south</span>
+                  </div>
+                  <div>
+                    <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-emerald-400">▼ DOWNHILL SIDE (Valley Railing)</h3>
+                    <p class="text-[11px] text-outline">Wait along descending highway lane railing</p>
+                  </div>
+                </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">Solan / Plains</span>
+              </div>
+              <p class="text-xs text-on-surface font-medium leading-relaxed">
+                Direct buses descending to <strong class="text-white">Kandaghat, Solan Mall Road, Kumarhatti, Chandigarh ISBT 43, and Delhi</strong>.
+              </p>
+              <div class="mt-2.5 pt-2 border-t border-white/[0.05] flex items-center justify-between text-[11px]">
+                <span class="text-on-surface-variant font-mono">Frequency: Every 10–20 mins</span>
+                <span class="text-emerald-400 font-bold group-hover:underline flex items-center gap-0.5">Filter Downhill <span class="material-symbols-outlined text-[13px]">arrow_forward</span></span>
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Campus Gate 1 Shuttle Live Widget & Quick Status -->
+        <div id="bus-shuttle-live-container"></div>
+
+        <!-- Scheduled Departures Toolbar & Destinations -->
+        <div class="space-y-3 pt-1">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div>
+              <h2 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold">Highway Transit Network</h2>
+              <p class="text-xs text-on-surface-variant">Select a corridor to view detailed route timelines, boarding points, and fares</p>
+            </div>
+            <!-- Search Destination -->
+            <div class="relative w-full sm:w-64">
+              <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+              <input type="text" id="bus-search-input" placeholder="Search Shimla, Solan, Airport..." class="w-full bg-surface-container-low pl-8 pr-8 py-1.5 rounded-xl text-on-surface placeholder:text-outline font-body-sm text-xs border border-white/[0.06] focus:outline-none focus:border-primary" />
+              <button type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-bus-search"><span class="material-symbols-outlined text-[14px]">close</span></button>
+            </div>
+          </div>
+
+          <!-- Dynamic Filter Chips Ribbon -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1" id="bus-filter-pills">
+            <!-- Dynamically populated by BusGuideController -->
+          </div>
+
+          <!-- Destinations Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="bus-destinations-grid">
             <!-- Dynamically populated by BusGuideController -->
           </div>
         </div>
+
+        <!-- Student Transit Wisdom & Taxi Hotlines Bottom Card -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 pt-2">
+          <!-- Cab Union Tariff -->
+          <div class="rounded-2xl bg-surface-container-low p-3.5 border border-white/[0.06] shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">local_taxi</span>
+                <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface">Waknaghat Cab Union Tariffs</h3>
+              </div>
+              <p class="text-[11px] text-on-surface-variant mb-2.5">Standard fixed student fares agreed with local union:</p>
+              <div class="space-y-1.5 font-mono text-xs">
+                <div class="flex items-center justify-between p-1.5 rounded-lg bg-surface-container">
+                  <span>Waknaghat ↔ Kandaghat</span>
+                  <span class="text-primary font-bold">₹250</span>
+                </div>
+                <div class="flex items-center justify-between p-1.5 rounded-lg bg-surface-container">
+                  <span>Waknaghat ↔ Solan Mall</span>
+                  <span class="text-primary font-bold">₹600</span>
+                </div>
+                <div class="flex items-center justify-between p-1.5 rounded-lg bg-surface-container">
+                  <span>Waknaghat ↔ Shimla ISBT</span>
+                  <span class="text-primary font-bold">₹800</span>
+                </div>
+              </div>
+            </div>
+            <a href="tel:01792239200" class="mt-3 w-full py-2 rounded-xl bg-primary text-on-primary font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm hover:bg-primary-dark transition-colors">
+              <span class="material-symbols-outlined text-[16px]">call</span>
+              <span>Call Stand (01792-239200)</span>
+            </a>
+          </div>
+
+          <!-- Street Wisdom Checklist (Checkboxes preserved for state persistence) -->
+          <div class="lg:col-span-2 rounded-2xl bg-surface-container-low p-3.5 border border-white/[0.06] shadow-sm space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary text-[20px]">verified_user</span>
+              <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface">Highway Transit Checklist & Street Wisdom</h3>
+            </div>
+            <div class="space-y-2 pt-0.5">
+              <label class="flex items-start gap-2.5 p-2 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer select-none">
+                <input type="checkbox" class="bus-checklist-checkbox mt-0.5 rounded border-white/20 text-primary focus:ring-0" />
+                <span class="text-xs text-on-surface leading-tight">
+                  <strong class="text-primary">Keep Small Cash (₹20, ₹50 notes):</strong> High elevation turns occasionally cause POS machines and UPI to drop cellular signal.
+                </span>
+              </label>
+              <label class="flex items-start gap-2.5 p-2 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer select-none">
+                <input type="checkbox" class="bus-checklist-checkbox mt-0.5 rounded border-white/20 text-primary focus:ring-0" />
+                <span class="text-xs text-on-surface leading-tight">
+                  <strong class="text-primary">Wave Early to Footboard Conductor:</strong> Signal early with your hand and shout <em>“Bhaiya Shimla jayegi?”</em> or <em>“Solan bypass?”</em> so the bus pulls into the slow lane safely.
+                </span>
+              </label>
+              <label class="flex items-start gap-2.5 p-2 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer select-none">
+                <input type="checkbox" class="bus-checklist-checkbox mt-0.5 rounded border-white/20 text-primary focus:ring-0" />
+                <span class="text-xs text-on-surface leading-tight">
+                  <strong class="text-primary">Last Safe Return Bus (8:40 PM):</strong> The last ordinary HRTC bus leaving Shimla Old ISBT that drops at Waknaghat departs around 8:40 PM. Do not get stranded past 9:15 PM without a pre-booked cab.
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <!-- ==================================================================
