@@ -449,29 +449,20 @@ const TimetableController = {
     if (!container) return;
 
     container.innerHTML = `
-      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'today' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-xs sm:text-body-sm transition-colors cursor-pointer" data-mode="today">
-        <span class="material-symbols-outlined text-[15px] sm:text-[16px]">bolt</span>
-        <span>Today</span>
+      <button type="button" class="term-btn ${this.viewMode !== 'week' ? 'active' : ''} text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer" data-mode="day">
+        <span class="material-symbols-outlined text-[15px]">view_agenda</span>
+        <span>Day View</span>
       </button>
-      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'day' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-xs sm:text-body-sm transition-colors cursor-pointer" data-mode="day">
-        <span class="material-symbols-outlined text-[15px] sm:text-[16px]">calendar_today</span>
-        <span>Day Flow</span>
-      </button>
-      <button type="button" class="flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-3.5 py-1.5 rounded-lg ${this.viewMode === 'week' ? 'bg-surface-container-high text-primary font-semibold shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'} font-body-sm text-xs sm:text-body-sm transition-colors cursor-pointer" data-mode="week">
-        <span class="material-symbols-outlined text-[15px] sm:text-[16px]">view_column</span>
-        <span>Week Matrix</span>
+      <button type="button" class="term-btn ${this.viewMode === 'week' ? 'active' : ''} text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer text-on-surface-variant hover:text-on-surface" data-mode="week">
+        <span class="material-symbols-outlined text-[15px]">grid_view</span>
+        <span>Weekly Grid</span>
       </button>
     `;
 
     container.querySelectorAll('button[data-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.viewMode = btn.dataset.mode;
-        if (this.viewMode === 'today') {
-          const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
-          this.activeDay = currentDayCode === 'SUN' ? 'MON' : currentDayCode;
-        }
         this.renderViewModeTabs();
-        this.renderDayPills();
         this.renderSchedule();
       });
     });
@@ -485,15 +476,19 @@ const TimetableController = {
 
     container.innerHTML = this.days.map(d => {
       const isToday = (d === currentDayCode);
-      const isActive = (d === this.activeDay);
+      const isActive = (d === this.activeDay && this.viewMode !== 'week');
       const dayClasses = this.filterAndMergeEntries(d);
       const count = dayClasses.length;
+      const fullName = this.dayFullNames[d] || d;
 
       return `
-        <button type="button" class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex-1 min-w-[68px] select-none border ${isActive ? 'bg-primary text-on-primary border-primary shadow-sm' : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-white/[0.06]'}" data-day="${d}" title="${this.dayFullNames[d] || d} (${count} classes)">
-          <span>${d}</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isActive ? 'bg-black/30 text-white' : 'bg-surface-container-high text-on-surface-variant'}">${count}</span>
-          ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary shrink-0" title="Today"></span>' : ''}
+        <button type="button" class="flex items-center justify-between gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none border ${isActive ? 'bg-primary text-on-primary border-primary shadow-md scale-[1.02]' : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-white/[0.06]'}" data-day="${d}" title="${fullName} (${count} classes scheduled)">
+          <div class="flex items-center gap-1.5 min-w-0">
+            ${isToday ? '<span class="w-2 h-2 rounded-full bg-secondary shrink-0 shadow-sm" title="Today"></span>' : ''}
+            <span class="sm:hidden font-bold">${d}</span>
+            <span class="hidden sm:inline truncate">${fullName}</span>
+          </div>
+          <span class="text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full font-mono font-bold shrink-0 ${isActive ? 'bg-black/30 text-white' : 'bg-surface-container-high text-on-surface-variant'}">${count}</span>
         </button>
       `;
     }).join('');
@@ -501,6 +496,8 @@ const TimetableController = {
     container.querySelectorAll('[data-day]').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeDay = btn.dataset.day;
+        this.viewMode = 'day';
+        this.renderViewModeTabs();
         this.renderDayPills();
         this.renderSchedule();
       });
@@ -600,13 +597,14 @@ const TimetableController = {
       return;
     }
 
+    const dayNavWrap = document.getElementById('timetable-day-nav-wrapper');
     if (this.viewMode === 'week') {
+      if (dayNavWrap) dayNavWrap.style.display = 'none';
       if (dayPillsWrap) dayPillsWrap.style.display = 'none';
-      if (headerTitle) headerTitle.textContent = 'Weekly Schedule Matrix';
-      if (headerCount) headerCount.textContent = 'Mon – Sat';
       this.renderWeekView(container);
       return;
     } else {
+      if (dayNavWrap) dayNavWrap.style.display = '';
       if (dayPillsWrap) dayPillsWrap.style.display = '';
     }
 
@@ -625,12 +623,32 @@ const TimetableController = {
 
     if (classes.length === 0) {
       container.innerHTML = `
-        <div class="empty-schedule-card">
-          <div class="empty-state-icon">🎉</div>
-          <h3>No classes scheduled for ${dayName}</h3>
-          <p>Relax, explore JUIT Solan campus, or head to LRC Library reading hall!</p>
+        <div class="p-8 sm:p-10 rounded-2xl bg-surface-container-low border border-white/[0.06] text-center space-y-3.5 my-2">
+          <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl shadow-inner border border-primary/20">
+            🌿
+          </div>
+          <div>
+            <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">No Classes Scheduled for ${dayName}</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto mt-1">
+              No lectures, tutorials or laboratory sessions on ${dayName} for Batch ${this.activeBatch}. You can review tutorial sheets in the Academic Vault or inspect the full week matrix.
+            </p>
+          </div>
+          <div class="flex items-center justify-center gap-2 pt-2">
+            <button type="button" class="btn-goto-week inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-bold cursor-pointer hover:brightness-110 shadow-sm transition-all">
+              <span class="material-symbols-outlined text-[16px]">grid_view</span>
+              <span>Open Weekly Grid Matrix</span>
+            </button>
+          </div>
         </div>
       `;
+      const gotoWeekBtn = container.querySelector('.btn-goto-week');
+      if (gotoWeekBtn) {
+        gotoWeekBtn.addEventListener('click', () => {
+          this.viewMode = 'week';
+          this.renderViewModeTabs();
+          this.renderSchedule();
+        });
+      }
       return;
     }
 
@@ -727,42 +745,25 @@ const TimetableController = {
       if (item.type === 'break') {
         const isLunch = item.isLunch;
         const breakTitle = isLunch ? 'Lunch Break & Campus Leisure' : `Free Period (${item.durationMins >= 60 ? `${Math.round(item.durationMins/60)} hr` : `${item.durationMins} mins`})`;
-        const breakSub = isLunch ? 'Annapurna Mess is serving hot lunch' : 'LRC Library study cubicles available';
-        const tagLabel = isLunch ? 'MESS ACTIVE' : 'FREE TIME';
-
-        if (this.densityMode === 'compact') {
-          return `
-            <div class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-surface-container-lowest/60 border border-white/[0.04] text-xs text-outline my-0.5">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="material-symbols-outlined text-[16px] ${isLunch ? 'text-amber-400' : 'text-outline'} shrink-0">${isLunch ? 'restaurant' : 'coffee'}</span>
-                <span class="font-semibold text-on-surface-variant truncate">${breakTitle}</span>
-                <span class="font-mono text-[11px] text-outline shrink-0">• ${item.timeLabel}</span>
-              </div>
-              ${isLunch
-                ? `<a class="inline-flex items-center gap-1 text-secondary hover:underline font-semibold text-[11px] shrink-0" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>Mess Menu</span><span class="material-symbols-outlined text-[13px]">arrow_forward</span></a>`
-                : `<a class="inline-flex items-center gap-1 text-secondary hover:underline font-semibold text-[11px] shrink-0" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Vault</span><span class="material-symbols-outlined text-[13px]">arrow_forward</span></a>`
-              }
-            </div>
-          `;
-        }
+        const breakSub = isLunch ? 'Annapurna Mess is serving fresh hot meals in Dining Halls' : 'Quiet reading spaces and laptop study booths open in LRC Library';
 
         return `
-          <div class="bg-surface-container-lowest/80 p-3 sm:p-space-md rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-white/[0.05] shadow-sm w-full max-w-full">
+          <div class="p-3.5 sm:p-4 rounded-2xl bg-surface-container-lowest/80 border border-white/[0.05] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-outline shrink-0">
-                <span class="material-symbols-outlined text-[20px]">${isLunch ? 'restaurant' : 'coffee'}</span>
+              <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center ${isLunch ? 'text-amber-400' : 'text-outline'} shrink-0">
+                <span class="material-symbols-outlined text-[20px]">${isLunch ? 'restaurant' : 'local_cafe'}</span>
               </div>
               <div class="min-w-0">
-                <div class="flex flex-wrap items-center gap-2">
-                  <p class="font-body-md text-sm sm:text-body-md font-semibold text-on-surface truncate">${breakTitle}</p>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container-high ${isLunch ? 'text-secondary' : 'text-outline'} shrink-0">${tagLabel}</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">${breakTitle}</span>
+                  <span class="text-xs font-mono text-outline">• ${item.timeLabel}</span>
                 </div>
-                <p class="font-label-sm text-xs text-outline mt-0.5 truncate">${item.timeLabel} • ${breakSub}</p>
+                <p class="text-xs text-on-surface-variant/80 mt-0.5 truncate">${breakSub}</p>
               </div>
             </div>
             ${isLunch
-              ? `<a class="inline-flex items-center gap-1 font-label-sm text-xs text-secondary hover:underline font-semibold whitespace-nowrap self-end sm:self-auto shrink-0" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>View Mess Menu</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
-              : `<a class="inline-flex items-center gap-1 font-label-sm text-xs text-secondary hover:underline font-semibold whitespace-nowrap self-end sm:self-auto shrink-0" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Explore Resources</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
+              ? `<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-colors border border-white/[0.06]" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>Mess Menu</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
+              : `<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-colors border border-white/[0.06]" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Explore Vault</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
             }
           </div>
         `;
@@ -799,14 +800,17 @@ const TimetableController = {
         attBtnLabel = 'Missed';
       }
 
+      let typeClass = 'lecture';
       let typeBadgeStyle = 'bg-amber-500/15 text-amber-300 border border-amber-500/30';
       let typeIcon = 'school';
       let typeLabel = 'Lecture (L)';
       if (c.type === 'P') {
+        typeClass = 'lab';
         typeBadgeStyle = 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
         typeIcon = 'science';
         typeLabel = 'Lab (P)';
       } else if (c.type === 'T') {
+        typeClass = 'tutorial';
         typeBadgeStyle = 'bg-sky-500/15 text-sky-300 border border-sky-500/30';
         typeIcon = 'groups';
         typeLabel = 'Tutorial (T)';
@@ -814,9 +818,9 @@ const TimetableController = {
 
       let liveStatusBadge = '';
       if (c.status === 'LIVE_NOW') {
-        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>LIVE NOW (${c.timeDiff}m left)</span>`;
+        liveStatusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[11px] font-bold animate-pulse"><span class="w-2 h-2 rounded-full bg-rose-400"></span>LIVE NOW (${c.timeDiff}m left)</span>`;
       } else if (c.status === 'NEXT_UP') {
-        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/40 text-[10px] font-semibold">⏳ NEXT UP (${c.timeDiff}m)</span>`;
+        liveStatusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/40 text-[11px] font-semibold">⏳ NEXT UP (${c.timeDiff}m)</span>`;
       }
 
       const timeParts = (c.time || '').split(/[-–—]/).map(t => t.trim());
@@ -827,122 +831,45 @@ const TimetableController = {
 
       const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
       let vaultBtn = '';
-      let compactVaultBtn = '';
       if (vaultRes) {
         if (vaultRes.hasMultiple) {
           vaultBtn = `
-            <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors cursor-pointer" 
+            <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors cursor-pointer" 
               data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
-              data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}'>
+              data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}' title="${vaultRes.title}">
               <span class="material-symbols-outlined text-[15px]">folder_open</span>
               <span>${vaultRes.shortTitle || 'Tutorials'}</span>
             </button>
           `;
-          compactVaultBtn = `
-            <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors cursor-pointer" 
-              data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
-              data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}' title="${vaultRes.title}">
-              <span class="material-symbols-outlined text-[14px]">folder_open</span>
-              <span class="hidden md:inline">${vaultRes.shortTitle || 'Tutorials'}</span>
-            </button>
-          `;
         } else {
           vaultBtn = `
-            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
+            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
               <span class="material-symbols-outlined text-[15px]">download</span>
               <span>${vaultRes.shortTitle || 'Notes'}</span>
-            </a>
-          `;
-          compactVaultBtn = `
-            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
-              <span class="material-symbols-outlined text-[14px]">download</span>
-              <span class="hidden md:inline">${vaultRes.shortTitle || 'Notes'}</span>
             </a>
           `;
         }
       }
 
-      // -------------------------------------------------------------
-      // COMPACT EXECUTIVE ROW LAYOUT (Default: Zero scrolling required)
-      // -------------------------------------------------------------
-      if (this.densityMode === 'compact') {
-        return `
-          <div class="class-schedule-card class-schedule-row bg-surface-container-low hover:bg-surface-container p-2 sm:p-2.5 rounded-xl shadow-sm transition-all duration-150 flex items-center justify-between gap-2 sm:gap-3 border border-white/[0.06] hover:border-white/[0.14] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary bg-primary/10' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
-            
-            <!-- Left: Time Pillar + Type Badge -->
-            <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-              <div class="w-18 sm:w-22 text-left font-mono">
-                <span class="text-xs font-bold text-primary block leading-tight whitespace-nowrap">${startTime}</span>
-                <span class="text-[10px] text-on-surface-variant block leading-tight whitespace-nowrap">${endTime}</span>
-              </div>
-              <span class="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-lg text-[10px] sm:text-[11px] font-bold ${typeBadgeStyle} shrink-0">
-                <span class="material-symbols-outlined text-[13px]">${typeIcon}</span>
-                <span class="hidden sm:inline">${typeLabel.split(' ')[0]}</span>
-              </span>
-            </div>
+      const isLive = c.status === 'LIVE_NOW';
 
-            <!-- Middle: Course Code + Subject Title + Faculty -->
-            <div class="flex-1 min-w-0 pr-1">
-              <div class="flex items-center gap-1.5 flex-wrap leading-tight">
-                <span class="font-mono text-[11px] font-bold text-on-surface bg-surface-container-highest px-1.5 py-0.2 rounded border border-white/[0.06] shrink-0">${c.code}</span>
-                <h3 class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface truncate">
-                  ${c.cleanSubject}
-                </h3>
-                ${liveStatusBadge}
-              </div>
-              <div class="flex items-center gap-2 text-[11px] text-on-surface-variant mt-0.5 truncate">
-                ${c.faculty ? `<span class="truncate">Prof. ${c.faculty}</span>` : ''}
-                ${c.venue ? `<span class="font-mono text-primary font-semibold shrink-0">📍 Rm ${c.venue}</span>` : ''}
-                ${coAttending ? `<span class="hidden md:inline text-outline truncate">• ${coAttending}</span>` : ''}
-              </div>
-            </div>
-
-            <!-- Right: Action Buttons (Location, Attend, Notes, Inspect) -->
-            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0" onclick="event.stopPropagation()">
-              ${c.venue ? `
-                <button type="button" class="venue-locator-pill inline-flex items-center gap-0.5 sm:gap-1 px-2 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface text-xs font-bold border border-white/[0.08] transition-colors" data-venue="${c.venue}" title="Show on 3D Map">
-                  <span class="material-symbols-outlined text-rose-400 text-[14px]">location_on</span>
-                  <span class="font-mono text-primary text-[11px]">Rm ${c.venue}</span>
-                </button>
-              ` : ''}
-
-              <button type="button" class="btn-attendance-toggle inline-flex items-center gap-1 px-2 py-1 rounded-lg font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track Attendance">
-                <span class="material-symbols-outlined text-[14px]">${attIcon}</span>
-                <span class="hidden sm:inline">${attBtnLabel}</span>
-              </button>
-
-              ${compactVaultBtn}
-
-              <button type="button" class="btn-class-inspect w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06]" data-class-id="${c.uniqueId}" title="Class Details">
-                <span class="material-symbols-outlined text-[15px]">info</span>
-              </button>
-            </div>
-
-          </div>
-        `;
-      }
-
-      // -------------------------------------------------------------
-      // EXPANDED MULTI-COLUMN CARDS LAYOUT
-      // -------------------------------------------------------------
       return `
-        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-4 sm:p-5 rounded-2xl shadow-sm transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/[0.06] hover:border-white/[0.12] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary/80 bg-surface-container' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
+        <div class="pro-timetable-card class-schedule-card type-${typeClass} ${isLive ? 'is-live-now' : ''} p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
           
-          <!-- Left Side: Time Pillar + Main Subject Details -->
-          <div class="flex items-start sm:items-center gap-3.5 sm:gap-5 flex-1 min-w-0">
+          <!-- Left Column: Time & Duration Pillar -->
+          <div class="flex items-start sm:items-center gap-3.5 sm:gap-4.5 flex-1 min-w-0">
             
-            <!-- Time Pillar: High-contrast, spacious and easy to read -->
-            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-2 rounded-2xl bg-surface-container-lowest border border-white/[0.06] text-center select-none shadow-sm">
+            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-2.5 rounded-2xl bg-surface-container-lowest border border-white/[0.08] text-center select-none shadow-sm">
               <span class="font-mono text-sm sm:text-base font-bold text-primary tracking-tight">${startTime}</span>
-              <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[11px]">
-                <span class="material-symbols-outlined text-[13px]">arrow_downward</span>
-                <span>to</span>
+              <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[10px] font-semibold">
+                <span class="material-symbols-outlined text-[12px]">south</span>
+                <span>TO</span>
               </div>
               <span class="font-mono text-xs sm:text-sm font-semibold text-on-surface-variant">${endTime}</span>
               <span class="mt-1 px-1.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-surface-container-high text-outline">${durText}</span>
             </div>
 
-            <!-- Subject & Academic Details -->
+            <!-- Middle Column: Course Details -->
             <div class="space-y-1.5 min-w-0 flex-1">
               
               <!-- Meta Badges: Type Pill + Course Code + Status -->
@@ -959,11 +886,11 @@ const TimetableController = {
               </div>
 
               <!-- Prominent Subject Title -->
-              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
+              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight">
                 ${c.cleanSubject}
               </h3>
 
-              <!-- Faculty & Batch Details -->
+              <!-- Faculty, Venue & Batches -->
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant pt-0.5">
                 ${c.faculty ? `
                   <div class="inline-flex items-center gap-1">
@@ -974,7 +901,7 @@ const TimetableController = {
                 ${coAttending ? `
                   <div class="inline-flex items-center gap-1 text-outline">
                     <span class="material-symbols-outlined text-[15px]">groups</span>
-                    <span class="truncate max-w-[220px] sm:max-w-none font-medium">${coAttending}</span>
+                    <span class="truncate max-w-[240px] sm:max-w-none font-medium">${coAttending}</span>
                   </div>
                 ` : ''}
               </div>
@@ -982,14 +909,14 @@ const TimetableController = {
             </div>
           </div>
 
-          <!-- Right Side: Venue & Action Buttons -->
-          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/[0.06]" onclick="event.stopPropagation()">
+          <!-- Right Column: Venue Locator, Attendance & Resources -->
+          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2.5 shrink-0 pt-2.5 md:pt-0 border-t md:border-t-0 border-white/[0.06]" onclick="event.stopPropagation()">
             
-            <!-- Prominent Venue Locator Button -->
+            <!-- Venue Locator Button -->
             ${c.venue ? `
-              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
+              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show Room ${c.venue} on 3D Campus Map">
                 <span class="material-symbols-outlined text-rose-400 text-[15px]">location_on</span>
-                <span class="text-primary font-mono">Room ${c.venue}</span>
+                <span class="text-primary font-mono font-bold">Room ${c.venue}</span>
               </button>
             ` : `
               <div class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container text-outline text-xs font-medium">
@@ -998,19 +925,16 @@ const TimetableController = {
               </div>
             `}
 
-            <!-- Actions Row: Attendance + Study Notes + Info -->
-            <div class="flex items-center gap-1.5">
-              <!-- Attendance Button -->
-              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
+            <!-- Actions Row: Attendance + Study Material + Details -->
+            <div class="flex items-center gap-2">
+              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track Attendance">
                 <span class="material-symbols-outlined text-[15px]">${attIcon}</span>
                 <span>${attBtnLabel}</span>
               </button>
 
-              <!-- Study Material / Tutorial Link -->
               ${vaultBtn}
 
-              <!-- Info Inspector -->
-              <button type="button" class="btn-class-inspect w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
+              <button type="button" class="btn-class-inspect w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details & Syllabus">
                 <span class="material-symbols-outlined text-[16px]">info</span>
               </button>
             </div>
@@ -1626,49 +1550,84 @@ const TimetableController = {
       });
     }
 
-    const densityBtn = document.getElementById('btn-timetable-density');
-    if (densityBtn && !densityBtn._bound) {
-      densityBtn._bound = true;
-      densityBtn.addEventListener('click', () => {
-        this.densityMode = this.densityMode === 'compact' ? 'expanded' : 'compact';
-        localStorage.setItem('juit_timetable_density', this.densityMode);
-        this.updateDensityButtonUI();
+    const jumpBtn = document.getElementById('btn-jump-to-now');
+    if (jumpBtn && !jumpBtn._bound) {
+      jumpBtn._bound = true;
+      jumpBtn.addEventListener('click', () => {
+        const dayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
+        this.activeDay = (dayCode === 'SUN') ? 'MON' : dayCode;
+        this.viewMode = 'day';
+        this.renderViewModeTabs();
+        this.renderDayPills();
         this.renderSchedule();
+
+        setTimeout(() => {
+          const liveEl = document.querySelector('.is-live-now') || document.querySelector('.pro-timetable-card');
+          if (liveEl) {
+            liveEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            liveEl.classList.add('ring-4', 'ring-primary');
+            setTimeout(() => liveEl.classList.remove('ring-4', 'ring-primary'), 1500);
+          }
+        }, 150);
       });
     }
   },
 
   renderWeekView(container) {
-    const tracker = document.getElementById('timetable-live-tracker');
-    if (tracker) tracker.innerHTML = '';
+    const currentSheet = this.data[this.activeSemesterId];
+    const batchLabel = (!this.activeBatch || this.activeBatch === 'ALL') ? 'All Batches' : `Batch ${this.activeBatch}`;
+
+    let weekTotalClasses = 0;
+    this.days.forEach(d => {
+      weekTotalClasses += this.filterAndMergeEntries(d).length;
+    });
 
     const slots = [
-      { label: '09:00 - 10:00', start: 540, end: 600 },
-      { label: '10:00 - 11:00', start: 600, end: 660 },
-      { label: '11:00 - 12:00', start: 660, end: 720 },
-      { label: '12:00 - 01:00', start: 720, end: 780 },
-      { label: '01:00 - 02:00', start: 780, end: 840, isLunch: true },
-      { label: '02:00 - 03:00', start: 840, end: 900 },
-      { label: '03:00 - 04:00', start: 900, end: 960 },
-      { label: '04:00 - 05:00', start: 960, end: 1020 }
+      { label: '09:00 - 09:55 AM', pNum: 'P1', start: 540, end: 595, colIndex: 1 },
+      { label: '10:00 - 10:55 AM', pNum: 'P2', start: 600, end: 655, colIndex: 2 },
+      { label: '11:00 - 11:55 AM', pNum: 'P3', start: 660, end: 715, colIndex: 3 },
+      { label: '12:00 - 12:55 PM', pNum: 'P4', start: 720, end: 775, colIndex: 4 },
+      { label: '01:00 - 02:00 PM', pNum: 'LUNCH', start: 780, end: 840, isLunch: true, colIndex: 5 },
+      { label: '02:00 - 02:55 PM', pNum: 'P5', start: 840, end: 895, colIndex: 6 },
+      { label: '03:00 - 03:55 PM', pNum: 'P6', start: 900, end: 955, colIndex: 7 },
+      { label: '04:00 - 04:55 PM', pNum: 'P7', start: 960, end: 1015, colIndex: 8 }
     ];
 
     const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
 
     let html = `
-      <div class="dash-card week-matrix-card" style="padding: 14px; overflow-x: auto;">
-        <table class="week-matrix-table" style="width: 100%; border-collapse: separate; border-spacing: 6px; min-width: 850px;">
-          <thead>
-            <tr>
-              <th style="width: 70px; background: var(--bg-elevated); padding: 8px; border-radius: var(--radius-xs);">Day</th>
-              ${slots.map(s => `
-                <th style="padding: 8px; font-size: 0.76rem; background: ${s.isLunch ? 'rgba(249, 115, 22, 0.15)' : 'var(--bg-elevated)'}; border-radius: var(--radius-xs); text-align: center; color: ${s.isLunch ? '#f97316' : 'var(--text-secondary)'};">
-                  ${s.isLunch ? '🍽️ LUNCH (1-2)' : s.label}
-                </th>
-              `).join('')}
-            </tr>
-          </thead>
-          <tbody>
+      <div class="space-y-3">
+        <!-- Week View Banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[20px]">calendar_view_week</span>
+            </div>
+            <div>
+              <span class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Weekly Academic Matrix</span>
+              <span class="text-xs text-on-surface-variant block">${batchLabel} • ${currentSheet?.title || 'Academic Semester'}</span>
+            </div>
+          </div>
+          <span class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+            ${weekTotalClasses} Classes Scheduled (Mon – Sat)
+          </span>
+        </div>
+
+        <!-- Matrix Table Container -->
+        <div class="week-matrix-wrapper overflow-x-auto no-scrollbar">
+          <table class="week-matrix-table">
+            <thead>
+              <tr>
+                <th class="th-sticky-day w-24">Day</th>
+                ${slots.map(s => `
+                  <th class="${s.isLunch ? 'text-amber-400' : ''}">
+                    <span class="block">${s.pNum}</span>
+                    <span class="text-[10px] text-outline font-normal font-mono block">${s.label.split(' ')[0]}</span>
+                  </th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
     `;
 
     this.days.forEach(d => {
@@ -1676,18 +1635,22 @@ const TimetableController = {
       const dayClasses = this.filterAndMergeEntries(d);
 
       html += `
-        <tr class="${isToday ? 'week-matrix-today-row' : ''}">
-          <td style="font-weight: 800; font-size: 0.88rem; text-align: center; background: ${isToday ? 'var(--accent-glow)' : 'var(--bg-elevated)'}; border-radius: var(--radius-xs); color: ${isToday ? 'var(--accent-primary)' : 'var(--text-primary)'}; padding: 10px 4px;">
-            ${d}
-            ${isToday ? '<div style="font-size: 0.65rem; color: var(--color-lab);">TODAY</div>' : ''}
+        <tr class="${isToday ? 'bg-primary/5' : ''}">
+          <td class="td-sticky-day text-center">
+            <div class="font-headline-sm font-bold text-xs sm:text-sm ${isToday ? 'text-primary' : 'text-on-surface'}">${d}</div>
+            <div class="text-[10px] text-outline mt-0.5">${dayClasses.length} cls</div>
+            ${isToday ? '<span class="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.2 rounded bg-primary/20 text-primary">TODAY</span>' : ''}
           </td>
       `;
 
       slots.forEach(s => {
         if (s.isLunch) {
           html += `
-            <td style="background: rgba(249, 115, 22, 0.06); border: 1px dashed rgba(249, 115, 22, 0.2); border-radius: var(--radius-xs); text-align: center; font-size: 0.72rem; color: #f97316; padding: 6px;">
-              Annapurna
+            <td class="p-1.5">
+              <div class="week-lunch-cell">
+                <span>🍽️</span>
+                <span>Lunch</span>
+              </div>
             </td>
           `;
           return;
@@ -1698,28 +1661,38 @@ const TimetableController = {
           if (r) {
             return (r.start < s.end && r.end > s.start);
           }
+          if (c.colIndex && c.colIndex === s.colIndex) return true;
           return false;
         });
 
         if (match) {
           const typeClass = match.type === 'P' ? 'lab' : (match.type === 'T' ? 'tutorial' : 'lecture');
+          const typeLabel = match.type === 'P' ? 'Lab' : (match.type === 'T' ? 'Tut' : 'Lec');
           const cleanName = this.getCleanSubjectName(match.code, match.subject);
 
           html += `
-            <td class="week-slot-cell cell-${typeClass}" data-venue="${match.venue}" style="border-radius: var(--radius-xs); padding: 8px 6px; cursor: pointer;">
-              <div style="font-weight: 700; font-size: 0.82rem; color: var(--text-primary); line-height: 1.2; margin-bottom: 2px;">
-                ${cleanName}
-              </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted);">
-                <span>📍 ${match.venue}</span>
-                <span>${match.typeName ? match.typeName[0] : 'L'}</span>
+            <td class="p-1.5">
+              <div class="week-matrix-cell-card cell-${typeClass}" data-class-data='${JSON.stringify({ ...match, cleanSubject: cleanName }).replace(/'/g, "&apos;")}' title="${cleanName} (${match.code}) - Room ${match.venue || 'TBA'}">
+                <div class="flex items-center justify-between gap-1 leading-tight">
+                  <span class="font-mono text-[10px] font-bold text-on-surface truncate">${match.code}</span>
+                  <span class="text-[9px] font-bold px-1 py-0.2 rounded bg-black/30 text-white">${typeLabel}</span>
+                </div>
+                <div class="font-headline-sm text-xs font-bold text-on-surface line-clamp-1 my-1">
+                  ${cleanName}
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-on-surface-variant font-mono">
+                  <span class="text-primary font-semibold">📍 ${match.venue || 'TBA'}</span>
+                  ${match.faculty ? `<span>Prof. ${match.faculty}</span>` : ''}
+                </div>
               </div>
             </td>
           `;
         } else {
           html += `
-            <td style="background: var(--bg-card); border-radius: var(--radius-xs); text-align: center; font-size: 0.7rem; color: var(--text-muted); opacity: 0.4;">
-              —
+            <td class="p-1.5 text-center">
+              <div class="h-full min-h-[64px] flex items-center justify-center text-outline/30 text-xs font-mono">
+                —
+              </div>
             </td>
           `;
         }
@@ -1729,19 +1702,25 @@ const TimetableController = {
     });
 
     html += `
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
 
     container.innerHTML = html;
 
-    container.querySelectorAll('.week-slot-cell').forEach(cell => {
+    // Bind click on matrix cells to open inspector modal
+    container.querySelectorAll('.week-matrix-cell-card').forEach(cell => {
       cell.addEventListener('click', () => {
-        const venue = cell.dataset.venue;
-        if (venue && window.CampusMap) {
-          window.App.switchView('campus');
-          window.CampusMap.focusVenue(venue);
+        try {
+          const raw = cell.dataset.classData;
+          if (raw) {
+            const data = JSON.parse(raw);
+            this.openClassInspector(data);
+          }
+        } catch (err) {
+          console.error(err);
         }
       });
     });

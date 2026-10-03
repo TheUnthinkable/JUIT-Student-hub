@@ -9897,3 +9897,146 @@ html, body {
   transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   EXECUTIVE PROFESSIONAL TIMETABLE & WEEKLY MATRIX STYLING
+   ========================================================================== */
+.pro-timetable-card {
+  position: relative;
+  background: var(--bg-card, #131722);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.pro-timetable-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.pro-timetable-card.type-lecture::before {
+  background: #f59e0b;
+}
+
+.pro-timetable-card.type-lab::before {
+  background: #10b981;
+}
+
+.pro-timetable-card.type-tutorial::before {
+  background: #0284c7;
+}
+
+.pro-timetable-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pro-timetable-card:hover::before {
+  width: 6px;
+}
+
+.pro-timetable-card.is-live-now {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.2) !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(19, 23, 34, 0.95) 100%) !important;
+}
+
+.week-matrix-wrapper {
+  background: var(--bg-card, #131722);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.week-matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 900px;
+}
+
+.week-matrix-table th {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #94a3b8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.week-matrix-table th.th-sticky-day,
+.week-matrix-table td.td-sticky-day {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: #11141e;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.week-matrix-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: top;
+}
+
+.week-matrix-cell-card {
+  padding: 8px;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  height: 100%;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.week-matrix-cell-card:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.week-matrix-cell-card.cell-lecture {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.week-matrix-cell-card.cell-lab {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.week-matrix-cell-card.cell-tutorial {
+  background: rgba(2, 132, 199, 0.12);
+  border-color: rgba(2, 132, 199, 0.3);
+}
+
+.week-lunch-cell {
+  background: rgba(249, 115, 22, 0.06);
+  border: 1px dashed rgba(249, 115, 22, 0.2);
+  border-radius: 8px;
+  text-align: center;
+  padding: 12px 4px;
+  color: #f97316;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+

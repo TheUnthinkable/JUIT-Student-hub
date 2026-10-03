@@ -640,85 +640,87 @@
       <!-- ==================================================================
            VIEW 2: CALM SCHEDULE (TIMETABLE)
            ================================================================== -->
-      <section class="app-view-panel flex flex-col w-full space-y-2.5 sm:space-y-3" id="view-timetable">
-        <!-- Compact Timetable Executive Header Bar -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 bg-surface-container-low p-3 sm:p-3.5 rounded-2xl border border-white/[0.06] shadow-sm">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[22px]">calendar_clock</span>
-            </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h1 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Academic Timetable</h1>
-                <span class="inline-flex items-center font-mono text-[11px] px-2 py-0.5 rounded-lg bg-primary/15 text-primary font-bold border border-primary/25" id="timetable-batch-display-label">Batch 26BT10</span>
-                <span class="inline-flex items-center font-label-sm text-[11px] px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface-variant font-medium" id="timetable-sem-badge">B.Tech. 1st Sem</span>
+      <section class="app-view-panel flex flex-col w-full space-y-4" id="view-timetable">
+        <!-- 1. Executive Modern Header: Title, Academic Identity & Selectors -->
+        <div class="bg-surface-container-low p-4 sm:p-5 rounded-2xl border border-white/[0.06] shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            
+            <!-- Academic Title & Badges -->
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0 border border-primary/25 shadow-inner">
+                <span class="material-symbols-outlined text-[26px]">calendar_month</span>
               </div>
-              <p class="text-[11px] text-on-surface-variant mt-0.5">Waknaghat Campus • Lectures, Tutorials & Labs</p>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h1 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">Academic Timetable</h1>
+                  <span class="inline-flex items-center font-mono text-xs px-2.5 py-0.5 rounded-lg bg-primary/20 text-primary font-bold border border-primary/30" id="timetable-batch-display-label">Batch 26BT10</span>
+                  <span class="inline-flex items-center text-xs px-2.5 py-0.5 rounded-lg bg-surface-container-high text-on-surface-variant font-medium" id="timetable-sem-badge">B.Tech 1st Sem</span>
+                </div>
+                <p class="text-xs text-on-surface-variant mt-0.5">Waknaghat Campus • Lecture Theatres, Tutorial Rooms & Labs</p>
+              </div>
             </div>
-          </div>
-          <!-- Semester & Batch Controls -->
-          <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
-            <select class="select-styled w-full max-w-full text-xs font-medium py-1.5 px-2.5 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-sem-select" aria-label="Select Semester"></select>
-            <select class="select-styled w-full max-w-full text-xs font-medium py-1.5 px-2.5 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-batch-select" aria-label="Select Batch"></select>
-          </div>
-        </div>
 
-        <!-- Compact Unified Toolbar: Search + Quick Batches + View Mode Tabs + Density Toggle -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 bg-surface-container-lowest/60 p-2 rounded-xl border border-white/[0.04]">
-          <div class="flex items-center gap-2 flex-1 min-w-0">
-            <!-- Search Input -->
-            <div class="relative flex-1 max-w-xs">
-              <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
-              <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container-low pl-8 pr-8 py-1.5 rounded-lg text-on-surface placeholder:text-outline font-body-sm text-xs border border-white/[0.06] focus:outline-none focus:border-primary" />
-              <button type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[14px]">close</span></button>
+            <!-- Header Controls: Sem & Batch Selectors + View Mode Tabs -->
+            <div class="flex flex-wrap items-center gap-2.5">
+              <select class="select-styled text-xs font-semibold py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08] text-on-surface focus:border-primary" id="timetable-sem-select" aria-label="Select Semester"></select>
+              <select class="select-styled text-xs font-semibold py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08] text-on-surface focus:border-primary" id="timetable-batch-select" aria-label="Select Batch"></select>
+
+              <!-- View Mode Tabs: Day View vs Weekly Grid -->
+              <div class="flex items-center rounded-xl bg-surface-container p-1 border border-white/[0.06]" id="timetable-view-mode-tabs">
+                <button type="button" class="term-btn active text-xs font-bold py-1.5 px-3 rounded-lg" data-mode="day">
+                  <span class="material-symbols-outlined text-[15px] align-middle mr-1">view_agenda</span>
+                  <span>Day View</span>
+                </button>
+                <button type="button" class="term-btn text-xs font-bold py-1.5 px-3 rounded-lg text-on-surface-variant hover:text-on-surface" data-mode="week">
+                  <span class="material-symbols-outlined text-[15px] align-middle mr-1">grid_view</span>
+                  <span>Weekly Grid</span>
+                </button>
+              </div>
             </div>
-            <!-- Quick Batch Filter Chips (Compact Scroll) -->
+          </div>
+
+          <!-- Quick Batches & Search Bar -->
+          <div class="mt-3.5 pt-3 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0" id="quick-batch-container">
               <!-- Dynamically populated -->
             </div>
-          </div>
-
-          <div class="flex items-center gap-1.5 shrink-0 justify-between md:justify-end">
-            <!-- Mode Switcher Tabs (Today, Day Flow, Week Matrix) -->
-            <div class="flex items-center rounded-lg bg-surface-container-low p-0.5 border border-white/[0.06]" id="timetable-view-mode-tabs">
-              <button type="button" class="term-btn active text-xs py-1 px-2.5" data-mode="today">Today</button>
-              <button type="button" class="term-btn text-xs py-1 px-2.5" data-mode="day">Day Flow</button>
-              <button type="button" class="term-btn text-xs py-1 px-2.5" data-mode="week">Week Matrix</button>
+            <div class="relative w-full sm:w-64 shrink-0">
+              <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+              <input type="text" id="timetable-search-input" placeholder="Search course, code or faculty..." class="w-full bg-surface-container pl-8 pr-7 py-1.5 rounded-xl text-on-surface placeholder:text-outline text-xs border border-white/[0.06] focus:outline-none focus:border-primary" />
+              <button type="button" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary cursor-pointer" id="btn-clear-timetable-search"><span class="material-symbols-outlined text-[14px]">close</span></button>
             </div>
-            <!-- Layout Density Switcher: Compact vs Expanded -->
-            <button type="button" id="btn-timetable-density" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-xs font-semibold border border-white/[0.06] transition-colors cursor-pointer" title="Toggle Compact / Detailed Layout">
-              <span class="material-symbols-outlined text-[15px]" id="icon-timetable-density">density_medium</span>
-              <span class="hidden sm:inline" id="text-timetable-density">Compact View</span>
-            </button>
           </div>
         </div>
 
-        <!-- Sleek Horizontal Day Flow Segmented Control (Height: 38px) -->
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full" id="timetable-day-pills">
-          <!-- Dynamically rendered day pills (MON, TUE, WED, THU, FRI, SAT) -->
+        <!-- 2. Day Schedule Navigation Bar (Active in Day View) -->
+        <div id="timetable-day-nav-wrapper" class="space-y-3">
+          <!-- Segmented Day Selector Pills: MON, TUE, WED, THU, FRI, SAT -->
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full" id="timetable-day-pills">
+            <!-- Dynamically rendered day pills -->
+          </div>
+
+          <!-- Day Schedule Header Row -->
+          <div class="flex items-center justify-between px-1" id="timetable-timeline-wrapper">
+            <div class="flex items-center gap-2">
+              <h2 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold" id="schedule-day-title">Tuesday Schedule</h2>
+              <span class="text-xs text-on-surface-variant hidden sm:inline" id="timetable-timeline-heading">• Waknaghat Academic Blocks</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" id="btn-jump-to-now" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-bold border border-white/[0.08] transition-colors cursor-pointer">
+                <span class="material-symbols-outlined text-[15px]">near_me</span>
+                <span>Jump to Current Period</span>
+              </button>
+              <span class="inline-flex items-center font-label-sm text-xs px-3 py-1 rounded-full bg-surface-container-high text-primary font-bold border border-primary/20" id="schedule-classes-count">4 Classes</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Timeline Section Heading & Jump Button -->
-        <div class="flex items-center justify-between pt-0.5 px-0.5" id="timetable-timeline-wrapper">
-          <div class="flex items-center gap-2">
-            <h2 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold" id="schedule-day-title">Tuesday Schedule</h2>
-            <span class="text-xs text-on-surface-variant hidden sm:inline" id="timetable-timeline-heading">• Waknaghat Academic Blocks</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" id="btn-jump-to-now" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-bold border border-white/[0.08] transition-colors cursor-pointer">
-              <span class="material-symbols-outlined text-[14px]">my_location</span>
-              <span>Now</span>
-            </button>
-            <span class="inline-flex items-center font-label-sm text-xs px-2.5 py-0.5 rounded-full bg-surface-container-high text-primary font-bold border border-primary/20" id="schedule-classes-count">4 Classes</span>
-          </div>
-        </div>
+        <!-- Backwards-compatible container for live tracker (clean & unobtrusive) -->
+        <div id="timetable-live-tracker" class="hidden"></div>
 
-        <!-- Compact Period Scrubber Tracker -->
-        <div id="timetable-live-tracker"></div>
-
-        <!-- Schedule Stream: High-Density Executive Class Rows -->
-        <div class="space-y-1.5" id="timetable-classes-list">
-          <!-- Dynamically populated by TimetableController with sleek compact rows -->
+        <!-- Main Timetable Content (Day Schedule Cards Stream or Weekly Matrix Table) -->
+        <div class="space-y-3.5" id="timetable-classes-list">
+          <!-- Dynamically populated by TimetableController -->
         </div>
       </section>
 
