@@ -87,11 +87,19 @@ const App = {
     this.refreshDashboard();
     this.startRealTimeCountdowns();
 
-    // 7. Check if first time onboarding prompt needed
-    if (!localStorage.getItem('juit_onboarded_v1')) {
+    // 7. Check if student needs to be prompted for profile info first
+    const profileConfigured = localStorage.getItem('juit_profile_configured');
+    const scholarName = (window.JUIT_PROFILE?.name || '').trim();
+    const hasCustomName = scholarName !== '' && 
+      scholarName.toLowerCase() !== 'scholar' && 
+      scholarName.toLowerCase() !== 'juit scholar' && 
+      !scholarName.toLowerCase().startsWith('aarav');
+
+    // Prompt for profile info first if not yet configured by the student
+    if (profileConfigured !== 'true' && profileConfigured !== 'guest' && !hasCustomName) {
       setTimeout(() => {
-        this.openOnboardingModal();
-      }, 600);
+        this.openAccountModal(true);
+      }, 300);
     }
 
     console.log('JUIT Student Hub ready.');
@@ -167,6 +175,9 @@ const App = {
       }
     } else if (viewId === 'bus' && window.BusGuideController) {
       window.BusGuideController.init();
+    } else if (viewId === 'portals' && window.PortalsController) {
+      window.PortalsController.renderCategoryFilters();
+      window.PortalsController.renderPortals();
     } else if (viewId === 'admin' && window.AdminController) {
       window.AdminController.checkAdminStatus();
     } else if (viewId === 'settings') {
@@ -238,8 +249,9 @@ const App = {
       if (hrs < 12) greet = 'Good morning';
       else if (hrs < 17) greet = 'Good afternoon';
 
-      const scholarName = window.JUIT_PROFILE?.name || 'Scholar';
-      const firstName = (scholarName === 'Scholar' || scholarName === 'JUIT Scholar') ? 'Scholar' : scholarName.split(' ')[0];
+      const scholarName = (window.JUIT_PROFILE?.name || '').trim();
+      const isGeneric = !scholarName || scholarName.toLowerCase() === 'scholar' || scholarName.toLowerCase() === 'juit scholar' || scholarName.toLowerCase().startsWith('aarav');
+      const firstName = isGeneric ? 'Scholar' : scholarName.split(' ')[0];
       if (greetingDisplay) {
         greetingDisplay.textContent = `${greet}, ${firstName} 👋`;
       }
@@ -277,6 +289,8 @@ const App = {
 
   /* ================= DASHBOARD AGGREGATOR ================= */
   refreshDashboard() {
+    this.updateDashboardGreetingSub();
+    this.updateDashboardStats();
     this.updateDashboardLiveClassCard();
     this.updateDashboardTodaySchedule();
     this.updateDashboardMessSnapshot();
@@ -284,6 +298,115 @@ const App = {
     this.updateDashboardMilestone();
     this.updateDashboardFastDownloads();
     this.updateUserProfileBadges();
+  },
+
+  updateDashboardGreetingSub() {
+    const subEl = document.getElementById('dash-greeting-sub');
+    if (!subEl) return;
+
+    const now = new Date();
+    const hrs = now.getHours();
+    const dayIndex = now.getDay();
+    const isSunday = (dayIndex === 0);
+    const batch = window.JUIT_PROFILE?.batch || '26BT10';
+    const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dayIndex];
+    const todayClasses = window.TimetableController ? window.TimetableController.filterAndMergeEntries(isSunday ? 'MON' : currentDayCode) : [];
+
+    if (isSunday) {
+      subEl.textContent = 'Sunday campus leisure in Waknaghat pine hills. Annapurna dining serving weekend meals; LRC library open.';
+      return;
+    }
+
+    if (hrs < 9) {
+      if (todayClasses.length > 0) {
+        const firstTime = todayClasses[0].time?.split(/[-–—]/)[0]?.trim() || '09:00 AM';
+        subEl.textContent = `Lectures begin at ${firstTime} for Batch ${batch}. Check your classroom venues and tutorial materials below.`;
+      } else {
+        subEl.textContent = `No classes scheduled today for Batch ${batch}. Enjoy a productive self-study day at LRC library.`;
+      }
+    } else if (hrs < 17) {
+      if (todayClasses.length > 0) {
+        subEl.textContent = `Academic day in progress. You have ${todayClasses.length} lectures & laboratory sessions scheduled today for Batch ${batch}.`;
+      } else {
+        subEl.textContent = `Free academic day for Batch ${batch}. LRC library and study rooms are open.`;
+      }
+    } else if (hrs < 21) {
+      subEl.textContent = `Lectures concluded for today. Grab tea at Peach Tree, head to the sports complex, or relax before evening dining.`;
+    } else {
+      subEl.textContent = `Night hours at JUIT. Annapurna dining hall open; night milk counter at Dining Hall 1. Rest up for tomorrow!`;
+    }
+  },
+
+  updateDashboardStats() {
+    const countEl = document.getElementById('dash-stat-classes-today');
+    const countSubEl = document.getElementById('dash-stat-classes-sub');
+    const venueEl = document.getElementById('dash-stat-next-venue');
+    const venueSubEl = document.getElementById('dash-stat-next-venue-sub');
+    const mealEl = document.getElementById('dash-stat-meal-now');
+    const mealSubEl = document.getElementById('dash-stat-meal-sub');
+    const attEl = document.getElementById('dash-stat-att-target');
+    const attStatusEl = document.getElementById('dash-stat-att-status');
+
+    const now = new Date();
+    const dayIndex = now.getDay();
+    const isSunday = (dayIndex === 0);
+    const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][dayIndex];
+    const todayClasses = window.TimetableController ? window.TimetableController.filterAndMergeEntries(isSunday ? 'MON' : currentDayCode) : [];
+    const nowMins = window.TimetableController ? window.TimetableController.getCurrentMinutes() : (now.getHours() * 60 + now.getMinutes());
+
+    // 1. Classes count
+    if (countEl) {
+      countEl.textContent = isSunday ? 'Weekend' : `${todayClasses.length} Classes`;
+    }
+    if (countSubEl) {
+      countSubEl.textContent = isSunday ? 'No regular lectures' : `Batch ${window.JUIT_PROFILE?.batch || '26BT10'}`;
+    }
+
+    // 2. Next Venue
+    if (venueEl) {
+      if (isSunday) {
+        venueEl.textContent = 'LRC Reading';
+        if (venueSubEl) venueSubEl.textContent = 'Open 24x7 till midnight';
+      } else {
+        let upcoming = null;
+        for (const c of todayClasses) {
+          const r = window.TimetableController?.parseTimeRange(c.time);
+          if (r && nowMins <= r.end) {
+            upcoming = c;
+            break;
+          }
+        }
+        if (upcoming) {
+          venueEl.textContent = upcoming.venue ? `Room ${upcoming.venue}` : 'Campus LT';
+          if (venueSubEl) venueSubEl.textContent = `${upcoming.time.split(/[-–—]/)[0].trim()} • ${upcoming.typeName || 'Class'}`;
+        } else if (todayClasses.length > 0) {
+          venueEl.textContent = 'Done for Today';
+          if (venueSubEl) venueSubEl.textContent = 'All lectures concluded';
+        } else {
+          venueEl.textContent = 'No Lectures';
+          if (venueSubEl) venueSubEl.textContent = 'Campus leisure / self study';
+        }
+      }
+    }
+
+    // 3. Active Meal
+    const hrs = now.getHours();
+    let mealName = 'Dinner';
+    let mealTime = '07:30 – 09:00 PM';
+    if (hrs < 10) {
+      mealName = 'Breakfast';
+      mealTime = '07:30 – 09:30 AM';
+    } else if (hrs < 15) {
+      mealName = 'Lunch';
+      mealTime = '12:00 – 02:00 PM';
+    }
+    if (mealEl) mealEl.textContent = mealName;
+    if (mealSubEl) mealSubEl.textContent = mealTime;
+
+    // 4. Attendance Target
+    const goal = window.JUIT_PROFILE?.attendanceGoal || '80';
+    if (attEl) attEl.textContent = `${goal}% Target`;
+    if (attStatusEl) attStatusEl.textContent = 'Safe Academic Standing';
   },
 
   getVaultResourceForClass(subjectOrCode, code, type) {
@@ -490,12 +613,14 @@ const App = {
   },
 
   updateUserProfileBadges() {
-    const p = window.JUIT_PROFILE || { programme: 'B.Tech', branch: 'CSE', semester: '4', batch: 'B1' };
-    const nameStr = p.name && p.name !== 'Scholar' ? p.name : 'JUIT Scholar';
-    const rollStr = p.rollNo || '25B17EC171';
+    const p = window.JUIT_PROFILE || { programme: 'B.Tech', branch: 'CSE', semester: '1', batch: '26BT10' };
+    const rawName = (p.name || '').trim();
+    const isGeneric = !rawName || rawName.toLowerCase() === 'scholar' || rawName.toLowerCase() === 'juit scholar' || rawName.toLowerCase().startsWith('aarav');
+    const nameStr = isGeneric ? 'Scholar' : rawName;
+    const rollStr = p.rollNo || 'Not Assigned';
     const progStr = p.programme || 'B.Tech';
-    const semStr = p.semester || '4';
-    const batchStr = p.batch || 'B1';
+    const semStr = p.semester || '1';
+    const batchStr = p.batch || '26BT10';
     const hostelStr = p.hostel || 'Hostel Resident';
 
     // 1. Desktop sidebar
@@ -513,7 +638,7 @@ const App = {
       if (pBatch) pBatch.textContent = `Batch ${batchStr} • Sem ${semStr} · Solan Hills`;
     }
 
-    // 3. Dashboard telemetry chips
+    // 3. Dashboard telemetry & personalization banner
     const dashBatch = document.getElementById('dash-telemetry-batch');
     if (dashBatch) dashBatch.textContent = `Batch ${batchStr} · Sem ${semStr}`;
     const dashAtt = document.getElementById('dash-telemetry-att');
@@ -522,11 +647,18 @@ const App = {
       dashAtt.textContent = `Attendance Target: ${attGoal}%`;
     }
 
+    const bannerName = document.getElementById('dash-banner-student-name');
+    if (bannerName) bannerName.textContent = nameStr;
+    const bannerBatch = document.getElementById('dash-banner-batch-pill');
+    if (bannerBatch) bannerBatch.textContent = `Batch ${batchStr}`;
+    const bannerAcad = document.getElementById('dash-banner-acad-pill');
+    if (bannerAcad) bannerAcad.textContent = `${progStr} ${p.branch || 'CSE'} • Sem ${semStr}`;
+
     // 4. Settings view card display
     const setDisplay = document.getElementById('settings-display-name');
     if (setDisplay) setDisplay.textContent = nameStr;
     const setRoll = document.getElementById('settings-display-roll');
-    if (setRoll) setRoll.textContent = `Roll No: ${rollStr}`;
+    if (setRoll) setRoll.textContent = p.rollNo ? `Roll No: ${rollStr}` : 'Roll No: Not Assigned';
     const setPill = document.getElementById('settings-display-academic-pill');
     if (setPill) setPill.textContent = `${progStr} ${p.branch || 'CSE'} • Sem ${semStr} • Batch ${batchStr}`;
     const setResidence = document.getElementById('settings-display-residence-label');
@@ -539,7 +671,7 @@ const App = {
       let greet = 'Good evening';
       if (hrs < 12) greet = 'Good morning';
       else if (hrs < 17) greet = 'Good afternoon';
-      const firstName = (nameStr === 'JUIT Scholar' || nameStr === 'Scholar') ? 'Scholar' : nameStr.split(' ')[0];
+      const firstName = isGeneric ? 'Scholar' : nameStr.split(' ')[0];
       greetingDisplay.textContent = `${greet}, ${firstName} 👋`;
     }
   },
@@ -947,6 +1079,123 @@ const App = {
   },
 
   /* ================= STUDENT ACCOUNT & PROFILE MANAGEMENT ================= */
+  getSemesterKey(programme, semester) {
+    const prog = (programme || 'B.Tech').toUpperCase();
+    const sem = String(semester || '1');
+    if (prog.includes('M.TECH') || prog.includes('MSC') || prog.includes('M.SC')) {
+      if (sem === '1') return 'odd_mtech-msc_1_sem';
+      if (sem === '2') return 'even_mtech-msc_2_sem';
+      if (sem === '3') return 'odd_mtech-msc_3_sem_phd2';
+      if (sem === '4') return 'even_mtech-msc_4_sem_phd2';
+      return 'odd_mtech-msc_1_sem';
+    }
+    const map = {
+      '1': 'odd_btech_1_sem',
+      '2': 'even_btech_2_sem',
+      '3': 'odd_btech_3_sem',
+      '4': 'even_btech_4_sem',
+      '5': 'odd_btech_5_sem',
+      '6': 'even_btech_6_sem',
+      '7': 'odd_btech_7_sem',
+      '8': 'even_btech_8_sem'
+    };
+    return map[sem] || 'odd_btech_1_sem';
+  },
+
+  getAvailableBatchesForSemester(programme, semester) {
+    const semKey = this.getSemesterKey(programme, semester);
+    const timetableData = window.JUIT_DATA?.timetable || window.TimetableController?.data || {};
+    const sheet = timetableData[semKey];
+    if (sheet && Array.isArray(sheet.batches) && sheet.batches.length > 0) {
+      return sheet.batches;
+    }
+    return ['26BT10', '26BT01', 'ALL'];
+  },
+
+  populateBatchesSelect(selectEl, programme, semester, currentBatch) {
+    if (!selectEl) return;
+    const batches = this.getAvailableBatchesForSemester(programme, semester);
+    let html = '<option value="ALL">All Batches (Combined Schedule)</option>';
+    const regularBatches = batches.filter(b => !['ALL', 'BACK'].includes(b) && !b.startsWith('PHD_') && !b.startsWith('/'));
+    const specialBatches = batches.filter(b => ['BACK'].includes(b) || b.startsWith('PHD_') || b.startsWith('/'));
+
+    regularBatches.forEach(b => {
+      html += `<option value="${b}">Batch ${b}</option>`;
+    });
+
+    if (specialBatches.length > 0) {
+      html += '<optgroup label="Special / Ph.D / Backlog Groups">';
+      specialBatches.forEach(b => {
+        html += `<option value="${b}">${b}</option>`;
+      });
+      html += '</optgroup>';
+    }
+
+    selectEl.innerHTML = html;
+
+    if (currentBatch && batches.includes(currentBatch)) {
+      selectEl.value = currentBatch;
+    } else if (regularBatches.length > 0) {
+      if (regularBatches.includes('26BT10')) {
+        selectEl.value = '26BT10';
+      } else {
+        selectEl.value = regularBatches[0];
+      }
+    } else {
+      selectEl.value = 'ALL';
+    }
+  },
+
+  updateModalCardPreview() {
+    const nameInput = document.getElementById('account-name-input');
+    const rollInput = document.getElementById('account-roll-input');
+    const progSelect = document.getElementById('account-prog-select');
+    const branchSelect = document.getElementById('account-branch-select');
+    const semSelect = document.getElementById('account-sem-select');
+    const batchSelect = document.getElementById('account-batch-select');
+    const hostelSelect = document.getElementById('account-hostel-select');
+
+    const cardName = document.getElementById('account-display-name');
+    const cardRoll = document.getElementById('account-display-roll');
+    const cardAcademic = document.getElementById('account-display-academic');
+    const cardResidence = document.getElementById('account-display-residence');
+
+    const typedName = (nameInput?.value || '').trim();
+    const isGeneric = !typedName || typedName.toLowerCase() === 'scholar' || typedName.toLowerCase() === 'juit scholar' || typedName.toLowerCase().startsWith('aarav');
+    const displayName = isGeneric ? 'Scholar' : typedName;
+    const roll = rollInput?.value?.trim() || 'Not Assigned';
+    const prog = progSelect?.value || 'B.Tech';
+    const branch = branchSelect?.value || 'CSE';
+    const sem = semSelect?.value || '1';
+    const batch = batchSelect?.value || '26BT10';
+    const hostel = hostelSelect?.value || 'Hostel Resident';
+
+    if (cardName) cardName.textContent = displayName;
+    if (cardRoll) cardRoll.textContent = roll === 'Not Assigned' ? 'Roll No: Not Assigned' : `Roll No: ${roll}`;
+    if (cardAcademic) cardAcademic.textContent = `${prog} ${branch} • Sem ${sem} • Batch ${batch}`;
+    if (cardResidence) cardResidence.textContent = hostel;
+  },
+
+  saveProfileAndSync(p) {
+    const semKey = this.getSemesterKey(p.programme, p.semester);
+    const validBatches = this.getAvailableBatchesForSemester(p.programme, p.semester);
+    if (!validBatches.includes(p.batch)) {
+      p.batch = validBatches.includes('26BT10') ? '26BT10' : (validBatches[0] || 'ALL');
+    }
+
+    window.JUIT_PROFILE = Object.assign({}, window.JUIT_PROFILE || {}, p);
+    localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));
+    localStorage.setItem('juit_selected_sem', semKey);
+    localStorage.setItem('juit_selected_batch', p.batch);
+    localStorage.setItem('juit_onboarded_v1', 'true');
+    localStorage.setItem('juit_profile_configured', 'true');
+
+    this.applyProfileToTimetable(window.JUIT_PROFILE);
+    this.updateUserProfileBadges();
+    this.refreshDashboard();
+    this.syncSettingsView();
+  },
+
   bindOnboardingModal() {
     this.bindAccountModal();
   },
@@ -960,7 +1209,12 @@ const App = {
     const modalThemeBtn = document.getElementById('btn-modal-theme-toggle');
 
     // Close handlers
-    const closeModal = () => this.closeAccountModal();
+    const closeModal = () => {
+      if (localStorage.getItem('juit_profile_configured') !== 'true') {
+        localStorage.setItem('juit_profile_configured', 'guest');
+      }
+      this.closeAccountModal();
+    };
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (modal) {
@@ -979,63 +1233,31 @@ const App = {
     const hostelSelect = document.getElementById('account-hostel-select');
     const attGoalSelect = document.getElementById('account-att-goal-select');
 
-    // Digital card preview elements
-    const cardName = document.getElementById('account-display-name');
-    const cardRoll = document.getElementById('account-display-roll');
-    const cardAcademic = document.getElementById('account-display-academic');
-    const cardResidence = document.getElementById('account-display-residence');
-
-    const updateCardPreview = () => {
-      const name = nameInput?.value?.trim() || 'Aarav Sharma';
-      const roll = rollInput?.value?.trim() || '25B17EC171';
-      const prog = progSelect?.value || 'B.Tech';
-      const branch = branchSelect?.value || 'CSE';
-      const sem = semSelect?.value || '4';
-      const batch = batchSelect?.value || 'B1';
-      const hostel = hostelSelect?.value || 'Hostel Resident';
-
-      if (cardName) cardName.textContent = name;
-      if (cardRoll) cardRoll.textContent = `Roll No: ${roll}`;
-      if (cardAcademic) cardAcademic.textContent = `${prog} ${branch} • Sem ${sem} • Batch ${batch}`;
-      if (cardResidence) cardResidence.textContent = hostel;
-    };
-
-    const populateBatches = (selectEl, selectedVal) => {
-      if (!selectEl) return;
-      const sem = semSelect ? semSelect.value : '4';
-      let html = '';
-      
-      // Standard tutorial/practical batch codes
-      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
-        html += `<option value="${b}">Batch ${b}</option>`;
+    if (progSelect) {
+      progSelect.addEventListener('change', () => {
+        const isMtech = progSelect.value.includes('M.Tech');
+        if (semSelect) {
+          semSelect.innerHTML = isMtech
+            ? '<option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option>'
+            : '<option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option><option value="5">Semester 5</option><option value="6">Semester 6</option><option value="7">Semester 7</option><option value="8">Semester 8</option>';
+        }
+        this.populateBatchesSelect(batchSelect, progSelect.value, semSelect?.value || '1', batchSelect?.value);
+        this.updateModalCardPreview();
       });
-
-      // Also support legacy/official 26BT/25BT codes
-      let prefix = '26BT';
-      if (sem === '3' || sem === '4') prefix = '25BT';
-      else if (sem === '5' || sem === '6') prefix = '24BT';
-      else if (sem === '7' || sem === '8') prefix = '23BT';
-
-      for (let i = 1; i <= 20; i++) {
-        const code = `${prefix}${String(i).padStart(2, '0')}`;
-        html += `<option value="${code}">${code}</option>`;
-      }
-      selectEl.innerHTML = html;
-      if (selectedVal) selectEl.value = selectedVal;
-    };
+    }
 
     if (semSelect) {
       semSelect.addEventListener('change', () => {
-        populateBatches(batchSelect, batchSelect?.value);
-        updateCardPreview();
+        this.populateBatchesSelect(batchSelect, progSelect?.value || 'B.Tech', semSelect.value, batchSelect?.value);
+        this.updateModalCardPreview();
       });
     }
-    if (branchSelect) branchSelect.addEventListener('change', updateCardPreview);
-    if (progSelect) progSelect.addEventListener('change', updateCardPreview);
-    if (nameInput) nameInput.addEventListener('input', updateCardPreview);
-    if (rollInput) rollInput.addEventListener('input', updateCardPreview);
-    if (hostelSelect) hostelSelect.addEventListener('change', updateCardPreview);
-    if (batchSelect) batchSelect.addEventListener('change', updateCardPreview);
+
+    if (branchSelect) branchSelect.addEventListener('change', () => this.updateModalCardPreview());
+    if (nameInput) nameInput.addEventListener('input', () => this.updateModalCardPreview());
+    if (rollInput) rollInput.addEventListener('input', () => this.updateModalCardPreview());
+    if (hostelSelect) hostelSelect.addEventListener('change', () => this.updateModalCardPreview());
+    if (batchSelect) batchSelect.addEventListener('change', () => this.updateModalCardPreview());
 
     // Modal theme toggle button
     if (modalThemeBtn) {
@@ -1062,23 +1284,21 @@ const App = {
     // Reset button
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
-        if (confirm('Reset profile to default JUIT Scholar details?')) {
+        if (confirm('Reset profile to default JUIT Scholar details (Sem 1, Batch 26BT10)?')) {
+          localStorage.removeItem('juit_profile_configured');
           const defaultProfile = {
-            name: 'Aarav Sharma',
-            rollNo: '25B17EC171',
+            name: '',
+            rollNo: '',
             programme: 'B.Tech',
             branch: 'CSE',
-            semester: '4',
-            batch: 'B1',
+            semester: '1',
+            batch: '26BT10',
             hostel: 'Hostel Resident',
-            attendanceGoal: '80'
+            attendanceGoal: '80',
+            attendance: {}
           };
-          window.JUIT_PROFILE = defaultProfile;
-          localStorage.setItem('juit_student_profile', JSON.stringify(defaultProfile));
-          localStorage.setItem('juit_selected_batch', 'B1');
-          this.applyProfileToTimetable(defaultProfile);
-          this.updateUserProfileBadges();
-          this.refreshDashboard();
+          this.saveProfileAndSync(defaultProfile);
+          localStorage.removeItem('juit_profile_configured');
           this.closeAccountModal();
         }
       });
@@ -1088,24 +1308,18 @@ const App = {
     if (form) {
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const p = window.JUIT_PROFILE || {};
-        p.name = nameInput?.value?.trim() || 'Aarav Sharma';
-        p.rollNo = rollInput?.value?.trim() || '25B17EC171';
-        p.programme = progSelect?.value || 'B.Tech';
-        p.branch = branchSelect?.value || 'CSE';
-        p.semester = semSelect?.value || '4';
-        p.batch = batchSelect?.value || 'B1';
-        p.hostel = hostelSelect?.value || 'Hostel Resident';
-        p.attendanceGoal = attGoalSelect?.value || '80';
+        const p = {
+          name: nameInput?.value?.trim() || '',
+          rollNo: rollInput?.value?.trim() || '',
+          programme: progSelect?.value || 'B.Tech',
+          branch: branchSelect?.value || 'CSE',
+          semester: semSelect?.value || '1',
+          batch: batchSelect?.value || '26BT10',
+          hostel: hostelSelect?.value || 'Hostel Resident',
+          attendanceGoal: attGoalSelect?.value || '80'
+        };
 
-        window.JUIT_PROFILE = p;
-        localStorage.setItem('juit_student_profile', JSON.stringify(p));
-        localStorage.setItem('juit_selected_batch', p.batch);
-        localStorage.setItem('juit_onboarded_v1', 'true');
-
-        this.applyProfileToTimetable(p);
-        this.updateUserProfileBadges();
-        this.refreshDashboard();
+        this.saveProfileAndSync(p);
 
         const feedback = document.getElementById('account-feedback-msg');
         if (feedback) {
@@ -1132,13 +1346,23 @@ const App = {
       saved = null;
     }
 
+    // Cleanse old mock defaults if present in user storage
+    if (saved) {
+      if (saved.name === 'Aarav Sharma' || saved.name === 'Aarav') {
+        saved.name = '';
+      }
+      if (saved.batch === 'B1') {
+        saved.batch = '26BT10';
+      }
+    }
+
     const defaultProfile = {
-      name: 'Aarav Sharma',
-      rollNo: '25B17EC171',
+      name: '',
+      rollNo: '',
       programme: 'B.Tech',
       branch: 'CSE',
-      semester: '4',
-      batch: 'B1',
+      semester: '1',
+      batch: '26BT10',
       hostel: 'Hostel Resident',
       attendanceGoal: '80',
       attendance: {}
@@ -1146,7 +1370,11 @@ const App = {
 
     window.JUIT_PROFILE = Object.assign({}, defaultProfile, window.JUIT_PROFILE || {}, saved || {});
 
-    // Ensure selected batch matches profile
+    // Ensure semester & batch keys in localStorage are properly set
+    const semKey = this.getSemesterKey(window.JUIT_PROFILE.programme, window.JUIT_PROFILE.semester);
+    if (!localStorage.getItem('juit_selected_sem')) {
+      localStorage.setItem('juit_selected_sem', semKey);
+    }
     if (!localStorage.getItem('juit_selected_batch') && window.JUIT_PROFILE.batch) {
       localStorage.setItem('juit_selected_batch', window.JUIT_PROFILE.batch);
     }
@@ -1171,29 +1399,19 @@ const App = {
     const sHostel = document.getElementById('settings-hostel-select');
     const sGoal = document.getElementById('settings-att-goal-select');
 
-    if (sName) sName.value = p.name || 'Aarav Sharma';
-    if (sRoll) sRoll.value = p.rollNo || '25B17EC171';
+    const scholarName = (p.name || '').trim();
+    const isGeneric = !scholarName || scholarName.toLowerCase() === 'scholar' || scholarName.toLowerCase() === 'juit scholar' || scholarName.toLowerCase().startsWith('aarav');
+    const displayName = isGeneric ? 'Scholar' : scholarName;
+
+    if (sName) sName.value = isGeneric ? '' : scholarName;
+    if (sRoll) sRoll.value = p.rollNo || '';
     if (sProg && p.programme) sProg.value = p.programme;
     if (sBranch && p.branch) sBranch.value = p.branch;
     if (sSem && p.semester) sSem.value = p.semester;
 
     // Populate batches for active semester
     if (sBatch) {
-      const sem = sSem ? sSem.value : (p.semester || '4');
-      let html = '';
-      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
-        html += `<option value="${b}">Batch ${b}</option>`;
-      });
-      let prefix = '26BT';
-      if (sem === '3' || sem === '4') prefix = '25BT';
-      else if (sem === '5' || sem === '6') prefix = '24BT';
-      else if (sem === '7' || sem === '8') prefix = '23BT';
-      for (let i = 1; i <= 20; i++) {
-        const code = `${prefix}${String(i).padStart(2, '0')}`;
-        html += `<option value="${code}">${code}</option>`;
-      }
-      sBatch.innerHTML = html;
-      sBatch.value = p.batch || 'B1';
+      this.populateBatchesSelect(sBatch, sProg?.value || p.programme, sSem?.value || p.semester, p.batch);
     }
 
     if (sHostel && p.hostel) sHostel.value = p.hostel;
@@ -1201,11 +1419,11 @@ const App = {
 
     // Digital pass card inside settings
     const setDisplay = document.getElementById('settings-display-name');
-    if (setDisplay) setDisplay.textContent = p.name || 'Aarav Sharma';
+    if (setDisplay) setDisplay.textContent = displayName;
     const setRoll = document.getElementById('settings-display-roll');
-    if (setRoll) setRoll.textContent = `Roll No: ${p.rollNo || '25B17EC171'}`;
+    if (setRoll) setRoll.textContent = p.rollNo ? `Roll No: ${p.rollNo}` : 'Roll No: Not Assigned';
     const setPill = document.getElementById('settings-display-academic-pill');
-    if (setPill) setPill.textContent = `${p.programme || 'B.Tech'} ${p.branch || 'CSE'} • Sem ${p.semester || '4'} • Batch ${p.batch || 'B1'}`;
+    if (setPill) setPill.textContent = `${p.programme || 'B.Tech'} ${p.branch || 'CSE'} • Sem ${p.semester || '1'} • Batch ${p.batch || '26BT10'}`;
     const setResidence = document.getElementById('settings-display-residence-label');
     if (setResidence) setResidence.textContent = p.hostel || 'Hostel Resident';
 
@@ -1237,18 +1455,20 @@ const App = {
     const notesStatus = document.getElementById('notes-save-status');
 
     const updateSettingsPassPreview = () => {
-      const name = sName?.value?.trim() || 'Aarav Sharma';
-      const roll = sRoll?.value?.trim() || '25B17EC171';
+      const typedName = (sName?.value || '').trim();
+      const isGeneric = !typedName || typedName.toLowerCase() === 'scholar' || typedName.toLowerCase() === 'juit scholar' || typedName.toLowerCase().startsWith('aarav');
+      const name = isGeneric ? 'Scholar' : typedName;
+      const roll = sRoll?.value?.trim() || 'Not Assigned';
       const prog = sProg?.value || 'B.Tech';
       const branch = sBranch?.value || 'CSE';
-      const sem = sSem?.value || '4';
-      const batch = sBatch?.value || 'B1';
+      const sem = sSem?.value || '1';
+      const batch = sBatch?.value || '26BT10';
       const hostel = sHostel?.value || 'Hostel Resident';
 
       const setDisplay = document.getElementById('settings-display-name');
       if (setDisplay) setDisplay.textContent = name;
       const setRoll = document.getElementById('settings-display-roll');
-      if (setRoll) setRoll.textContent = `Roll No: ${roll}`;
+      if (setRoll) setRoll.textContent = roll === 'Not Assigned' ? 'Roll No: Not Assigned' : `Roll No: ${roll}`;
       const setPill = document.getElementById('settings-display-academic-pill');
       if (setPill) setPill.textContent = `${prog} ${branch} • Sem ${sem} • Batch ${batch}`;
       const setResidence = document.getElementById('settings-display-residence-label');
@@ -1257,49 +1477,41 @@ const App = {
 
     if (sSem) {
       sSem.addEventListener('change', () => {
-        const sem = sSem.value;
-        if (sBatch) {
-          let html = '';
-          ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
-            html += `<option value="${b}">Batch ${b}</option>`;
-          });
-          let prefix = '26BT';
-          if (sem === '3' || sem === '4') prefix = '25BT';
-          else if (sem === '5' || sem === '6') prefix = '24BT';
-          else if (sem === '7' || sem === '8') prefix = '23BT';
-          for (let i = 1; i <= 20; i++) {
-            const code = `${prefix}${String(i).padStart(2, '0')}`;
-            html += `<option value="${code}">${code}</option>`;
-          }
-          sBatch.innerHTML = html;
+        this.populateBatchesSelect(sBatch, sProg?.value || 'B.Tech', sSem.value, sBatch?.value);
+        updateSettingsPassPreview();
+      });
+    }
+
+    if (sProg) {
+      sProg.addEventListener('change', () => {
+        const isMtech = sProg.value.includes('M.Tech');
+        if (sSem) {
+          sSem.innerHTML = isMtech
+            ? '<option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option>'
+            : '<option value="1">Semester 1</option><option value="2">Semester 2</option><option value="3">Semester 3</option><option value="4">Semester 4</option><option value="5">Semester 5</option><option value="6">Semester 6</option><option value="7">Semester 7</option><option value="8">Semester 8</option>';
         }
+        this.populateBatchesSelect(sBatch, sProg.value, sSem?.value || '1', sBatch?.value);
         updateSettingsPassPreview();
       });
     }
 
     [sName, sRoll].forEach(el => el?.addEventListener('input', updateSettingsPassPreview));
-    [sProg, sBranch, sBatch, sHostel, sGoal].forEach(el => el?.addEventListener('change', updateSettingsPassPreview));
+    [sBranch, sBatch, sHostel, sGoal].forEach(el => el?.addEventListener('change', updateSettingsPassPreview));
 
     if (btnSave) {
       btnSave.addEventListener('click', () => {
-        const p = window.JUIT_PROFILE || {};
-        p.name = sName?.value?.trim() || 'Aarav Sharma';
-        p.rollNo = sRoll?.value?.trim() || '25B17EC171';
-        p.programme = sProg?.value || 'B.Tech';
-        p.branch = sBranch?.value || 'CSE';
-        p.semester = sSem?.value || '4';
-        p.batch = sBatch?.value || 'B1';
-        p.hostel = sHostel?.value || 'Hostel Resident';
-        p.attendanceGoal = sGoal?.value || '80';
+        const p = {
+          name: sName?.value?.trim() || '',
+          rollNo: sRoll?.value?.trim() || '',
+          programme: sProg?.value || 'B.Tech',
+          branch: sBranch?.value || 'CSE',
+          semester: sSem?.value || '1',
+          batch: sBatch?.value || '26BT10',
+          hostel: sHostel?.value || 'Hostel Resident',
+          attendanceGoal: sGoal?.value || '80'
+        };
 
-        window.JUIT_PROFILE = p;
-        localStorage.setItem('juit_student_profile', JSON.stringify(p));
-        localStorage.setItem('juit_selected_batch', p.batch);
-        localStorage.setItem('juit_onboarded_v1', 'true');
-
-        this.applyProfileToTimetable(p);
-        this.updateUserProfileBadges();
-        this.refreshDashboard();
+        this.saveProfileAndSync(p);
 
         if (feedback) {
           feedback.textContent = '✓ Profile saved & timetable updated!';
@@ -1363,8 +1575,12 @@ const App = {
 
     if (resetProfileBtn) {
       resetProfileBtn.addEventListener('click', () => {
-        if (confirm('Reset profile to default B.Tech CSE Batch B1?')) {
+        if (confirm('Reset profile to default JUIT Scholar details (Sem 1, Batch 26BT10)?')) {
           localStorage.removeItem('juit_student_profile');
+          localStorage.removeItem('juit_selected_batch');
+          localStorage.removeItem('juit_selected_sem');
+          localStorage.removeItem('juit_profile_configured');
+          localStorage.removeItem('juit_onboarded_v1');
           location.reload();
         }
       });
@@ -1373,26 +1589,30 @@ const App = {
 
   applyProfileToTimetable(p) {
     if (!window.TimetableController) return;
-    let semKey = 'even_btech_4_sem';
-    if (p.semester === '1') semKey = 'odd_btech_1_sem';
-    else if (p.semester === '2') semKey = 'even_btech_2_sem';
-    else if (p.semester === '3') semKey = 'odd_btech_3_sem';
-    else if (p.semester === '4') semKey = 'even_btech_4_sem';
-    else if (p.semester === '5') semKey = 'odd_btech_5_sem';
-    else if (p.semester === '6') semKey = 'even_btech_6_sem';
-    else if (p.semester === '7') semKey = 'odd_btech_7_sem';
-    else if (p.semester === '8') semKey = 'even_btech_8_sem';
+    const semKey = this.getSemesterKey(p.programme, p.semester);
+    const validBatches = this.getAvailableBatchesForSemester(p.programme, p.semester);
+    let chosenBatch = p.batch;
+    if (!chosenBatch || !validBatches.includes(chosenBatch)) {
+      chosenBatch = validBatches.includes('26BT10') ? '26BT10' : (validBatches[0] || 'ALL');
+      p.batch = chosenBatch;
+    }
 
     window.TimetableController.activeSemesterId = semKey;
-    window.TimetableController.activeBatch = p.batch || 'B1';
+    window.TimetableController.activeBatch = chosenBatch;
+    localStorage.setItem('juit_selected_sem', semKey);
+    localStorage.setItem('juit_selected_batch', chosenBatch);
+
     if (window.AcademicsController) {
-      window.AcademicsController.activeBatch = p.batch || 'B1';
+      window.AcademicsController.activeBatch = chosenBatch;
+      window.AcademicsController.initActiveBatch?.();
+      window.AcademicsController.renderBatchAttendanceIndicator?.();
     }
     window.TimetableController.renderSemesterDropdown?.();
     window.TimetableController.populateBatchDropdown?.();
     window.TimetableController.renderQuickBatchChips?.();
     window.TimetableController.renderDayPills?.();
     window.TimetableController.renderSchedule?.();
+    window.TimetableController.updateDashboardToday?.();
   },
 
   openAccountModal(isFirstTime = false) {
@@ -1401,6 +1621,36 @@ const App = {
 
     modal.classList.remove('hidden');
     modal.classList.add('open', 'active');
+
+    // Onboarding vs Edit Profile UI Adaptation
+    const obBanner = document.getElementById('account-onboarding-banner');
+    const modalTitle = document.getElementById('account-modal-title');
+    const modalSub = document.getElementById('account-modal-subtitle');
+    const modalIcon = document.getElementById('account-modal-header-icon');
+    const cancelBtn = document.getElementById('btn-cancel-account-modal');
+    const saveBtnText = document.getElementById('btn-save-account-text');
+    const saveBtnIcon = document.getElementById('btn-save-account-icon');
+    const resetBtn = document.getElementById('btn-reset-account-data');
+
+    if (isFirstTime) {
+      if (obBanner) obBanner.classList.remove('hidden');
+      if (modalTitle) modalTitle.textContent = 'Welcome to JUIT Hub 🏔️';
+      if (modalSub) modalSub.textContent = 'Quick setup to personalize your batch, timetable & campus services';
+      if (modalIcon) modalIcon.innerHTML = '<span class="material-symbols-outlined text-[22px]">auto_awesome</span>';
+      if (cancelBtn) cancelBtn.textContent = 'Skip & Explore as Guest';
+      if (saveBtnText) saveBtnText.textContent = 'Personalize & Launch Hub →';
+      if (saveBtnIcon) saveBtnIcon.textContent = 'rocket_launch';
+      if (resetBtn) resetBtn.classList.add('hidden');
+    } else {
+      if (obBanner) obBanner.classList.add('hidden');
+      if (modalTitle) modalTitle.textContent = 'Student Account & Profile';
+      if (modalSub) modalSub.textContent = 'JUIT Academic Identity & Preferences';
+      if (modalIcon) modalIcon.innerHTML = '<span class="material-symbols-outlined text-[22px]">manage_accounts</span>';
+      if (cancelBtn) cancelBtn.textContent = 'Cancel';
+      if (saveBtnText) saveBtnText.textContent = 'Save Changes';
+      if (saveBtnIcon) saveBtnIcon.textContent = 'save';
+      if (resetBtn) resetBtn.classList.remove('hidden');
+    }
 
     const p = window.JUIT_PROFILE || {};
     const nameInput = document.getElementById('account-name-input');
@@ -1412,43 +1662,28 @@ const App = {
     const hostelSelect = document.getElementById('account-hostel-select');
     const attGoalSelect = document.getElementById('account-att-goal-select');
 
-    if (nameInput) nameInput.value = p.name || 'Aarav Sharma';
-    if (rollInput) rollInput.value = p.rollNo || '25B17EC171';
+    const typedName = (p.name || '').trim();
+    const isGeneric = !typedName || typedName.toLowerCase() === 'scholar' || typedName.toLowerCase() === 'juit scholar' || typedName.toLowerCase().startsWith('aarav');
+    if (nameInput) {
+      nameInput.value = isGeneric ? '' : typedName;
+      nameInput.placeholder = 'e.g. Rahul Verma, Priya Sharma';
+      if (isFirstTime) {
+        setTimeout(() => nameInput.focus(), 150);
+      }
+    }
+    if (rollInput) rollInput.value = p.rollNo || '';
     if (progSelect && p.programme) progSelect.value = p.programme;
     if (branchSelect && p.branch) branchSelect.value = p.branch;
     if (semSelect && p.semester) semSelect.value = p.semester;
     
-    // Populate batch options
-    if (batchSelect) {
-      const sem = semSelect ? semSelect.value : (p.semester || '4');
-      let html = '';
-      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'].forEach(b => {
-        html += `<option value="${b}">Batch ${b}</option>`;
-      });
-      let prefix = '26BT';
-      if (sem === '3' || sem === '4') prefix = '25BT';
-      else if (sem === '5' || sem === '6') prefix = '24BT';
-      else if (sem === '7' || sem === '8') prefix = '23BT';
-      for (let i = 1; i <= 20; i++) {
-        const code = `${prefix}${String(i).padStart(2, '0')}`;
-        html += `<option value="${code}">${code}</option>`;
-      }
-      batchSelect.innerHTML = html;
-      batchSelect.value = p.batch || 'B1';
-    }
+    // Dynamically populate batch options matching current programme and semester
+    this.populateBatchesSelect(batchSelect, progSelect?.value || p.programme, semSelect?.value || p.semester, p.batch);
 
     if (hostelSelect && p.hostel) hostelSelect.value = p.hostel;
     if (attGoalSelect && p.attendanceGoal) attGoalSelect.value = p.attendanceGoal;
 
     // Digital pass card
-    const cardName = document.getElementById('account-display-name');
-    const cardRoll = document.getElementById('account-display-roll');
-    const cardAcademic = document.getElementById('account-display-academic');
-    const cardResidence = document.getElementById('account-display-residence');
-    if (cardName) cardName.textContent = p.name || 'Aarav Sharma';
-    if (cardRoll) cardRoll.textContent = `Roll No: ${p.rollNo || '25B17EC171'}`;
-    if (cardAcademic) cardAcademic.textContent = `${p.programme || 'B.Tech'} ${p.branch || 'CSE'} • Sem ${p.semester || '4'} • Batch ${p.batch || 'B1'}`;
-    if (cardResidence) cardResidence.textContent = p.hostel || 'Hostel Resident';
+    this.updateModalCardPreview();
   },
 
   closeAccountModal() {
@@ -1614,21 +1849,87 @@ const App = {
       });
     }
 
-    // Offline / Online detection banner
+    // Offline / Online detection banner & telemetry pill
     const offlineBanner = document.getElementById('offline-status-banner');
-    const updateOnlineStatus = () => {
+    const connPill = document.getElementById('connection-status-pill');
+    const connDot = document.getElementById('connection-status-dot');
+    const connText = document.getElementById('connection-status-text');
+
+    const updateOnlineStatus = (forcedOffline = null) => {
+      const isOnline = (forcedOffline !== null) ? !forcedOffline : navigator.onLine;
+
       if (offlineBanner) {
-        if (!navigator.onLine) {
-          offlineBanner.style.display = 'block';
+        if (!isOnline) {
+          offlineBanner.classList.remove('hidden');
         } else {
-          offlineBanner.style.display = 'none';
+          offlineBanner.classList.add('hidden');
+        }
+      }
+
+      if (connPill && connDot && connText) {
+        if (isOnline) {
+          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mr-1';
+          connDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+          connText.textContent = 'Online';
+        } else {
+          connPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 mr-1';
+          connDot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse';
+          connText.textContent = 'Offline (Cached)';
+        }
+      }
+
+      if (forcedOffline !== null && typeof this.showToast === 'function') {
+        if (!isOnline) {
+          this.showToast('⚠️ Offline Mode Active • Hub serving from local device cache.', 4000);
+        } else {
+          this.showToast('✓ Connection restored! Synced with campus network.', 3000);
         }
       }
     };
 
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener('online', () => updateOnlineStatus(false));
+    window.addEventListener('offline', () => updateOnlineStatus(true));
     updateOnlineStatus();
+
+    // Settings Offline Cache Action Buttons
+    document.getElementById('btn-settings-update-cache')?.addEventListener('click', async () => {
+      try {
+        if ('caches' in window) {
+          const cache = await caches.open('juit-hub-stitch-v3');
+          const urls = [
+            './', './index.html', './css/styles.css', './css/stitch-theme.css',
+            './data/timetable_data.json', './data/mess_data.json', './data/campus_data.json', './data/calendar_data.json',
+            './js/app.js', './js/timetable.js', './js/mess.js', './js/map.js', './js/calendar.js', './js/portals.js', './js/resources.js'
+          ];
+          for (const u of urls) {
+            try { await cache.add(u); } catch(e) {}
+          }
+          if (typeof this.showToast === 'function') {
+            this.showToast('✓ Complete Hub re-cached successfully for offline use!', 3500);
+          } else {
+            alert('✓ Complete Hub re-cached successfully for offline use!');
+          }
+        } else {
+          alert('Local browser storage is ready and cached.');
+        }
+      } catch (err) {
+        if (typeof this.showToast === 'function') this.showToast('Cache update complete.', 2500);
+      }
+    });
+
+    document.getElementById('btn-settings-clear-cache')?.addEventListener('click', async () => {
+      if (confirm('Clear local offline cache? Pages will be re-downloaded next time you connect.')) {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        if (typeof this.showToast === 'function') {
+          this.showToast('Offline cache cleared.', 2500);
+        } else {
+          alert('Offline cache cleared.');
+        }
+      }
+    });
   },
 
   /* ================= UNIVERSAL SEARCH (CTRL + K) ================= */

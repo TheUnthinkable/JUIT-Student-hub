@@ -390,6 +390,14 @@ const TimetableController = {
         localStorage.setItem('juit_selected_batch', this.activeBatch);
         const batchSelect = document.getElementById('timetable-batch-select');
         if (batchSelect) batchSelect.value = this.activeBatch;
+        if (window.JUIT_PROFILE) {
+          window.JUIT_PROFILE.batch = this.activeBatch;
+          localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));
+        }
+        if (window.App) {
+          window.App.updateUserProfileBadges?.();
+          window.App.refreshDashboard?.();
+        }
         this.renderQuickBatchChips();
         this.renderDayPills();
         this.renderSchedule();
@@ -1228,6 +1236,19 @@ const TimetableController = {
           localStorage.setItem('juit_selected_batch', 'ALL');
         }
 
+        if (window.JUIT_PROFILE) {
+          const semNum = this.activeSemesterId.match(/(\d)_sem/)?.[1] || window.JUIT_PROFILE.semester || '1';
+          const isMtech = this.activeSemesterId.includes('mtech');
+          window.JUIT_PROFILE.programme = isMtech ? 'M.Tech' : 'B.Tech';
+          window.JUIT_PROFILE.semester = semNum;
+          window.JUIT_PROFILE.batch = this.activeBatch;
+          localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));
+        }
+        if (window.App) {
+          window.App.updateUserProfileBadges?.();
+          window.App.refreshDashboard?.();
+        }
+
         this.populateBatchDropdown();
         this.renderQuickBatchChips();
         this.renderDayPills();
@@ -1241,6 +1262,14 @@ const TimetableController = {
       batchSelect.addEventListener('change', (e) => {
         this.activeBatch = e.target.value;
         localStorage.setItem('juit_selected_batch', this.activeBatch);
+        if (window.JUIT_PROFILE) {
+          window.JUIT_PROFILE.batch = this.activeBatch;
+          localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));
+        }
+        if (window.App) {
+          window.App.updateUserProfileBadges?.();
+          window.App.refreshDashboard?.();
+        }
         this.renderQuickBatchChips();
         this.renderDayPills();
         this.renderSchedule();
@@ -1502,22 +1531,28 @@ const TimetableController = {
       const startTime = c.time.split(/[-–—]/)[0].trim();
 
       return `
-        <div class="group rounded-xl bg-surface-container-low hover:bg-surface-container p-space-md flex items-center justify-between gap-space-md transition-all shadow-sm border border-outline-variant/15">
-          <div class="flex items-center gap-space-md min-w-0">
+        <div class="group rounded-xl bg-surface-container-low hover:bg-surface-container p-3 sm:p-space-md flex items-center justify-between gap-3 sm:gap-space-md transition-all shadow-sm border border-outline-variant/15">
+          <div class="flex items-center gap-3 min-w-0">
             <div class="w-8 h-8 rounded-full ${isDone ? 'bg-surface-container-high text-secondary' : (isLive ? 'bg-primary/20 text-primary' : 'bg-surface-container-high text-outline')} flex items-center justify-center flex-shrink-0">
               <span class="material-symbols-outlined text-[18px]">${isDone ? 'check' : (isLive ? 'play_arrow' : 'schedule')}</span>
             </div>
             <div class="min-w-0">
-              <div class="flex items-center gap-space-sm flex-wrap">
-                <span class="font-headline-sm text-headline-sm text-on-surface font-semibold truncate">${subjName}</span>
-                <span class="px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">${typeLabel}</span>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-headline-sm text-sm sm:text-headline-sm text-on-surface font-semibold truncate">${subjName}</span>
+                <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[11px] font-medium">${typeLabel}</span>
               </div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5 truncate">${c.venue ? `Room ${c.venue}` : 'Campus Venue'} • ${c.venueDetails?.buildingName || 'Department Block'}</p>
+              <div class="flex items-center gap-2 mt-1 flex-wrap">
+                <button type="button" class="venue-locator-pill inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded bg-surface-container-high hover:bg-primary/20 text-secondary hover:text-primary transition-colors cursor-pointer border border-white/[0.04]" data-venue="${c.venue || ''}" title="View classroom on campus map">
+                  <span class="material-symbols-outlined text-[13px]">location_on</span>
+                  <span>${c.venue ? `Room ${c.venue}` : 'Campus'}</span>
+                </button>
+                <span class="text-[11px] text-on-surface-variant truncate">${c.venueDetails?.buildingName || 'Academic Block'} • ${c.faculty || 'Faculty'}</span>
+              </div>
             </div>
           </div>
           <div class="flex flex-col items-end flex-shrink-0">
-            <span class="font-label-md text-label-md text-on-surface font-mono font-medium">${startTime}</span>
-            <span class="font-label-sm text-label-sm ${isDone ? 'text-secondary' : (isLive ? 'text-primary font-semibold' : 'text-outline')}">${isDone ? 'Completed' : (isLive ? 'In Progress' : 'Upcoming')}</span>
+            <span class="font-label-md text-xs sm:text-label-md text-on-surface font-mono font-medium">${startTime}</span>
+            <span class="text-[11px] font-medium ${isDone ? 'text-secondary' : (isLive ? 'text-primary font-semibold' : 'text-outline')}">${isDone ? 'Completed' : (isLive ? 'In Progress' : 'Upcoming')}</span>
           </div>
         </div>
       `;
@@ -1526,8 +1561,10 @@ const TimetableController = {
     previewContainer.querySelectorAll('.venue-locator-pill').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        const venue = btn.dataset.venue;
+        if (window.App) window.App.switchView('campus');
         if (window.CampusMap && window.CampusMap.focusVenue) {
-          window.CampusMap.focusVenue(btn.dataset.venue);
+          window.CampusMap.focusVenue(venue);
         }
       });
     });

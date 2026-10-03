@@ -2,12 +2,12 @@
  * Academic Calendar Controller for JUIT Student Hub
  * Sourced from official notification Ref: JUIT/WKG/REGR/2026-27/050
  * Features:
- * - Real-time Day Countdown Statuses (In X Days, Happening Today, Concluded)
- * - Live Search Filter across all milestones, exams, fests, and holidays
- * - Category Filters with Vibrant Badges (Exams, Fests, Vacations, Holidays, Personal)
- * - 1-Tap Google Calendar Export & .ICS Sync
+ * - Next Milestone Spotlight Hero with Real-Time Countdown
+ * - Category Filter Chips with Vibrant Badges (Exams, Fests, Breaks, Holidays, Personal)
  * - Dual Agenda Timeline View and Interactive Month Grid View
+ * - 1-Tap Google Calendar & .ICS Sync
  * - Personal Scholar Event Planner stored in localStorage
+ * - Seamless search & responsive layout
  */
 
 const CalendarController = {
@@ -22,12 +22,15 @@ const CalendarController = {
     this.data = calendarData || (window.JUIT_DATA && window.JUIT_DATA.calendar) || {};
 
     this.renderTermSwitcher();
+    this.renderCategoryFilters();
+    this.renderSpotlightMilestone();
     this.renderViewSwitcher();
     this.renderCalendarContent();
     this.bindEvents();
   },
 
   renderTimeline() {
+    this.renderSpotlightMilestone();
     this.renderCalendarContent();
   },
 
@@ -50,35 +53,173 @@ const CalendarController = {
     const termPill = document.getElementById('calendar-active-term-pill');
 
     if (btnOdd && btnEven) {
-      btnOdd.classList.toggle('active', this.activeTerm === 'odd2026');
-      btnEven.classList.toggle('active', this.activeTerm === 'even2027');
+      btnOdd.className = `px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all font-semibold cursor-pointer ${
+        this.activeTerm === 'odd2026'
+          ? 'bg-primary text-on-primary shadow-sm'
+          : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+      }`;
+      btnEven.className = `px-3.5 py-1.5 rounded-xl font-label-md text-label-md transition-all font-semibold cursor-pointer ${
+        this.activeTerm === 'even2027'
+          ? 'bg-primary text-on-primary shadow-sm'
+          : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
+      }`;
     }
 
     if (termPill) {
       termPill.innerHTML = this.activeTerm === 'odd2026'
-        ? '<span class="pulse-indicator"></span><span>ODD Sem 2026 Active</span>'
-        : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6;"></span><span>EVEN Sem 2027</span>';
+        ? '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>ODD Sem 2026 (Jul–Dec)</span>'
+        : '<span class="w-2 h-2 rounded-full bg-purple-400"></span><span>EVEN Sem 2027 (Jan–May)</span>';
+      termPill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono bg-surface-container-high text-secondary border border-white/[0.06] font-medium';
     }
+  },
+
+  renderCategoryFilters() {
+    const container = document.getElementById('calendar-category-filters');
+    if (!container) return;
+
+    const allItems = this.getAllEvents();
+    const categories = [
+      { id: 'all', label: 'All Milestones', icon: 'event_note' },
+      { id: 'exam', label: 'Exams & Tests', icon: 'quiz' },
+      { id: 'holiday', label: 'Gazetted Holidays', icon: 'account_balance' },
+      { id: 'vacation', label: 'Breaks & Vacations', icon: 'flight_takeoff' },
+      { id: 'fest', label: 'Fests & Culture', icon: 'celebration' },
+      { id: 'academic', label: 'Academics & Reg', icon: 'school' },
+      { id: 'personal', label: 'Personal Notes', icon: 'bookmark' }
+    ];
+
+    container.innerHTML = categories.map(cat => {
+      const isActive = (cat.id === this.activeCategory);
+      let count = 0;
+      if (cat.id === 'all') {
+        count = allItems.length;
+      } else if (cat.id === 'exam') {
+        count = allItems.filter(x => x.category === 'exam').length;
+      } else if (cat.id === 'holiday') {
+        count = allItems.filter(x => x.category === 'holiday').length;
+      } else if (cat.id === 'vacation') {
+        count = allItems.filter(x => x.category === 'vacation').length;
+      } else if (cat.id === 'fest') {
+        count = allItems.filter(x => x.category === 'fest' || x.category === 'sports' || x.category === 'cultural').length;
+      } else if (cat.id === 'academic') {
+        count = allItems.filter(x => x.category === 'academic' || x.category === 'registration' || x.category === 'commencement').length;
+      } else if (cat.id === 'personal') {
+        count = allItems.filter(x => x.category === 'personal').length;
+      }
+
+      return `
+        <button type="button" class="cal-category-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-md text-xs transition-all flex-shrink-0 cursor-pointer ${
+          isActive
+            ? 'bg-primary text-on-primary font-bold shadow-sm'
+            : 'bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
+        }" data-category="${cat.id}">
+          <span class="material-symbols-outlined text-[15px]">${cat.icon}</span>
+          <span>${cat.label}</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-on-primary/20 text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">${count}</span>
+        </button>
+      `;
+    }).join('');
+
+    container.querySelectorAll('.cal-category-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.activeCategory = btn.dataset.category;
+        this.renderCategoryFilters();
+        this.renderCalendarContent();
+      });
+    });
+  },
+
+  renderSpotlightMilestone() {
+    const spotlightContainer = document.getElementById('calendar-spotlight-milestone');
+    if (!spotlightContainer) return;
+
+    const allEvents = this.getAllEvents();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+
+    // Find the nearest upcoming or currently active event
+    let targetEvent = null;
+    let minDiff = Infinity;
+
+    for (const ev of allEvents) {
+      const parsed = this.parseEventDates(ev.dates);
+      if (!parsed) continue;
+
+      if (today >= parsed.startDate && today <= parsed.endDate) {
+        targetEvent = { ...ev, parsed, isActiveNow: true };
+        break;
+      }
+
+      if (parsed.startDate > today) {
+        const diff = parsed.startDate - today;
+        if (diff < minDiff) {
+          minDiff = diff;
+          targetEvent = { ...ev, parsed, isActiveNow: false };
+        }
+      }
+    }
+
+    if (!targetEvent) {
+      spotlightContainer.innerHTML = '';
+      spotlightContainer.classList.add('hidden');
+      return;
+    }
+
+    spotlightContainer.classList.remove('hidden');
+    const countdown = this.getCountdownStatus(targetEvent.parsed);
+    const gCalUrl = this.getGCalUrl(targetEvent, targetEvent.parsed);
+
+    spotlightContainer.innerHTML = `
+      <div class="relative rounded-2xl bg-gradient-to-r from-surface-container-high via-surface-container to-surface-container-low p-5 sm:p-6 border border-white/[0.1] shadow-lg overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-primary/20 text-primary border border-primary/30'} flex items-center justify-center shrink-0 shadow-inner">
+              <span class="material-symbols-outlined text-[26px]">${targetEvent.isActiveNow ? 'crisis_alert' : 'upcoming'}</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap mb-1">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider ${targetEvent.isActiveNow ? 'bg-emerald-500/20 text-emerald-300' : 'bg-primary-container text-on-primary-container'}">
+                  ${targetEvent.isActiveNow ? '● Live Milestone' : 'Upcoming Next'}
+                </span>
+                <span class="text-xs font-semibold text-secondary">${countdown.statusText}</span>
+              </div>
+              <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold tracking-tight">${targetEvent.title}</h3>
+              <p class="font-body-sm text-xs sm:text-body-sm text-on-surface-variant mt-0.5">${targetEvent.target} • <span class="font-mono text-primary font-medium">${targetEvent.dates}</span></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-bold inline-flex items-center gap-1.5 transition-all shadow-sm">
+              <span class="material-symbols-outlined text-[15px]">event</span>
+              <span>Sync to Google Calendar</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
   },
 
   renderViewSwitcher() {
     const container = document.getElementById('calendar-view-switcher');
     if (!container) return;
 
+    container.className = 'flex items-center gap-1 bg-surface-container p-1 rounded-xl border border-white/[0.06]';
     container.innerHTML = `
-      <div class="calendar-view-mode-bar">
-        <div class="term-switcher">
-          <button type="button" class="term-btn ${this.activeViewMode === 'agenda' ? 'active' : ''}" data-cal-view="agenda">
-            📑 Agenda Timeline
-          </button>
-          <button type="button" class="term-btn ${this.activeViewMode === 'month' ? 'active' : ''}" data-cal-view="month">
-            📆 Month Grid
-          </button>
-        </div>
-      </div>
+      <button type="button" class="view-mode-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+        this.activeViewMode === 'agenda' ? 'bg-surface-container-high text-primary font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+      }" data-cal-view="agenda">
+        <span class="material-symbols-outlined text-[15px]">view_timeline</span>
+        <span class="hidden sm:inline">Timeline</span>
+      </button>
+      <button type="button" class="view-mode-btn px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+        this.activeViewMode === 'month' ? 'bg-surface-container-high text-primary font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'
+      }" data-cal-view="month">
+        <span class="material-symbols-outlined text-[15px]">calendar_month</span>
+        <span class="hidden sm:inline">Month Grid</span>
+      </button>
     `;
 
-    container.querySelectorAll('.term-btn').forEach(btn => {
+    container.querySelectorAll('.view-mode-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeViewMode = btn.dataset.calView;
         this.renderViewSwitcher();
@@ -120,7 +261,7 @@ const CalendarController = {
 
   getCountdownStatus(parsedDates) {
     if (!parsedDates) {
-      return { statusText: '', pillClass: '', pillColor: 'var(--text-muted)', isPast: false };
+      return { statusText: '', pillClass: '', pillColor: 'text-on-surface-variant', isPast: false };
     }
 
     const now = new Date();
@@ -131,9 +272,9 @@ const CalendarController = {
 
     if (today >= startDate && today <= endDate) {
       return {
-        statusText: '🔴 Active Today',
-        pillClass: 'active',
-        pillColor: '#10b981',
+        statusText: '● Active Today',
+        pillClass: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30',
+        pillColor: 'text-emerald-400',
         isCurrent: true
       };
     }
@@ -141,26 +282,27 @@ const CalendarController = {
     if (today > endDate) {
       return {
         statusText: '✓ Concluded',
-        pillClass: 'concluded',
-        pillColor: 'var(--text-muted)',
+        pillClass: 'bg-surface-container-high text-on-surface-variant/70 border border-white/[0.04]',
+        pillColor: 'text-on-surface-variant',
         isPast: true
       };
     }
 
     const diffDays = Math.ceil((startDate - today) / msPerDay);
+
     if (diffDays === 1) {
       return {
         statusText: '⚡ Starts Tomorrow',
-        pillClass: 'urgent',
-        pillColor: '#f59e0b',
+        pillClass: 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold',
+        pillColor: 'text-amber-400',
         isUpcoming: true
       };
     }
 
     return {
       statusText: `⏳ Starts in ${diffDays} days`,
-      pillClass: diffDays <= 7 ? 'urgent' : 'upcoming',
-      pillColor: diffDays <= 7 ? '#f59e0b' : 'var(--accent-primary)',
+      pillClass: diffDays <= 7 ? 'bg-amber-500/15 text-amber-300 border border-amber-500/25' : 'bg-primary/10 text-primary border border-primary/20',
+      pillColor: diffDays <= 7 ? 'text-amber-400' : 'text-primary',
       isUpcoming: true
     };
   },
@@ -244,6 +386,7 @@ const CalendarController = {
         if (this.activeCategory === 'vacation') return m.category === 'vacation';
         if (this.activeCategory === 'holiday') return m.category === 'holiday';
         if (this.activeCategory === 'personal') return m.category === 'personal';
+        if (this.activeCategory === 'academic') return m.category === 'academic' || m.category === 'registration' || m.category === 'commencement';
         return m.category === this.activeCategory;
       });
     }
@@ -262,13 +405,13 @@ const CalendarController = {
 
     if (items.length === 0) {
       container.innerHTML = `
-        <div class="empty-state-card" style="padding: 40px; text-align: center;">
-          <div style="font-size: 2.5rem; margin-bottom: 8px;">📆</div>
-          <h3 style="font-size: 1.2rem; color: var(--text-primary); margin-bottom: 6px;">No Calendar Events Found</h3>
-          <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 16px;">
-            ${this.searchQuery ? `No milestones matching search query "<strong>${this.searchQuery}</strong>".` : `No milestones recorded under category "<strong>${this.activeCategory}</strong>".`}
+        <div class="p-8 text-center bg-surface-container-low rounded-2xl border border-white/[0.06]">
+          <div class="text-4xl mb-3">📆</div>
+          <h3 class="font-headline-sm text-base text-on-surface font-semibold mb-1">No Calendar Events Found</h3>
+          <p class="font-body-sm text-xs text-on-surface-variant max-w-sm mx-auto mb-4">
+            ${this.searchQuery ? `No milestones matching "${this.searchQuery}".` : `No milestones recorded under category "${this.activeCategory}".`}
           </p>
-          <button type="button" class="btn-primary" onclick="CalendarController.resetFilters()">
+          <button type="button" class="px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm cursor-pointer" onclick="CalendarController.resetFilters()">
             Clear Filters & Search
           </button>
         </div>
@@ -277,35 +420,33 @@ const CalendarController = {
     }
 
     const categoryMap = {
-      'exam': { color: '#ef4444', label: 'Examination', icon: 'quiz', bg: 'rgba(239, 68, 68, 0.12)' },
-      'fest': { color: '#f59e0b', label: 'Fest / Hackathon', icon: 'celebration', bg: 'rgba(245, 158, 11, 0.12)' },
-      'sports': { color: '#10b981', label: 'Sports Meet', icon: 'sports_soccer', bg: 'rgba(16, 185, 129, 0.12)' },
-      'cultural': { color: '#ec4899', label: 'Cultural Fest', icon: 'theater_comedy', bg: 'rgba(236, 72, 153, 0.12)' },
-      'vacation': { color: '#8b5cf6', label: 'Vacation Break', icon: 'flight_takeoff', bg: 'rgba(139, 92, 246, 0.12)' },
-      'holiday': { color: '#10b981', label: 'Gazetted Holiday', icon: 'account_balance', bg: 'rgba(16, 185, 129, 0.12)' },
-      'academic': { color: '#3b82f6', label: 'Academic Milestone', icon: 'school', bg: 'rgba(59, 130, 246, 0.12)' },
-      'registration': { color: '#06b6d4', label: 'Registration', icon: 'how_to_reg', bg: 'rgba(6, 182, 212, 0.12)' },
-      'commencement': { color: '#00e5ff', label: 'Semester Start', icon: 'play_circle', bg: 'rgba(0, 229, 255, 0.12)' },
-      'personal': { color: '#f43f5e', label: 'Personal Note', icon: 'star', bg: 'rgba(244, 63, 94, 0.12)' }
+      'exam': { color: '#ef4444', label: 'Examination', icon: 'quiz', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)' },
+      'fest': { color: '#f59e0b', label: 'Fest / Hackathon', icon: 'celebration', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)' },
+      'sports': { color: '#10b981', label: 'Sports Meet', icon: 'sports_soccer', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' },
+      'cultural': { color: '#ec4899', label: 'Cultural Fest', icon: 'theater_comedy', bg: 'rgba(236, 72, 153, 0.12)', border: 'rgba(236, 72, 153, 0.3)' },
+      'vacation': { color: '#8b5cf6', label: 'Vacation Break', icon: 'flight_takeoff', bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)' },
+      'holiday': { color: '#10b981', label: 'Gazetted Holiday', icon: 'account_balance', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' },
+      'academic': { color: '#3b82f6', label: 'Academic Milestone', icon: 'school', bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)' },
+      'registration': { color: '#06b6d4', label: 'Registration', icon: 'how_to_reg', bg: 'rgba(6, 182, 212, 0.12)', border: 'rgba(6, 182, 212, 0.3)' },
+      'commencement': { color: '#00e5ff', label: 'Semester Start', icon: 'play_circle', bg: 'rgba(0, 229, 255, 0.12)', border: 'rgba(0, 229, 255, 0.3)' },
+      'personal': { color: '#f43f5e', label: 'Personal Note', icon: 'star', bg: 'rgba(244, 63, 94, 0.12)', border: 'rgba(244, 63, 94, 0.3)' }
     };
 
     container.innerHTML = `
       <!-- Agenda Subheader Count -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
-        <div style="font-size: 0.88rem; color: var(--text-secondary);">
-          Showing <strong>${items.length}</strong> official schedule milestones
-        </div>
-        <div style="display: flex; gap: 6px;">
-          <span class="hub-pill-tag" style="background: rgba(0, 229, 255, 0.08); color: var(--accent-primary);">
-            Ref: JUIT/WKG/REGR
-          </span>
-        </div>
+      <div class="flex items-center justify-between gap-2 mb-3 px-1">
+        <span class="font-label-sm text-xs text-on-surface-variant font-medium">
+          Showing <strong class="text-on-surface">${items.length}</strong> official schedule milestones
+        </span>
+        <span class="font-mono text-[11px] text-secondary bg-surface-container px-2 py-0.5 rounded-full border border-white/[0.04]">
+          Ref: JUIT/WKG/REGR/2026-27
+        </span>
       </div>
 
       <!-- Events List -->
-      <div class="calendar-agenda-stack">
+      <div class="flex flex-col space-y-3">
         ${items.map(ev => {
-          const cat = categoryMap[ev.category] || { color: '#3b82f6', label: 'Event', icon: 'event', bg: 'rgba(59, 130, 246, 0.12)' };
+          const cat = categoryMap[ev.category] || { color: '#3b82f6', label: 'Milestone', icon: 'event', bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)' };
           const parsed = this.parseEventDates(ev.dates);
           const countdown = this.getCountdownStatus(parsed);
           const gCalUrl = this.getGCalUrl(ev, parsed);
@@ -314,45 +455,52 @@ const CalendarController = {
           const dayDisplay = parsed ? (parsed.startDay === parsed.endDay ? `${parsed.startDay}` : `${parsed.startDay}–${parsed.endDay}`) : ev.dates;
 
           return `
-            <div class="cal-event-card ${countdown.isCurrent ? 'active-event' : ''} ${countdown.isPast ? 'concluded-event' : ''}">
-              <!-- Left: Date Box Pill -->
-              <div class="cal-date-pill-box" style="border-left: 3px solid ${cat.color};">
-                <span class="cal-date-month" style="color: ${cat.color};">${monthName}</span>
-                <span class="cal-date-day">${dayDisplay}</span>
-              </div>
-
-              <!-- Center: Event Info & Badges -->
-              <div class="cal-event-main-content">
-                <div class="cal-event-tags-row">
-                  <span class="cal-cat-badge" style="background: ${cat.bg}; color: ${cat.color}; border: 1px solid ${cat.color}35;">
-                    <span class="material-symbols-outlined text-[13px]">${cat.icon}</span>
-                    <span>${cat.label}</span>
-                  </span>
-
-                  ${countdown.statusText ? `
-                    <span class="cal-countdown-badge ${countdown.pillClass}" style="color: ${countdown.pillColor};">
-                      ${countdown.statusText}
-                    </span>
-                  ` : ''}
+            <div class="group relative rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-200 border border-white/[0.06] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${
+              countdown.isCurrent ? 'ring-1 ring-emerald-500/40 bg-emerald-500/[0.03]' : ''
+            }">
+              <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+                <!-- Date Pill Block -->
+                <div class="w-16 h-16 rounded-xl bg-surface-container flex flex-col items-center justify-center shrink-0 border border-white/[0.06] shadow-sm text-center" style="border-left: 3px solid ${cat.color};">
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-wider leading-none" style="color: ${cat.color};">${monthName}</span>
+                  <span class="font-mono text-base font-bold text-on-surface mt-1 leading-none">${dayDisplay}</span>
                 </div>
 
-                <h4 class="cal-event-title">${ev.title}</h4>
-                <div class="cal-event-audience">${ev.target}</div>
-                <div class="cal-event-raw-dates">🗓 ${ev.dates}</div>
+                <!-- Event Details -->
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold" style="background: ${cat.bg}; color: ${cat.color}; border: 1px solid ${cat.border};">
+                      <span class="material-symbols-outlined text-[13px]">${cat.icon}</span>
+                      <span>${cat.label}</span>
+                    </span>
+
+                    ${countdown.statusText ? `
+                      <span class="px-2 py-0.5 rounded-full text-[11px] font-mono font-medium ${countdown.pillClass}">
+                        ${countdown.statusText}
+                      </span>
+                    ` : ''}
+                  </div>
+
+                  <h4 class="font-headline-sm text-sm sm:text-base text-on-surface font-semibold group-hover:text-primary transition-colors leading-snug">${ev.title}</h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">${ev.target}</p>
+                  <p class="font-mono text-[11px] text-primary/80 mt-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px]">calendar_today</span>
+                    <span>${ev.dates}</span>
+                  </p>
+                </div>
               </div>
 
-              <!-- Right: Quick Actions (Google Calendar, Copy, Delete) -->
-              <div class="cal-event-action-group">
-                <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="btn-cal-gcal" title="Sync this milestone to your Google Calendar">
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-2 self-end sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.04] w-full sm:w-auto justify-end">
+                <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-primary hover:text-on-primary text-primary font-label-md text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-sm" title="Add to Google Calendar">
+                  <span class="material-symbols-outlined text-[14px]">event</span>
                   <span>+ GCal</span>
-                  <span class="material-symbols-outlined text-[14px]">open_in_new</span>
                 </a>
-                <button type="button" class="btn-cal-copy" onclick="CalendarController.copyEvent('${ev.title.replace(/'/g, "\\'")}', '${ev.dates}', '${(ev.target || '').replace(/'/g, "\\'")}')" title="Copy event details to clipboard">
-                  <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                <button type="button" class="w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors cursor-pointer" onclick="CalendarController.copyEvent('${ev.title.replace(/'/g, "\\'")}', '${ev.dates}', '${(ev.target || '').replace(/'/g, "\\'")}')" title="Copy Details">
+                  <span class="material-symbols-outlined text-[16px]">content_copy</span>
                 </button>
                 ${ev.isPersonal ? `
-                  <button type="button" class="btn-cal-del btn-del-personal-ev" data-id="${ev.id}" title="Delete personal note">
-                    <span class="material-symbols-outlined text-[15px]">delete</span>
+                  <button type="button" class="w-8 h-8 rounded-xl bg-error/15 hover:bg-error text-error hover:text-white flex items-center justify-center transition-colors cursor-pointer btn-del-personal-ev" data-id="${ev.id}" title="Delete Personal Milestone">
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
                   </button>
                 ` : ''}
               </div>
@@ -368,6 +516,8 @@ const CalendarController = {
         const id = btn.dataset.id;
         const current = this.getPersonalEvents().filter(x => x.id !== id);
         this.savePersonalEvents(current);
+        this.renderCategoryFilters();
+        this.renderSpotlightMilestone();
         this.renderCalendarContent();
       });
     });
@@ -384,36 +534,35 @@ const CalendarController = {
     const allEvents = this.getAllEvents();
 
     let gridHtml = `
-      <div class="dash-card calendar-month-container">
-        <!-- Month Bar Controls -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-          <button type="button" class="btn-secondary" id="btn-month-prev" style="padding: 6px 14px;">
-            ← Prev Month
+      <div class="rounded-2xl bg-surface-container-low p-4 sm:p-5 border border-white/[0.06] shadow-sm flex flex-col space-y-4">
+        <!-- Month Navigation Bar -->
+        <div class="flex items-center justify-between gap-3">
+          <button type="button" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold text-on-surface transition-colors cursor-pointer flex items-center gap-1" id="btn-month-prev">
+            <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+            <span>Prev</span>
           </button>
-          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin: 0;">
-            ${monthName}
-          </h3>
-          <button type="button" class="btn-secondary" id="btn-month-next" style="padding: 6px 14px;">
-            Next Month →
+          <div class="text-center">
+            <h3 class="font-headline-sm text-base sm:text-lg text-on-surface font-bold">${monthName}</h3>
+            <span class="font-mono text-[10px] text-secondary">Academic Session 2026-27</span>
+          </div>
+          <button type="button" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold text-on-surface transition-colors cursor-pointer flex items-center gap-1" id="btn-month-next">
+            <span>Next</span>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
           </button>
         </div>
 
         <!-- Weekday Headers -->
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; margin-bottom: 8px;">
-          ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `
-            <div style="font-size: 0.76rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; padding: 4px;">
-              ${d}
-            </div>
-          `).join('')}
+        <div class="grid grid-cols-7 gap-1 text-center font-mono text-[11px] font-bold text-on-surface-variant uppercase tracking-wider py-1 border-b border-white/[0.04]">
+          ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div>${d}</div>`).join('')}
         </div>
 
         <!-- Days Grid -->
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
+        <div class="grid grid-cols-7 gap-1 sm:gap-2">
     `;
 
     // Blank cells before month start
     for (let i = 0; i < firstDayIndex; i++) {
-      gridHtml += `<div class="month-day-cell empty" style="height: 80px; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-xs); border: 1px dashed rgba(255, 255, 255, 0.05);"></div>`;
+      gridHtml += `<div class="h-16 sm:h-24 rounded-xl bg-surface-container/20 border border-transparent"></div>`;
     }
 
     // Days in current month
@@ -431,19 +580,25 @@ const CalendarController = {
       const isToday = (new Date().toDateString() === currentCellDate.toDateString());
 
       gridHtml += `
-        <div class="month-day-cell ${hasEvents ? 'has-events' : ''} ${isToday ? 'is-today' : ''}" style="min-height: 80px; background: var(--bg-elevated); border: 1px solid ${isToday ? 'var(--accent-primary)' : 'var(--border-subtle)'}; border-radius: var(--radius-xs); padding: 5px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            ${isToday ? '<span style="font-size: 0.6rem; color: var(--accent-primary); font-weight: 800;">TODAY</span>' : '<span></span>'}
-            <span style="font-weight: 700; font-size: 0.78rem; color: ${isToday ? 'var(--accent-primary)' : 'var(--text-secondary)'};">${day}</span>
+        <div class="min-h-16 sm:min-h-24 rounded-xl p-1.5 sm:p-2 flex flex-col justify-between transition-colors border ${
+          isToday
+            ? 'bg-primary/10 border-primary ring-1 ring-primary/40'
+            : (hasEvents ? 'bg-surface-container border-white/[0.08] hover:border-primary/40 cursor-pointer' : 'bg-surface-container-lowest border-white/[0.02]')
+        }">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold ${isToday ? 'text-primary' : (hasEvents ? 'text-on-surface' : 'text-on-surface-variant/60')}">${day}</span>
+            ${isToday ? '<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>' : ''}
           </div>
-          <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px;">
+          <div class="flex flex-col gap-1 overflow-hidden mt-1">
             ${dayEvents.slice(0, 2).map(ev => `
-              <div class="month-mini-event" style="font-size: 0.68rem; background: rgba(0, 229, 255, 0.12); color: var(--accent-primary); border-radius: 3px; padding: 2px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--accent-primary);" title="${ev.title}">
+              <div class="px-1.5 py-0.5 rounded text-[10px] font-medium truncate ${
+                ev.category === 'exam' ? 'bg-error/20 text-error' : (ev.category === 'holiday' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-primary/20 text-primary')
+              }" title="${ev.title}">
                 ${ev.title}
               </div>
             `).join('')}
             ${dayEvents.length > 2 ? `
-              <div style="font-size: 0.64rem; color: var(--text-muted); text-align: center;">+${dayEvents.length - 2} more</div>
+              <span class="font-mono text-[9px] text-secondary font-semibold">+${dayEvents.length - 2} more</span>
             ` : ''}
           </div>
         </div>
@@ -476,10 +631,7 @@ const CalendarController = {
     const clearBtn = document.getElementById('calendar-search-clear');
     if (clearBtn) clearBtn.style.display = 'none';
 
-    document.querySelectorAll('.cal-filter-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.filter === 'all');
-    });
-
+    this.renderCategoryFilters();
     this.renderCalendarContent();
   },
 
@@ -497,14 +649,16 @@ const CalendarController = {
       note: note || ''
     });
     this.savePersonalEvents(current);
+    this.renderCategoryFilters();
+    this.renderSpotlightMilestone();
     this.renderCalendarContent();
   },
 
   copyEvent(title, dates, target) {
-    const text = `📅 JUIT Calendar Event: ${title}\n🗓 Dates: ${dates}\n📌 Note: ${target}`;
+    const text = `📅 JUIT Milestone: ${title}\n🗓 Dates: ${dates}\n📌 Cohort/Note: ${target}\n🏛 Jaypee University of Information Technology`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
-        alert(`✓ Copied milestone details to clipboard:\n${title} (${dates})`);
+        alert(`✓ Copied milestone to clipboard:\n${title} (${dates})`);
       }).catch(() => {
         prompt('Copy milestone details:', text);
       });
@@ -514,7 +668,6 @@ const CalendarController = {
   },
 
   exportICSFile(events) {
-    const termData = this.data.semesters && this.data.semesters[this.activeTerm];
     const items = events || this.getAllEvents();
 
     let icsContent = [
@@ -565,7 +718,7 @@ const CalendarController = {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    alert(`✓ JUIT Academic Calendar (.ics) downloaded. You can now import it directly into Apple Calendar, Google Calendar, or Outlook.`);
+    alert(`✓ JUIT Academic Calendar (.ics) downloaded. Import it directly into Apple Calendar, Google Calendar, or Outlook.`);
   },
 
   bindEvents() {
@@ -576,6 +729,8 @@ const CalendarController = {
       btnOdd.addEventListener('click', () => {
         this.activeTerm = 'odd2026';
         this.renderTermSwitcher();
+        this.renderCategoryFilters();
+        this.renderSpotlightMilestone();
         this.renderCalendarContent();
       });
     }
@@ -584,18 +739,11 @@ const CalendarController = {
       btnEven.addEventListener('click', () => {
         this.activeTerm = 'even2027';
         this.renderTermSwitcher();
+        this.renderCategoryFilters();
+        this.renderSpotlightMilestone();
         this.renderCalendarContent();
       });
     }
-
-    document.querySelectorAll('.cal-filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.cal-filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.activeCategory = btn.dataset.filter;
-        this.renderCalendarContent();
-      });
-    });
 
     // Search Input Binding
     const searchInput = document.getElementById('calendar-search-input');

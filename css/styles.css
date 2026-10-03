@@ -9700,3 +9700,40 @@ html, body {
   }
 }
 
+/* ==========================================================================
+   ENHANCED POLISHED UI: Calendar, Events, Vault, Portals & Offline Mode
+   ========================================================================== */
+.cal-category-chip,
+.event-filter-pill,
+.portal-cat-pill,
+.category-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.cal-category-chip:active,
+.event-filter-pill:active,
+.portal-cat-pill:active,
+.category-pill:active {
+  transform: scale(0.96);
+}
+
+#connection-status-pill {
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+#offline-status-banner {
+  animation: slideDownBanner 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownBanner {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
