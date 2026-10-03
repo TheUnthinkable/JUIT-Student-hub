@@ -641,43 +641,25 @@
            VIEW 2: CALM SCHEDULE (TIMETABLE)
            ================================================================== -->
       <section class="app-view-panel flex flex-col w-full space-y-space-md" id="view-timetable">
-        <!-- Solan Hill Rhythm & Weather Vignette -->
-        <div class="flex items-center justify-between py-space-sm text-on-surface-variant">
-          <div class="flex items-center gap-space-xs">
-            <span class="material-symbols-outlined text-[17px] text-secondary">cloud</span>
-            <span class="font-caption-editorial text-caption-editorial italic">18°C Misty afternoon · Ridge breeze</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="inline-flex items-center font-label-sm text-xs px-2.5 py-0.5 rounded-full bg-surface-container-high text-secondary font-semibold" id="timetable-live-clock-badge">LIVE TRACKER</span>
-            <span class="inline-flex items-center font-label-sm text-xs px-2.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/25 font-bold tracking-wide">WEEK 6</span>
-          </div>
-        </div>
-
-        <!-- Batch & Attendance Reassurance Card -->
-        <div class="bg-surface-container rounded-xl p-3 sm:p-space-md shadow-md border border-white/[0.06] w-full max-w-full">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 mb-space-sm">
-            <div class="flex items-center gap-2 min-w-0 flex-wrap">
-              <span class="material-symbols-outlined text-primary text-[20px] shrink-0">school</span>
-              <span class="font-headline-sm text-body-md sm:text-headline-sm text-on-surface font-semibold truncate" id="timetable-batch-display-label">Batch 26BT10</span>
-              <span class="inline-flex items-center font-label-sm text-[11px] sm:text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant shrink-0 font-medium">B.Tech. 1st Sem</span>
+        <!-- Timetable Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-surface-container-low p-3.5 sm:p-4 rounded-2xl border border-white/[0.06] shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[24px]">calendar_clock</span>
             </div>
-            <!-- Semester & Batch Controls -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
-              <select class="select-styled w-full max-w-full truncate" id="timetable-sem-select" aria-label="Select Semester"></select>
-              <select class="select-styled w-full max-w-full truncate" id="timetable-batch-select" aria-label="Select Batch"></select>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">Academic Timetable</h1>
+                <span class="inline-flex items-center font-mono text-xs px-2.5 py-0.5 rounded-lg bg-primary/15 text-primary font-bold border border-primary/25" id="timetable-batch-display-label">Batch 26BT10</span>
+                <span class="inline-flex items-center font-label-sm text-[11px] px-2 py-0.5 rounded-lg bg-surface-container-high text-on-surface-variant font-medium" id="timetable-sem-badge">B.Tech. 1st Sem</span>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-0.5">Waknaghat Campus Lectures, Tutorials & Labs</p>
             </div>
           </div>
-
-          <!-- Reassurance Badge -->
-          <div class="flex items-center gap-space-sm bg-surface-container-low rounded-lg p-2.5 sm:p-space-sm border border-white/[0.04]">
-            <div class="w-7 h-7 rounded-full bg-secondary/15 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">spa</span>
-            </div>
-            <div class="min-w-0 flex-1">
-              <p class="font-body-sm text-xs sm:text-body-sm text-on-surface">
-                You are safe on attendance <span class="font-label-md text-label-md text-secondary font-bold">(89% total)</span>. No worries.
-              </p>
-            </div>
+          <!-- Semester & Batch Controls -->
+          <div class="grid grid-cols-2 gap-2 w-full sm:w-auto">
+            <select class="select-styled w-full max-w-full text-xs sm:text-sm font-medium py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-sem-select" aria-label="Select Semester"></select>
+            <select class="select-styled w-full max-w-full text-xs sm:text-sm font-medium py-2 px-3 rounded-xl bg-surface-container border border-white/[0.08]" id="timetable-batch-select" aria-label="Select Batch"></select>
           </div>
         </div>
 
@@ -712,7 +694,10 @@
             <span class="font-caption-editorial text-caption-editorial text-on-surface-variant italic" id="timetable-timeline-heading">Waknaghat Academic Blocks</span>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" id="btn-jump-period" class="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-surface-container-high text-primary font-label-sm text-xs font-semibold border border-white/[0.08] transition-colors hover:bg-surface-bright cursor-pointer">Now</button>
+            <button type="button" id="btn-jump-to-now" class="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-xs font-semibold border border-white/[0.08] transition-colors cursor-pointer">
+              <span class="material-symbols-outlined text-[14px]">my_location</span>
+              <span>Now</span>
+            </button>
             <span class="inline-flex items-center font-label-sm text-xs px-3 py-1 rounded-full bg-surface-container-high text-primary font-bold border border-primary/20" id="schedule-classes-count">5 Classes</span>
           </div>
         </div>
@@ -818,116 +803,24 @@
         </div>
 
         <!-- Quick Meal Period Filter Pills -->
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1" id="mess-meal-filter-bar">
-          <button type="button" class="mess-meal-filter-pill active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm" data-filter="all">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="mess-meal-filter-bar">
+          <button type="button" class="mess-meal-filter-pill active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm cursor-pointer" data-filter="all">
             <span>All Daily Meals</span>
           </button>
-          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="snacks">
-            <span>☕ Hostel Chai (5:00 PM)</span>
+          <button type="button" class="mess-meal-filter-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container hover:bg-surface-container-high cursor-pointer" data-filter="breakfast">
+            <span>🌅 Breakfast (07:30 – 09:30 AM)</span>
           </button>
-          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="night-milk">
-            <span>🥛 Night Milk (9:15 PM)</span>
+          <button type="button" class="mess-meal-filter-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container hover:bg-surface-container-high cursor-pointer" data-filter="lunch">
+            <span>☀️ Lunch (12:00 – 02:00 PM)</span>
           </button>
-          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="breakfast">
-            <span>🌅 Breakfast</span>
-          </button>
-          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="lunch">
-            <span>☀️ Lunch</span>
-          </button>
-          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="dinner">
-            <span>🌙 Dinner</span>
+          <button type="button" class="mess-meal-filter-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container hover:bg-surface-container-high cursor-pointer" data-filter="dinner">
+            <span>🌙 Dinner (07:30 – 09:30 PM)</span>
           </button>
         </div>
 
-        <!-- Full Daily Meals Container (Breakfast, Lunch, Chai, Dinner, Night Milk) -->
+        <!-- Full Daily Meals Container (Breakfast, Lunch, Dinner) -->
         <div class="space-y-space-md" id="mess-meals-container">
           <!-- Dynamically populated by MessController in chronological order -->
-        </div>
-
-        <!-- Night Milk & Hostel Chai Hub -->
-        <div class="rounded-2xl bg-surface-container-low p-4 sm:p-5 border border-white/[0.08] shadow-sm space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[24px]">local_cafe</span>
-              </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold">Night Milk & Hostel Chai Distribution Hub</h3>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-sky-500/15 text-sky-400 font-semibold border border-sky-500/30">Daily Campus Essential</span>
-                </div>
-                <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">
-                  Hot evening mountain tea & late-night warm flavored milk served directly at residential hostel counters.
-                </p>
-              </div>
-            </div>
-            <button type="button" id="btn-locate-milk-on-map" class="px-3.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer border border-white/[0.06] shrink-0 self-start sm:self-auto">
-              <span class="material-symbols-outlined text-[15px]">explore</span>
-              <span>Locate Counters on 3D Map</span>
-            </button>
-          </div>
-
-          <!-- 3-Block Hostel Counters Info Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-pink-400 flex items-center gap-1">
-                  <span>🌸</span>
-                  <span>Girls Hostels</span>
-                </span>
-                <span class="text-[10px] font-mono text-on-surface-variant">09:15 – 09:45 PM</span>
-              </div>
-              <p class="text-[11px] text-on-surface font-semibold">Geeta Bhawan, Geeta Ext. & Malviya-B</p>
-              <p class="text-[11px] text-on-surface-variant leading-relaxed">
-                Dedicated counters in hostel reception lobby with hot haldi/bournvita dispenser & Marie/digestive biscuits.
-              </p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-sky-400 flex items-center gap-1">
-                  <span>🌲</span>
-                  <span>Boys Senior & 1st Year</span>
-                </span>
-                <span class="text-[10px] font-mono text-on-surface-variant">09:15 – 09:45 PM</span>
-              </div>
-              <p class="text-[11px] text-on-surface font-semibold">Dining Hall 1 & First Year Dining Annex</p>
-              <p class="text-[11px] text-on-surface-variant leading-relaxed">
-                Large capacity double-barrel steamed milk boilers, bournvita/horlicks mixes, and student travel flask refills.
-              </p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-amber-400 flex items-center gap-1">
-                  <span>🏔️</span>
-                  <span>Azad & Shastri Terraces</span>
-                </span>
-                <span class="text-[10px] font-mono text-on-surface-variant">07:30 – 08:30 PM</span>
-              </div>
-              <p class="text-[11px] text-on-surface font-semibold">Terrace Counter during Dinner Hours</p>
-              <p class="text-[11px] text-on-surface-variant leading-relaxed">
-                Early distribution counter set up right at the hostel dining terrace for senior boys during dinner timing.
-              </p>
-            </div>
-          </div>
-
-          <!-- Weekly Flavors & Schedule Table -->
-          <div class="overflow-x-auto rounded-xl border border-white/[0.04]">
-            <table class="milk-table w-full">
-              <thead>
-                <tr>
-                  <th>Day</th>
-                  <th>Chai & Evening Snack (5:00 PM)</th>
-                  <th>Night Milk Counter (9:15 PM)</th>
-                  <th>Counter Locations</th>
-                </tr>
-              </thead>
-              <tbody id="milk-schedule-tbody">
-                <!-- Dynamically populated by MessController -->
-              </tbody>
-            </table>
-          </div>
         </div>
       </section>
 

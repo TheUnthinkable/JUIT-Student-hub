@@ -329,11 +329,9 @@ const TimetableController = {
     if (label) {
       label.textContent = (!this.activeBatch || this.activeBatch === 'ALL') ? 'All Batches' : `Batch ${this.activeBatch}`;
       const currentSheet = this.data[this.activeSemesterId];
-      if (label.parentElement) {
-        const semBadge = label.parentElement.querySelector('span:last-child');
-        if (semBadge && currentSheet) {
-          semBadge.textContent = currentSheet.term || currentSheet.title || '1st Sem';
-        }
+      const semBadge = document.getElementById('timetable-sem-badge') || (label.parentElement && label.parentElement.querySelector('span:last-child'));
+      if (semBadge && currentSheet) {
+        semBadge.textContent = currentSheet.term || currentSheet.title || '1st Sem';
       }
     }
   },
@@ -813,55 +811,55 @@ const TimetableController = {
       }
 
       return `
-        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-3.5 sm:p-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-3.5 border border-white/[0.06] hover:border-white/[0.12] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary/80 bg-surface-container' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
+        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-4 sm:p-5 rounded-2xl shadow-sm transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/[0.06] hover:border-white/[0.12] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary/80 bg-surface-container' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
           
           <!-- Left Side: Time Pillar + Main Subject Details -->
-          <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          <div class="flex items-start sm:items-center gap-3.5 sm:gap-5 flex-1 min-w-0">
             
-            <!-- Time Pillar: High-contrast, easy to read -->
-            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-1.5 rounded-xl bg-surface-container-lowest border border-white/[0.05] text-center select-none">
-              <span class="font-mono text-xs sm:text-sm font-bold text-primary tracking-tight">${startTime}</span>
-              <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[10px]">
-                <span class="material-symbols-outlined text-[12px]">arrow_downward</span>
+            <!-- Time Pillar: High-contrast, spacious and easy to read -->
+            <div class="flex flex-col items-center justify-center shrink-0 w-28 sm:w-32 py-2.5 px-2 rounded-2xl bg-surface-container-lowest border border-white/[0.06] text-center select-none shadow-sm">
+              <span class="font-mono text-sm sm:text-base font-bold text-primary tracking-tight">${startTime}</span>
+              <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[11px]">
+                <span class="material-symbols-outlined text-[13px]">arrow_downward</span>
                 <span>to</span>
               </div>
               <span class="font-mono text-xs sm:text-sm font-semibold text-on-surface-variant">${endTime}</span>
-              <span class="mt-1 px-1.5 py-0.5 rounded-md font-mono text-[10px] font-semibold bg-surface-container-high text-outline">${durText}</span>
+              <span class="mt-1.5 px-2 py-0.5 rounded-md font-mono text-[10px] sm:text-[11px] font-bold bg-surface-container-high text-outline">${durText}</span>
             </div>
 
             <!-- Subject & Academic Details -->
-            <div class="space-y-1.5 min-w-0 flex-1">
+            <div class="space-y-2 min-w-0 flex-1">
               
               <!-- Meta Badges: Type Pill + Course Code + Status -->
-              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold ${typeBadgeStyle}">
-                  <span class="material-symbols-outlined text-[14px]">${typeIcon}</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold ${typeBadgeStyle}">
+                  <span class="material-symbols-outlined text-[15px]">${typeIcon}</span>
                   <span>${typeLabel}</span>
                 </span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-lg font-mono text-[11px] sm:text-xs font-semibold bg-surface-container-highest text-on-surface border border-white/[0.06]">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-xl font-mono text-xs font-bold bg-surface-container-highest text-on-surface border border-white/[0.06]">
                   ${c.code}
                 </span>
-                ${c.durationSlots > 1 ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md font-mono text-[10px] bg-surface-container-highest text-on-surface-variant font-medium">${c.durationSlots} hrs</span>` : ''}
+                ${c.durationSlots > 1 ? `<span class="inline-flex items-center px-2 py-0.5 rounded-lg font-mono text-[11px] bg-surface-container-highest text-on-surface-variant font-semibold">${c.durationSlots} hrs</span>` : ''}
                 ${liveStatusBadge}
               </div>
 
               <!-- Prominent Subject Title -->
-              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
+              <h3 class="font-headline-sm text-base sm:text-lg md:text-xl font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
                 ${c.cleanSubject}
               </h3>
 
               <!-- Faculty & Batch Details -->
-              <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-on-surface-variant pt-0.5">
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-on-surface-variant pt-0.5">
                 ${c.faculty ? `
-                  <div class="inline-flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[15px] text-primary">person</span>
-                    <span class="font-medium text-on-surface">Prof. ${c.faculty}</span>
+                  <div class="inline-flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px] text-primary">person</span>
+                    <span class="font-semibold text-on-surface">Prof. ${c.faculty}</span>
                   </div>
                 ` : ''}
                 ${coAttending ? `
-                  <div class="inline-flex items-center gap-1 text-outline">
-                    <span class="material-symbols-outlined text-[15px]">groups</span>
-                    <span class="truncate max-w-[200px] sm:max-w-none">${coAttending}</span>
+                  <div class="inline-flex items-center gap-1.5 text-outline">
+                    <span class="material-symbols-outlined text-[16px]">groups</span>
+                    <span class="truncate max-w-[220px] sm:max-w-none font-medium">${coAttending}</span>
                   </div>
                 ` : ''}
               </div>
@@ -870,26 +868,26 @@ const TimetableController = {
           </div>
 
           <!-- Right Side: Venue & Action Buttons -->
-          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/[0.06]">
+          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-white/[0.06]">
             
             <!-- Prominent Venue Locator Button -->
             ${c.venue ? `
-              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
-                <span class="material-symbols-outlined text-rose-400 text-[15px]">location_on</span>
-                <span class="font-bold text-primary font-mono">Room ${c.venue}</span>
+              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs sm:text-sm transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
+                <span class="material-symbols-outlined text-rose-400 text-[16px]">location_on</span>
+                <span class="text-primary font-mono">Room ${c.venue}</span>
               </button>
             ` : `
-              <div class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container text-outline text-xs">
-                <span class="material-symbols-outlined text-[15px]">location_off</span>
+              <div class="inline-flex items-center justify-center gap-1 px-3.5 py-2 rounded-xl bg-surface-container text-outline text-xs font-medium">
+                <span class="material-symbols-outlined text-[16px]">location_off</span>
                 <span>Venue TBA</span>
               </div>
             `}
 
             <!-- Actions Row: Attendance + Study Notes + Info -->
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-2">
               <!-- Attendance Button -->
-              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl font-label-md text-xs font-semibold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
-                <span class="material-symbols-outlined text-[15px]">${attIcon}</span>
+              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl font-label-md text-xs sm:text-sm font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
+                <span class="material-symbols-outlined text-[16px]">${attIcon}</span>
                 <span>${attBtnLabel}</span>
               </button>
 
@@ -897,8 +895,8 @@ const TimetableController = {
               ${vaultBtn}
 
               <!-- Info Inspector -->
-              <button type="button" class="btn-class-inspect w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
-                <span class="material-symbols-outlined text-[16px]">info</span>
+              <button type="button" class="btn-class-inspect w-9 h-9 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
+                <span class="material-symbols-outlined text-[18px]">info</span>
               </button>
             </div>
 
@@ -1017,7 +1015,7 @@ const TimetableController = {
 
     let statusText = '';
     if (!isToday) {
-      statusText = `📅 Academic Day Flow (${classes.length} Sessions Scheduled)`;
+      statusText = `Academic Day Flow (${classes.length} Sessions Scheduled)`;
     } else if (liveClass) {
       statusText = `🔴 IN PROGRESS: ${liveClass.cleanSubject || liveClass.subject} at ${liveClass.venue || 'Campus'} (${liveClass.range.end - curMins}m remaining)`;
     } else if (nextClass) {
@@ -1056,25 +1054,75 @@ const TimetableController = {
         const gapMins = cStart - currentMarker;
         const gapPct = ((gapMins / dayTotal) * 100).toFixed(1);
         const isLunch = (currentMarker >= 760 && cStart <= 860);
-        ganttSlotsHtml += `
-          <div class="h-full ${isLunch ? 'bg-surface-container-high/80 text-on-surface' : 'bg-surface-container/60 hover:bg-surface-container text-on-surface-variant'} rounded-md flex items-center justify-center cursor-pointer transition-colors" style="width: ${gapPct}%;" title="${isLunch ? 'Lunch Break (01:00 - 02:00 PM)' : 'Free Period'}">
-            <span class="font-label-sm text-[11px] font-semibold truncate px-1">${isLunch ? 'Lunch' : 'Free'}</span>
-          </div>
-        `;
+        if (isLunch) {
+          ganttSlotsHtml += `
+            <div class="h-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 rounded-xl flex flex-col items-center justify-center p-1 sm:p-2 text-center text-amber-300 transition-all select-none shadow-sm" style="width: ${gapPct}%; min-width: 55px;" title="Lunch Break (01:00 PM – 02:00 PM)">
+              <span class="font-extrabold text-[11px] sm:text-xs tracking-tight flex items-center gap-1 justify-center">
+                <span>🍽️</span>
+                <span class="hidden sm:inline">Lunch</span>
+              </span>
+              <span class="font-mono text-[9px] sm:text-[10px] text-amber-300/80 mt-0.5">1–2 PM</span>
+            </div>
+          `;
+        } else {
+          ganttSlotsHtml += `
+            <div class="h-full bg-surface-container/50 hover:bg-surface-container/80 border border-white/[0.04] rounded-xl flex flex-col items-center justify-center p-1 sm:p-2 text-center text-on-surface-variant transition-all select-none" style="width: ${gapPct}%; min-width: 40px;" title="Free Break (${gapMins} mins)">
+              <span class="font-bold text-[10px] sm:text-xs text-outline flex items-center gap-1 justify-center">
+                <span>☕</span>
+                <span class="hidden sm:inline">Free</span>
+              </span>
+              <span class="font-mono text-[9px] sm:text-[10px] text-outline/80 mt-0.5">${gapMins}m</span>
+            </div>
+          `;
+        }
       }
 
       const durMins = Math.max(15, cEnd - cStart);
       const slotPct = ((durMins / dayTotal) * 100).toFixed(1);
+      
+      const typeLabel = c.type === 'P' ? 'Lab' : (c.type === 'T' ? 'Tut' : 'Lec');
       const bgClass = c.type === 'P'
-        ? 'bg-emerald-400 hover:bg-emerald-300 text-neutral-950 font-bold'
+        ? 'bg-gradient-to-br from-emerald-600 to-teal-700 text-white border-emerald-400/40 shadow-emerald-500/15'
         : (c.type === 'T'
-          ? 'bg-sky-400 hover:bg-sky-300 text-neutral-950 font-bold'
-          : 'bg-amber-400 hover:bg-amber-300 text-neutral-950 font-bold');
+          ? 'bg-gradient-to-br from-sky-600 to-indigo-700 text-white border-sky-400/40 shadow-sky-500/15'
+          : 'bg-gradient-to-br from-amber-600 to-orange-700 text-white border-amber-400/40 shadow-amber-500/15');
 
-      const slotLabel = (durMins <= 60 && c.cleanSubject) ? c.cleanSubject.split(' ')[0] : (c.code || c.cleanSubject || 'Class');
+      const isCurrentClass = (liveClass && liveClass.uniqueId === c.uniqueId);
+
+      const rTime = this.parseTimeRange(c.time);
+      const startTimeFormatted = rTime ? `${Math.floor(rTime.start/60)%12 || 12}:${String(rTime.start%60).padStart(2,'0')}` : '';
+      const endTimeFormatted = rTime ? `${Math.floor(rTime.end/60)%12 || 12}:${String(rTime.end%60).padStart(2,'0')}` : '';
+      const timeSpanStr = (startTimeFormatted && endTimeFormatted) ? `${startTimeFormatted}–${endTimeFormatted}` : c.time;
+
+      const subShort = c.cleanSubject ? c.cleanSubject.split('(')[0].trim() : (c.subject || 'Class');
+
+      // Robust standard course code extraction (e.g. 25B11HS111 -> HS111, 25B17CI172 -> CI172)
+      const rawCode = c.code || '';
+      const deptCodeMatch = rawCode.match(/[A-Z]{2,4}[0-9]{3}/i);
+      const displayCode = deptCodeMatch ? deptCodeMatch[0] : (rawCode || 'CLASS');
+
       ganttSlotsHtml += `
-        <div class="h-full ${bgClass} rounded-md flex items-center justify-center font-semibold cursor-pointer transition-colors group relative" style="width: ${slotPct}%;" title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'}">
-          <span class="font-code-sm text-[10px] sm:text-code-sm truncate px-0.5 font-mono">${slotLabel}</span>
+        <div class="class-gantt-slot h-full ${bgClass} rounded-2xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all hover:scale-[1.02] hover:brightness-110 active:scale-[0.99] border shadow-sm select-none relative overflow-hidden group shrink-0 ${isCurrentClass ? 'ring-2 ring-white ring-offset-2 ring-offset-neutral-900 animate-pulse' : ''}"
+             style="width: ${slotPct}%; min-width: 120px;"
+             data-target-id="${c.uniqueId}"
+             title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'} (Click to jump to class)">
+          
+          <!-- Top Row: Clean Course Code & Type Badge -->
+          <div class="flex items-center justify-between gap-1 leading-none">
+            <span class="font-mono text-xs sm:text-sm font-black tracking-tight text-white drop-shadow-sm whitespace-nowrap">${displayCode}</span>
+            <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/35 text-white uppercase tracking-wider shrink-0">${typeLabel}</span>
+          </div>
+
+          <!-- Middle Row: Clean Subject Name -->
+          <div class="font-bold text-[11px] sm:text-xs text-white/95 truncate leading-tight my-0.5">
+            ${subShort}
+          </div>
+
+          <!-- Bottom Row: Time and Room Location -->
+          <div class="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-white/90 leading-none pt-1 border-t border-white/20">
+            <span class="truncate">${timeSpanStr}</span>
+            <span class="shrink-0 font-bold ml-1">${c.venue ? 'Rm ' + c.venue : ''}</span>
+          </div>
         </div>
       `;
 
@@ -1082,17 +1130,50 @@ const TimetableController = {
     }
 
     if (currentMarker < dayEnd) {
-      const remPct = (((dayEnd - currentMarker) / dayTotal) * 100).toFixed(1);
+      const remMins = dayEnd - currentMarker;
+      const remPct = (((remMins) / dayTotal) * 100).toFixed(1);
       ganttSlotsHtml += `
-        <div class="h-full bg-surface-container/50 hover:bg-surface-container rounded flex items-center justify-center text-outline cursor-pointer transition-colors" style="width: ${remPct}%;" title="Campus Leisure">
-          <span class="font-label-sm text-[10px] sm:text-label-sm truncate px-1">Free</span>
+        <div class="h-full bg-surface-container/50 hover:bg-surface-container/80 border border-white/[0.04] rounded-2xl flex flex-col items-center justify-center p-2 text-center text-on-surface-variant transition-all select-none shrink-0" style="width: ${remPct}%; min-width: 65px;" title="Free Evening (${remMins}m)">
+          <span class="font-bold text-xs text-outline flex items-center gap-1 justify-center">
+            <span>🌆</span>
+            <span>Evening</span>
+          </span>
+          <span class="font-mono text-[10px] text-outline/80 mt-0.5">${remMins}m</span>
         </div>
       `;
     }
 
     trackerContainer.innerHTML = `
-      <div class="space-y-1.5 pt-space-xs">
-        <div class="flex justify-between font-mono text-[10px] sm:text-code-sm text-outline px-0.5 select-none">
+      <div class="bg-surface-container-low rounded-2xl p-3 sm:p-4 border border-white/[0.06] shadow-md space-y-2.5">
+        
+        <!-- Load Bar Header & Legend -->
+        <div class="flex items-center justify-between gap-2 flex-wrap pb-1 border-b border-white/[0.05]">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">view_timeline</span>
+            <span class="font-label-md text-xs sm:text-sm font-bold text-on-surface">Daily Period Tracker</span>
+            <span class="hidden sm:inline-block text-xs text-on-surface-variant">· 09:00 AM to 06:00 PM Timeline</span>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] font-semibold">
+            <span class="inline-flex items-center gap-1 text-amber-400"><span class="w-2.5 h-2.5 rounded bg-amber-500"></span> Lecture</span>
+            <span class="inline-flex items-center gap-1 text-sky-400"><span class="w-2.5 h-2.5 rounded bg-sky-500"></span> Tutorial</span>
+            <span class="inline-flex items-center gap-1 text-emerald-400"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> Lab</span>
+          </div>
+        </div>
+
+        <!-- Hourly Timeline Ticks Scale (10 Hourly Markers) -->
+        <div class="relative w-full h-4 font-mono text-[11px] sm:text-xs font-bold text-on-surface-variant select-none hidden sm:block">
+          <span class="absolute left-0">09:00 AM</span>
+          <span class="absolute left-[11.1%] -translate-x-1/2">10:00</span>
+          <span class="absolute left-[22.2%] -translate-x-1/2">11:00</span>
+          <span class="absolute left-[33.3%] -translate-x-1/2">12:00 PM</span>
+          <span class="absolute left-[44.4%] -translate-x-1/2">01:00</span>
+          <span class="absolute left-[55.5%] -translate-x-1/2">02:00</span>
+          <span class="absolute left-[66.7%] -translate-x-1/2">03:00</span>
+          <span class="absolute left-[77.8%] -translate-x-1/2">04:00</span>
+          <span class="absolute left-[88.9%] -translate-x-1/2">05:00</span>
+          <span class="absolute right-0">06:00 PM</span>
+        </div>
+        <div class="flex sm:hidden justify-between font-mono text-[11px] font-bold text-on-surface-variant select-none px-1">
           <span>9 AM</span>
           <span>11 AM</span>
           <span>1 PM</span>
@@ -1100,31 +1181,72 @@ const TimetableController = {
           <span>5 PM</span>
           <span>6 PM</span>
         </div>
-        <div class="h-8 w-full bg-surface-container-lowest rounded-lg p-1 flex gap-1 relative overflow-hidden border border-outline-variant/20">
+
+        <!-- The Large Interactive Load Bar -->
+        <div class="h-20 sm:h-24 w-full bg-surface-container-lowest rounded-2xl p-1.5 flex gap-1.5 relative overflow-x-auto overflow-y-hidden border border-white/[0.08] shadow-inner no-scrollbar">
           ${ganttSlotsHtml}
+          ${(isToday && curMins >= dayStart && curMins <= dayEnd) ? `
+            <div class="absolute top-0 bottom-0 w-0.5 bg-rose-500 z-30 pointer-events-none shadow-[0_0_10px_rgba(244,63,94,1)]" style="left: ${((curMins - dayStart) / dayTotal) * 100}%;">
+              <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rose-500 ring-2 ring-white"></div>
+              <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1 rounded bg-rose-600 text-white font-mono text-[9px] font-bold">NOW</div>
+            </div>
+          ` : ''}
         </div>
-      </div>
-      <div class="flex items-center justify-between pt-1 gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="w-2 h-2 rounded-full ${isToday ? (liveClass ? 'bg-primary animate-ping' : 'bg-secondary') : 'bg-outline'} shrink-0"></span>
-          <span class="font-label-sm text-xs sm:text-label-sm text-on-surface truncate">${statusText}</span>
+
+        <!-- Live Period Status Row -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2.5 h-2.5 rounded-full ${isToday ? (liveClass ? 'bg-emerald-400 animate-ping' : 'bg-primary') : 'bg-outline'} shrink-0"></span>
+            <span class="font-body-md text-xs sm:text-sm font-semibold text-on-surface truncate">${statusText}</span>
+          </div>
+          ${(liveClass || nextClass) ? `
+            <button type="button" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-dark text-on-primary font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-sm shrink-0 self-start sm:self-auto" id="btn-jump-period">
+              <span>Jump to Class</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+            </button>
+          ` : ''}
         </div>
-        ${(liveClass || nextClass) ? `
-          <button type="button" class="btn-micro px-2 sm:px-space-sm py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary font-label-sm text-[11px] sm:text-label-sm font-medium transition-colors cursor-pointer border border-outline-variant/30 shrink-0" id="btn-jump-period">
-            Jump to Class →
-          </button>
-        ` : ''}
+
       </div>
     `;
 
-    const jumpBtn = document.getElementById('btn-jump-period');
-    if (jumpBtn) {
-      jumpBtn.addEventListener('click', () => {
-        const target = document.querySelector('.bg-surface-container-low.ring-1') || document.querySelector('[data-venue]');
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Click handler for Gantt slots to scroll directly to the class card below
+    trackerContainer.querySelectorAll('.class-gantt-slot').forEach(slot => {
+      slot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = slot.dataset.targetId;
+        if (!targetId) return;
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.classList.add('ring-4', 'ring-primary', 'transition-all');
+          setTimeout(() => {
+            targetEl.classList.remove('ring-4', 'ring-primary');
+          }, 1500);
         }
       });
+    });
+
+    const triggerJump = () => {
+      const liveTarget = document.querySelector('.class-schedule-card.ring-2') || document.querySelector('.class-schedule-card');
+      if (liveTarget) {
+        liveTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        liveTarget.classList.add('ring-4', 'ring-primary', 'transition-all');
+        setTimeout(() => {
+          liveTarget.classList.remove('ring-4', 'ring-primary');
+        }, 1500);
+      }
+    };
+
+    const jumpBtn = document.getElementById('btn-jump-period');
+    if (jumpBtn) {
+      jumpBtn.addEventListener('click', triggerJump);
+    }
+
+    const jumpToNowBtn = document.getElementById('btn-jump-to-now');
+    if (jumpToNowBtn && !jumpToNowBtn._bound) {
+      jumpToNowBtn._bound = true;
+      jumpToNowBtn.addEventListener('click', triggerJump);
     }
   },
 
