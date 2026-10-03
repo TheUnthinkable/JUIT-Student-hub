@@ -634,6 +634,264 @@ const ResourcesController = {
         this.promptAddResource();
       });
     }
+
+    // Senior Strategy Master Center Bindings
+    this.bindSeniorStrategy();
+
+    // Senior Strategy Exam Shortcuts (T-1 -> Tutorial, T-2 -> PYQ, TA -> Lab Manual)
+    document.querySelectorAll('.btn-strategy-shortcut').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetType = btn.dataset.strategyType;
+        if (targetType) {
+          this.activeType = targetType;
+          this.renderTypeFilters();
+          this.renderResources();
+          const targetEl = document.getElementById('resources-grid-container');
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+  },
+
+  bindSeniorStrategy() {
+    const tabBtns = document.querySelectorAll('.strategy-tab-btn');
+    const contentPanels = {
+      overview: document.getElementById('strat-content-overview'),
+      t1: document.getElementById('strat-content-t1'),
+      t2: document.getElementById('strat-content-t2'),
+      ta: document.getElementById('strat-content-ta'),
+      calc: document.getElementById('strat-content-calc')
+    };
+
+    const activateTab = (tabName) => {
+      tabBtns.forEach(b => {
+        if (b.dataset.tab === tabName) {
+          b.className = 'strategy-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm';
+        } else {
+          b.className = 'strategy-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container';
+        }
+      });
+
+      Object.entries(contentPanels).forEach(([key, el]) => {
+        if (!el) return;
+        if (key === tabName) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+    };
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(btn.dataset.tab);
+      });
+    });
+
+    document.querySelectorAll('.btn-goto-strat-tab').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(btn.dataset.targetTab);
+      });
+    });
+
+    // CGPA Predictor Live Engine
+    const inputT1 = document.getElementById('strat-input-t1');
+    const inputT2 = document.getElementById('strat-input-t2');
+    const inputTa = document.getElementById('strat-input-ta');
+    const valT1 = document.getElementById('strat-val-t1');
+    const valT2 = document.getElementById('strat-val-t2');
+    const valTa = document.getElementById('strat-val-ta');
+    const elAccumulated = document.getElementById('strat-calc-accumulated');
+    const elNeedAplus = document.getElementById('strat-calc-need-aplus');
+    const elNeedA = document.getElementById('strat-calc-need-a');
+    const elNeedBplus = document.getElementById('strat-calc-need-bplus');
+    const elFeedback = document.getElementById('strat-calc-feedback');
+
+    const updateCalc = () => {
+      if (!inputT1 || !inputT2 || !inputTa) return;
+      const t1 = parseFloat(inputT1.value) || 0;
+      const t2 = parseFloat(inputT2.value) || 0;
+      const ta = parseFloat(inputTa.value) || 0;
+
+      if (valT1) valT1.textContent = t1;
+      if (valT2) valT2.textContent = t2;
+      if (valTa) valTa.textContent = ta;
+
+      const acc = t1 + t2 + ta; // out of 65
+      if (elAccumulated) elAccumulated.textContent = `${acc} / 65`;
+
+      // Targets: A+ ~ 80, A ~ 72, B+ ~ 64, B ~ 55
+      const calcNeed = (targetTotal) => {
+        const diff = Math.max(0, targetTotal - acc);
+        if (diff > 35) return 'Out of reach';
+        return `${diff} / 35`;
+      };
+
+      if (elNeedAplus) elNeedAplus.textContent = calcNeed(80);
+      if (elNeedA) elNeedA.textContent = calcNeed(72);
+      if (elNeedBplus) elNeedBplus.textContent = calcNeed(64);
+
+      if (elFeedback) {
+        if (acc >= 55) {
+          elFeedback.innerHTML = `
+            <span class="material-symbols-outlined text-amber-400 text-[18px]">workspace_premium</span>
+            <span><strong>Elite CGPA Standing:</strong> You have accumulated ${acc}/65 marks! Scoring just 17/35 in T-3 secures an A (9.0 SGPA), and 25/35 secures a flawless A+ (10.0)!</span>
+          `;
+        } else if (acc >= 45) {
+          elFeedback.innerHTML = `
+            <span class="material-symbols-outlined text-emerald-400 text-[18px]">verified</span>
+            <span><strong>Strong Competitive Zone:</strong> ${acc}/65 in hand. Scoring 27/35 in T-3 End-Sem puts you comfortably in the 9.0+ SGPA bracket under JUIT relative curves.</span>
+          `;
+        } else {
+          elFeedback.innerHTML = `
+            <span class="material-symbols-outlined text-sky-400 text-[18px]">trending_up</span>
+            <span><strong>Opportunity Ahead:</strong> Focus heavily on the 35-mark T-3 End Sem (covering entire syllabus). Target 25+ in T-3 to pull your grade directly into the B+ / A band!</span>
+          `;
+        }
+      }
+    };
+
+    [inputT1, inputT2, inputTa].forEach(inp => {
+      if (inp) {
+        inp.addEventListener('input', updateCalc);
+      }
+    });
+
+    // Full Playbook Modal Trigger
+    const btnPlaybook = document.getElementById('btn-open-full-playbook-modal');
+    if (btnPlaybook) {
+      btnPlaybook.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.openPlaybookModal();
+      });
+    }
+  },
+
+  openPlaybookModal() {
+    const modal = document.getElementById('universal-modal');
+    const content = document.getElementById('universal-modal-content');
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+      <div class="space-y-4 text-on-surface">
+        <div class="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">workspace_premium</span>
+            </div>
+            <div>
+              <h3 class="font-headline-sm text-base font-bold">JUIT Senior Examination Strategy Playbook</h3>
+              <p class="text-xs text-on-surface-variant font-mono">Curated by 4th-Year Gold Medalists & Department Scholars</p>
+            </div>
+          </div>
+          <button type="button" class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant flex items-center justify-center cursor-pointer text-sm font-bold" id="btn-close-playbook-modal">✕</button>
+        </div>
+
+        <div class="space-y-3.5 text-xs text-on-surface-variant leading-relaxed">
+          <!-- 100 Mark Breakdown -->
+          <div class="p-3 rounded-xl bg-surface-container-low border border-white/[0.06]">
+            <h4 class="font-bold text-on-surface text-xs mb-1.5 flex items-center gap-1.5 text-primary">
+              <span class="material-symbols-outlined text-[16px]">pie_chart</span>
+              <span>JUIT 100-Mark Architecture & Examination Weights</span>
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-[11px] pt-1">
+              <div class="p-2 rounded-lg bg-surface-container">
+                <span class="text-sky-400 font-bold block">T-1 EXAM</span>
+                <span class="text-on-surface font-semibold">15 Marks (15%)</span>
+                <span class="text-[10px] text-on-surface-variant block mt-0.5">Units 1 & 2 • 1 Hr</span>
+              </div>
+              <div class="p-2 rounded-lg bg-surface-container">
+                <span class="text-rose-400 font-bold block">T-2 EXAM</span>
+                <span class="text-on-surface font-semibold">25 Marks (25%)</span>
+                <span class="text-[10px] text-on-surface-variant block mt-0.5">Units 1–4 • 1.5 Hrs</span>
+              </div>
+              <div class="p-2 rounded-lg bg-surface-container">
+                <span class="text-emerald-400 font-bold block">INTERNAL TA</span>
+                <span class="text-on-surface font-semibold">25 Marks (25%)</span>
+                <span class="text-[10px] text-on-surface-variant block mt-0.5">Attd + Vivas + HW</span>
+              </div>
+              <div class="p-2 rounded-lg bg-surface-container">
+                <span class="text-amber-400 font-bold block">T-3 END-SEM</span>
+                <span class="text-on-surface font-semibold">35 Marks (35%)</span>
+                <span class="text-[10px] text-on-surface-variant block mt-0.5">All Units • 2.0 Hrs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- The Golden Rules -->
+          <div class="space-y-2">
+            <h4 class="font-bold text-on-surface text-xs flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-amber-400 text-[16px]">lightbulb</span>
+              <span>4 Golden Rules for 9.0+ SGPA at JUIT</span>
+            </h4>
+            <ul class="space-y-2 pl-1">
+              <li class="flex items-start gap-2">
+                <span class="w-5 h-5 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                <div>
+                  <strong class="text-on-surface">Tutorial Sheets are 75% of T-1:</strong> ECE, Mathematics, and Computing professors draft 75% of T-1 problems directly from Tutorial Sheets 1 and 2. Solving them twice by hand guarantees 12+/15.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                <div>
+                  <strong class="text-on-surface">4-Year PYQ Repetition Pattern in T-2:</strong> Because T-2 covers 4 cumulative units, faculty pull previous questions from 2021–2025 archives. Focus on circuit derivations, algorithm tracing, and boundary value questions.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                <div>
+                  <strong class="text-on-surface">State Assumptions & Units for Partial Marking:</strong> Evaluators follow strict step-marking schemes. Even if a final numerical calculation has a sign error, you bag 70% partial marks if formulas, units, and assumptions are clearly boxed.
+                </div>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 font-bold flex items-center justify-center shrink-0 text-[10px]">4</span>
+                <div>
+                  <strong class="text-on-surface">Lock TA Marks Early (Target 23+/25):</strong> Never lose marks on attendance (<80%) or tutorial deadlines. A 24/25 TA score gives you huge cushion during the final T-3 crunch.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Quick Branch Notes -->
+          <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
+            <h4 class="font-bold text-on-surface text-xs">Department Specific Insights:</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <strong class="text-primary">• CSE / IT:</strong> Practice dry-running recursive code with stack diagrams. Big-O questions require formal definitions (c, n0 constants).
+              </div>
+              <div>
+                <strong class="text-sky-300">• ECE:</strong> Draw neat circuits with arrows for current direction. BJT/Diode problems need explicit DC analysis and AC equivalent models.
+              </div>
+              <div>
+                <strong class="text-emerald-300">• Mathematics:</strong> State theorems before applying them (e.g. "By Cayley-Hamilton theorem..."). Write matrix determinant steps clearly.
+              </div>
+              <div>
+                <strong class="text-amber-300">• Biotech & Civil:</strong> Draw labeled diagrams first; examiners award 40% of marks for comprehensive biochemical pathways and structural shear-force diagrams.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end pt-3 border-t border-white/[0.08] gap-2">
+          <button type="button" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-on-primary font-semibold text-xs cursor-pointer" id="btn-close-playbook-modal-bottom">
+            Got it, Let's Study!
+          </button>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('active');
+
+    const closeModal = () => modal.classList.remove('active');
+    const c1 = document.getElementById('btn-close-playbook-modal');
+    const c2 = document.getElementById('btn-close-playbook-modal-bottom');
+    if (c1) c1.onclick = closeModal;
+    if (c2) c2.onclick = closeModal;
   }
 };
 

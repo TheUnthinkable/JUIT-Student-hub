@@ -22,6 +22,12 @@ const CampusMap = {
   activeFloorFilter: 'all',
   activeMapMode: 'blueprint', // 'blueprint' | 'walkways' | 'night'
   is3DMode: true, // Default to 3D Isometric View
+  activeEngine: 'google3d', // 'google3d' | '3d' | '2d'
+  googleMap: null,
+  googleMarkers: [],
+  googleTilt: 67.5,
+  googleHeading: 45,
+  googleMapTypeId: 'hybrid',
   
   // Transform State
   zoomLevel: 1,
@@ -225,7 +231,8 @@ const CampusMap = {
     this.renderMapControlsUI();
     this.renderSVGMap();
     this.bindMapControls();
-    this.set3DMode(true);
+    this.initGoogle3DMap();
+    this.setMapEngine('google3d');
     this.bindSearch();
     this.bindBuildingCards();
     this.bindTurnByTurn();
@@ -896,8 +903,30 @@ const CampusMap = {
   /* ================= BUILDING SELECTION & PAN/ZOOM ================= */
   focusBuilding(bldg, roomCode, shouldPlotRoute = true) {
     if (!bldg) return;
+    if (typeof bldg === 'string') {
+      bldg = this.buildings.find(b => b.id === bldg) || { id: bldg, name: bldg, code: bldg.toUpperCase() };
+    }
     this.activeBuilding = bldg;
     this.highlightedVenue = roomCode || null;
+
+    // If in Google 3D mode, smoothly fly the 3D camera to the landmark
+    if (this.activeEngine === 'google3d' && this.landmarkCoords && this.landmarkCoords[bldg.id]) {
+      const coords = this.landmarkCoords[bldg.id];
+      if (this.map3DElement) {
+        this.map3DElement.flyCameraTo({
+          endCamera: {
+            center: { lat: coords.lat, lng: coords.lng, altitude: (coords.altitude || 1550) + 140 },
+            tilt: 65,
+            heading: 45,
+            range: 400
+          },
+          durationMillis: 1800
+        });
+      } else if (this.googleMap) {
+        this.googleMap.panTo({ lat: coords.lat, lng: coords.lng });
+        this.googleMap.setZoom(19);
+      }
+    }
 
     // Center map view accurately on building coordinates (SVG 1000x680 space)
     const meta = this.layoutMeta[bldg.id] || { x: bldg.coordinates?.x || 500, y: bldg.coordinates?.y || 340, w: 140, h: 60 };
@@ -973,10 +1002,13 @@ const CampusMap = {
   },
 
   /* ================= FLYOUT BUILDING DRAWER ================= */
-  /* ================= FLYOUT BUILDING DRAWER ================= */
   openBuildingDrawer(bldg, roomToMatch) {
     const drawer = document.getElementById('map-venue-drawer');
-    if (!drawer) return;
+    if (!drawer || !bldg) return;
+
+    if (typeof bldg === 'string') {
+      bldg = this.buildings.find(b => b.id === bldg) || { id: bldg, name: bldg, code: bldg.toUpperCase() };
+    }
 
     this.activeBuilding = bldg;
     const meta = this.layoutMeta[bldg.id] || { color: '#3b82f6', code: bldg.code, badge: 'Landmark', photo: null, photoAlt: bldg.name };
@@ -1310,6 +1342,361 @@ const CampusMap = {
     this.renderSVGMap();
   },
 
+  /* ================= GOOGLE 3D PHOTOREALISTIC & WEBGL MAP ENGINE ================= */
+  landmarkCoords: {
+    block1: { lat: 31.01638, lng: 77.06968, altitude: 1560, code: 'AB1', name: 'Academic Block 1', color: '#00e5ff' },
+    block2: { lat: 31.01662, lng: 77.07012, altitude: 1565, code: 'AB2', name: 'Academic Block 2', color: '#3b82f6' },
+    block3: { lat: 31.01684, lng: 77.07055, altitude: 1560, code: 'AB3', name: 'Academic Block 3', color: '#10b981' },
+    lrc: { lat: 31.01705, lng: 77.06992, altitude: 1575, code: 'LRC', name: 'Learning Resource Centre', color: '#f59e0b' },
+    admin: { lat: 31.01685, lng: 77.06925, altitude: 1570, code: 'ADMIN', name: 'Administrative Block', color: '#38bdf8' },
+    oat: { lat: 31.01625, lng: 77.07022, altitude: 1555, code: 'OAT', name: 'Open Air Theatre', color: '#8b5cf6' },
+    annapurna_a: { lat: 31.01588, lng: 77.07002, altitude: 1545, code: 'MESS-A', name: 'Annapurna Dining Hall A', color: '#f97316' },
+    annapurna_b: { lat: 31.01595, lng: 77.07035, altitude: 1545, code: 'MESS-B', name: 'Annapurna Dining Hall B', color: '#f97316' },
+    hostels_boys: { lat: 31.01552, lng: 77.06932, altitude: 1530, code: 'BH', name: 'Boys Hostels Terraces', color: '#6366f1' },
+    hostels_girls: { lat: 31.01712, lng: 77.07125, altitude: 1580, code: 'GH', name: 'Girls Hostels Complex', color: '#ec4899' },
+    sports_complex: { lat: 31.01618, lng: 77.07085, altitude: 1550, code: 'SPORTS', name: 'Sports Arena & Gym', color: '#06b6d4' },
+    viewpoint: { lat: 31.01735, lng: 77.07042, altitude: 1600, code: 'VIEW', name: 'Shivalik Ridge Helipad', color: '#0ea5e9' },
+    main_gate: { lat: 31.01512, lng: 77.06878, altitude: 1510, code: 'GATE 1', name: 'Main Campus Gate 1', color: '#64748b' },
+    dispensary: { lat: 31.01610, lng: 77.06915, altitude: 1540, code: 'HEALTH', name: 'Health Centre', color: '#ef4444' }
+  },
+
+  async initGoogle3DMap() {
+    const canvas = document.getElementById('google-3d-map-canvas');
+    if (!canvas) return;
+
+    if (!window.google || !window.google.maps) {
+      console.warn('Google Maps JS API is not loaded yet. Waiting for script readiness.');
+      window.addEventListener('load', () => this.initGoogle3DMap());
+      return;
+    }
+
+    if (this.map3DElement || this.googleMap) return;
+
+    const juitCoords = { lat: 31.01655, lng: 77.07004, altitude: 1600 };
+
+    const landmarks = Object.entries(this.landmarkCoords).map(([id, info]) => ({
+      id,
+      ...info,
+      desc: (this.buildings.find(b => b.id === id)?.summary) || `${info.name} at JUIT Waknaghat.`
+    }));
+
+    // Method A: Google Maps Photorealistic 3D Maps element (<gmp-map-3d>)
+    try {
+      if (google.maps.importLibrary) {
+        const maps3d = await google.maps.importLibrary('maps3d');
+        if (maps3d && maps3d.Map3DElement) {
+          console.log('Successfully mounting Google Photorealistic 3D Map Element (<gmp-map-3d>)...');
+          canvas.innerHTML = '';
+          const map3d = new maps3d.Map3DElement({
+            center: { lat: juitCoords.lat, lng: juitCoords.lng, altitude: juitCoords.altitude },
+            tilt: 67.5,
+            heading: 45,
+            range: 1250,
+            mode: 'HYBRID'
+          });
+          map3d.style.width = '100%';
+          map3d.style.height = '100%';
+          map3d.style.display = 'block';
+          canvas.appendChild(map3d);
+          this.map3DElement = map3d;
+
+          // Add interactive 3D markers for all campus landmarks
+          if (maps3d.Marker3DInteractiveElement) {
+            landmarks.forEach(l => {
+              try {
+                const marker = new maps3d.Marker3DInteractiveElement({
+                  position: { lat: l.lat, lng: l.lng, altitude: l.altitude || 1550 },
+                  altitudeMode: 'ABSOLUTE',
+                  extruded: true,
+                  label: l.code,
+                  title: `${l.name} - ${l.desc}`
+                });
+
+                marker.addEventListener('gmp-click', () => {
+                  this.map3DElement.flyCameraTo({
+                    endCamera: {
+                      center: { lat: l.lat, lng: l.lng, altitude: (l.altitude || 1550) + 120 },
+                      tilt: 65,
+                      heading: 45,
+                      range: 400
+                    },
+                    durationMillis: 1800
+                  });
+                  this.openBuildingDrawer(l.id);
+                });
+
+                this.map3DElement.append(marker);
+              } catch (errMarker) {
+                console.warn('Marker 3D initialization caught warning:', errMarker);
+              }
+            });
+          }
+
+          this.bindGoogle3DControls();
+          return;
+        }
+      }
+    } catch (e3d) {
+      console.warn('Google Maps 3D Library import fell back to WebGL Map:', e3d);
+    }
+
+    // Method B: Google Maps WebGL 3D Vector & Satellite Map (Seamless Fallback)
+    try {
+      this.googleMap = new google.maps.Map(canvas, {
+        center: { lat: juitCoords.lat, lng: juitCoords.lng },
+        zoom: 18,
+        tilt: this.googleTilt || 67.5,
+        heading: this.googleHeading || 45,
+        mapTypeId: this.googleMapTypeId || 'hybrid',
+        mapTypeControl: false,
+        fullscreenControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        zoomControl: false,
+        gestureHandling: 'greedy'
+      });
+
+      const infoWindow = new google.maps.InfoWindow();
+
+      this.googleMarkers = landmarks.map(l => {
+        const marker = new google.maps.Marker({
+          position: { lat: l.lat, lng: l.lng },
+          map: this.googleMap,
+          title: l.name,
+          label: {
+            text: l.code,
+            color: '#ffffff',
+            fontSize: '10px',
+            fontWeight: 'bold'
+          },
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: l.color,
+            fillOpacity: 0.95,
+            strokeColor: '#ffffff',
+            strokeWeight: 2,
+            scale: 15
+          }
+        });
+
+        marker.addListener('click', () => {
+          this.googleMap.panTo(marker.getPosition());
+          this.googleMap.setZoom(19);
+
+          const content = `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 6px; max-width: 240px; color: #0f172a;">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                <span style="background: ${l.color}; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">${l.code}</span>
+                <strong style="font-size: 13px; color: #0f172a;">${l.name}</strong>
+              </div>
+              <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4;">${l.desc}</p>
+              <button type="button" onclick="window.CampusMap.openBuildingDrawer('${l.id}')" style="width: 100%; background: #0284c7; color: #ffffff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                Open Building Floor Guide
+              </button>
+            </div>
+          `;
+          infoWindow.setContent(content);
+          infoWindow.open(this.googleMap, marker);
+        });
+
+        return marker;
+      });
+
+      this.bindGoogle3DControls();
+    } catch (e) {
+      console.warn('Google Maps initialization caught error:', e);
+    }
+  },
+
+  bindGoogle3DControls() {
+    const btnOrbit = document.getElementById('btn-gmap-orbit');
+    const orbitLabel = document.getElementById('gmap-orbit-label');
+    const btnTilt = document.getElementById('btn-gmap-tilt-toggle');
+    const tiltLabel = document.getElementById('gmap-tilt-label');
+    const btnRotate = document.getElementById('btn-gmap-rotate-cw');
+    const btnType = document.getElementById('btn-gmap-type-toggle');
+    const typeLabel = document.getElementById('gmap-type-label');
+    const btnRecenter = document.getElementById('btn-gmap-recenter');
+
+    // 1. 3D Flyover Orbit
+    if (btnOrbit && !btnOrbit._bound) {
+      btnOrbit._bound = true;
+      btnOrbit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.map3DElement) {
+          if (this.isOrbiting) {
+            this.map3DElement.stopCameraAnimation();
+            this.isOrbiting = false;
+            if (orbitLabel) orbitLabel.textContent = '🚁 3D Flyover Orbit';
+            btnOrbit.classList.remove('bg-sky-500/30');
+          } else {
+            this.isOrbiting = true;
+            if (orbitLabel) orbitLabel.textContent = '⏹️ Stop Orbit';
+            btnOrbit.classList.add('bg-sky-500/30');
+            this.map3DElement.flyCameraAround({
+              camera: {
+                center: { lat: 31.01655, lng: 77.07004, altitude: 1600 },
+                tilt: 67.5,
+                range: 1250
+              },
+              durationMillis: 45000,
+              repeatCount: 1
+            });
+          }
+        } else if (this.googleMap) {
+          if (this.orbitInterval) {
+            clearInterval(this.orbitInterval);
+            this.orbitInterval = null;
+            if (orbitLabel) orbitLabel.textContent = '🚁 3D Flyover Orbit';
+            btnOrbit.classList.remove('bg-sky-500/30');
+          } else {
+            if (orbitLabel) orbitLabel.textContent = '⏹️ Stop Orbit';
+            btnOrbit.classList.add('bg-sky-500/30');
+            this.orbitInterval = setInterval(() => {
+              this.googleHeading = ((this.googleMap.getHeading() || 0) + 2) % 360;
+              this.googleMap.setHeading(this.googleHeading);
+            }, 100);
+          }
+        }
+      });
+    }
+
+    // 2. 3D Tilt Angle Toggle (67.5° / 0°)
+    if (btnTilt && !btnTilt._bound) {
+      btnTilt._bound = true;
+      btnTilt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.map3DElement) {
+          this.googleTilt = (this.map3DElement.tilt >= 50 ? 0 : 67.5);
+          this.map3DElement.tilt = this.googleTilt;
+          if (tiltLabel) tiltLabel.textContent = `3D Tilt: ${this.googleTilt}°`;
+        } else if (this.googleMap) {
+          this.googleTilt = (this.googleTilt === 67.5 ? 0 : 67.5);
+          this.googleMap.setTilt(this.googleTilt);
+          if (tiltLabel) tiltLabel.textContent = `3D Tilt: ${this.googleTilt}°`;
+        }
+      });
+    }
+
+    // 3. Rotate Heading 45°
+    if (btnRotate && !btnRotate._bound) {
+      btnRotate._bound = true;
+      btnRotate.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.map3DElement) {
+          this.googleHeading = ((this.map3DElement.heading || 0) + 45) % 360;
+          this.map3DElement.heading = this.googleHeading;
+        } else if (this.googleMap) {
+          this.googleHeading = ((this.googleMap.getHeading() || 0) + 45) % 360;
+          this.googleMap.setHeading(this.googleHeading);
+        }
+      });
+    }
+
+    // 4. Map Type / Mode Toggle (Hybrid / Satellite)
+    if (btnType && !btnType._bound) {
+      btnType._bound = true;
+      btnType.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.map3DElement) {
+          const newMode = (this.map3DElement.mode === 'HYBRID' ? 'SATELLITE' : 'HYBRID');
+          this.map3DElement.mode = newMode;
+          if (typeLabel) typeLabel.textContent = newMode === 'HYBRID' ? 'Hybrid 3D' : 'Satellite';
+        } else if (this.googleMap) {
+          if (this.googleMapTypeId === 'hybrid') {
+            this.googleMapTypeId = 'satellite';
+            if (typeLabel) typeLabel.textContent = 'Satellite';
+          } else {
+            this.googleMapTypeId = 'hybrid';
+            if (typeLabel) typeLabel.textContent = 'Hybrid 3D';
+          }
+          this.googleMap.setMapTypeId(this.googleMapTypeId);
+        }
+      });
+    }
+
+    // 5. Recenter Campus Center
+    if (btnRecenter && !btnRecenter._bound) {
+      btnRecenter._bound = true;
+      btnRecenter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.map3DElement) {
+          if (this.isOrbiting) {
+            this.map3DElement.stopCameraAnimation();
+            this.isOrbiting = false;
+            if (orbitLabel) orbitLabel.textContent = '🚁 3D Flyover Orbit';
+          }
+          this.map3DElement.flyCameraTo({
+            endCamera: {
+              center: { lat: 31.01655, lng: 77.07004, altitude: 1600 },
+              tilt: 67.5,
+              heading: 45,
+              range: 1250
+            },
+            durationMillis: 1800
+          });
+        } else if (this.googleMap) {
+          this.googleMap.panTo({ lat: 31.01655, lng: 77.07004 });
+          this.googleMap.setZoom(18);
+          this.googleMap.setTilt(67.5);
+          this.googleMap.setHeading(45);
+        }
+      });
+    }
+  },
+
+  /* ================= MAP ENGINE SWITCHER ================= */
+  setMapEngine(engine) {
+    this.activeEngine = engine;
+    const gmapCanvas = document.getElementById('google-3d-map-canvas');
+    const svgCanvas = document.getElementById('campus-vector-svg');
+    const gmapToolbar = document.getElementById('google-3d-controls-toolbar');
+    const container = document.getElementById('map-canvas-container');
+
+    const btnG3D = document.getElementById('btn-map-mode-g3d');
+    const btn3D = document.getElementById('btn-map-mode-3d');
+    const btn2D = document.getElementById('btn-map-mode-2d');
+
+    const updateBtns = (activeBtn) => {
+      [btnG3D, btn3D, btn2D].forEach(b => {
+        if (!b) return;
+        if (b === activeBtn) {
+          b.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm';
+        } else {
+          b.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface';
+        }
+      });
+    };
+
+    if (engine === 'google3d') {
+      if (gmapCanvas) gmapCanvas.classList.remove('hidden');
+      if (svgCanvas) svgCanvas.classList.add('hidden');
+      if (gmapToolbar) gmapToolbar.classList.remove('hidden');
+      if (container) {
+        container.classList.remove('map-mode-3d', 'map-mode-2d');
+      }
+      updateBtns(btnG3D);
+
+      if (!this.map3DElement && !this.googleMap) {
+        this.initGoogle3DMap();
+      } else if (this.googleMap) {
+        google.maps.event.trigger(this.googleMap, 'resize');
+      }
+    } else if (engine === '3d') {
+      if (gmapCanvas) gmapCanvas.classList.add('hidden');
+      if (svgCanvas) svgCanvas.classList.remove('hidden');
+      if (gmapToolbar) gmapToolbar.classList.add('hidden');
+      updateBtns(btn3D);
+      this.set3DMode(true);
+    } else if (engine === '2d') {
+      if (gmapCanvas) gmapCanvas.classList.add('hidden');
+      if (svgCanvas) svgCanvas.classList.remove('hidden');
+      if (gmapToolbar) gmapToolbar.classList.add('hidden');
+      updateBtns(btn2D);
+      this.set3DMode(false);
+    }
+  },
+
   /* ================= PAN & ZOOM CONTROLS ================= */
   applyTransform(animate = false) {
     const world = document.querySelector('#campus-vector-svg #map-world-layer') || document.getElementById('map-world-layer');
@@ -1328,22 +1715,30 @@ const CampusMap = {
     const btnIn = document.getElementById('btn-map-zoom-in');
     const btnOut = document.getElementById('btn-map-zoom-out');
     const btnReset = document.getElementById('btn-map-reset');
+    const btnG3D = document.getElementById('btn-map-mode-g3d');
     const btn3D = document.getElementById('btn-map-mode-3d');
     const btn2D = document.getElementById('btn-map-mode-2d');
     const backdrop = document.getElementById('map-drawer-backdrop');
     const viewport = document.getElementById('map-viewport-box');
 
+    if (btnG3D) {
+      btnG3D.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.setMapEngine('google3d');
+      });
+    }
+
     if (btn3D) {
       btn3D.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.set3DMode(true);
+        this.setMapEngine('3d');
       });
     }
 
     if (btn2D) {
       btn2D.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.set3DMode(false);
+        this.setMapEngine('2d');
       });
     }
 
@@ -1356,23 +1751,38 @@ const CampusMap = {
     if (btnIn) {
       btnIn.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.zoomLevel = Math.min(this.zoomLevel + 0.3, 2.6);
-        this.applyTransform(true);
+        if (this.activeEngine === 'google3d' && this.googleMap) {
+          this.googleMap.setZoom((this.googleMap.getZoom() || 18) + 1);
+        } else {
+          this.zoomLevel = Math.min(this.zoomLevel + 0.3, 2.6);
+          this.applyTransform(true);
+        }
       });
     }
 
     if (btnOut) {
       btnOut.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.zoomLevel = Math.max(this.zoomLevel - 0.3, 0.75);
-        this.applyTransform(true);
+        if (this.activeEngine === 'google3d' && this.googleMap) {
+          this.googleMap.setZoom(Math.max((this.googleMap.getZoom() || 18) - 1, 10));
+        } else {
+          this.zoomLevel = Math.max(this.zoomLevel - 0.3, 0.75);
+          this.applyTransform(true);
+        }
       });
     }
 
     if (btnReset) {
       btnReset.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.resetMapView();
+        if (this.activeEngine === 'google3d' && this.googleMap) {
+          this.googleMap.panTo({ lat: 31.01655, lng: 77.07004 });
+          this.googleMap.setZoom(18);
+          this.googleMap.setTilt(67.5);
+          this.googleMap.setHeading(45);
+        } else {
+          this.resetMapView();
+        }
       });
     }
 

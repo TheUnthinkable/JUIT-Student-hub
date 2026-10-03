@@ -651,8 +651,9 @@ body {
 }
 .meal-card.breakfast .meal-icon-avatar { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 .meal-card.lunch .meal-icon-avatar { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.meal-card.snacks .meal-icon-avatar { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+.meal-card.snacks .meal-icon-avatar { background: rgba(249, 115, 22, 0.15); color: #f97316; }
 .meal-card.dinner .meal-icon-avatar { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+.meal-card.night-milk .meal-icon-avatar { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
 .meal-label-name {
   font-size: 1.0625rem;
   font-weight: 700;

@@ -5,6 +5,7 @@
 const MessController = {
   data: {},
   activeDay: 'Tuesday',
+  activeMealFilter: 'all',
   days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
 
   init(messData) {
@@ -16,6 +17,8 @@ const MessController = {
     this.activeDay = dayNames[todayIndex] || 'Tuesday';
 
     this.renderDayTabs();
+    this.bindMealFilters();
+    this.bindMapLocateButtons();
     this.renderMeals();
     this.renderMilkDistribution();
     this.updateLiveServingStatus();
@@ -31,6 +34,47 @@ const MessController = {
       this.updateLiveServingStatus();
       this.updateDashboardCard();
     }, 60000);
+  },
+
+  bindMealFilters() {
+    const pills = document.querySelectorAll('.mess-meal-filter-pill');
+    pills.forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.activeMealFilter = pill.dataset.filter || 'all';
+        pills.forEach(p => {
+          if (p === pill) {
+            p.className = 'mess-meal-filter-pill active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm';
+          } else {
+            p.className = 'mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container';
+          }
+        });
+        this.renderMeals();
+      });
+    });
+  },
+
+  bindMapLocateButtons() {
+    const btnLocateAll = document.getElementById('btn-locate-milk-on-map');
+    if (btnLocateAll && !btnLocateAll._bound) {
+      btnLocateAll._bound = true;
+      btnLocateAll.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.locateCounterOnCampusMap('annapurna_a');
+      });
+    }
+  },
+
+  locateCounterOnCampusMap(buildingId = 'annapurna_a') {
+    if (window.App && window.App.switchView) {
+      window.App.switchView('campus');
+      setTimeout(() => {
+        if (window.CampusMap) {
+          window.CampusMap.openBuildingDrawer(buildingId);
+          window.CampusMap.focusBuilding(buildingId);
+        }
+      }, 300);
+    }
   },
 
   renderDayTabs() {
@@ -58,6 +102,7 @@ const MessController = {
         this.activeDay = btn.dataset.day;
         this.renderDayTabs();
         this.renderMeals();
+        this.renderMilkDistribution();
       });
     });
   },
@@ -108,112 +153,274 @@ const MessController = {
     }
 
     const timings = this.data.mealTimings || {};
+    const filter = this.activeMealFilter;
 
-    container.innerHTML = `
-      <!-- Breakfast -->
-      <div class="meal-card breakfast">
-        <div class="meal-card-header">
-          <div class="meal-title-wrap">
-            <div class="meal-icon-avatar">🌅</div>
-            <div>
-              <div class="meal-label-name">Breakfast</div>
-              <div class="meal-time-pill">${timings.breakfast?.display || '07:30 AM – 09:30 AM'}</div>
+    // Build the 5 meal cards in chronological order
+    const mealCards = [];
+
+    // 1. Breakfast (07:30 - 09:30 AM)
+    if (filter === 'all' || filter === 'breakfast') {
+      mealCards.push(`
+        <div class="meal-card breakfast">
+          <div class="meal-card-header">
+            <div class="meal-title-wrap">
+              <div class="meal-icon-avatar">🌅</div>
+              <div>
+                <div class="meal-label-name">Breakfast</div>
+                <div class="meal-time-pill">${timings.breakfast?.display || '07:30 AM – 09:30 AM'}</div>
+              </div>
             </div>
+            ${dayData.breakfast?.category ? `<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">${dayData.breakfast.category}</span>` : ''}
           </div>
-          ${dayData.breakfast?.category ? `<span class="px-2.5 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold">${dayData.breakfast.category}</span>` : ''}
-        </div>
-        <div class="meal-items-list">
-          ${(dayData.breakfast?.items || []).map(item => `
-            <div class="food-item-row">
-              <span class="food-bullet">✦</span>
-              <span>${item}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${dayData.breakfast?.highlights ? `
-          <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
-            ${dayData.breakfast.highlights.map(h => `
-              <span class="px-2 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">
-                ✨ ${h}
-              </span>
+          <div class="meal-items-list">
+            ${(dayData.breakfast?.items || []).map(item => `
+              <div class="food-item-row">
+                <span class="food-bullet">✦</span>
+                <span>${item}</span>
+              </div>
             `).join('')}
           </div>
-        ` : ''}
-      </div>
+          ${dayData.breakfast?.highlights ? `
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
+              ${dayData.breakfast.highlights.map(h => `
+                <span class="px-2 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">
+                  ✨ ${h}
+                </span>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `);
+    }
 
-      <!-- Lunch -->
-      <div class="meal-card lunch">
-        <div class="meal-card-header">
-          <div class="meal-title-wrap">
-            <div class="meal-icon-avatar">☀️</div>
-            <div>
-              <div class="meal-label-name">Lunch</div>
-              <div class="meal-time-pill">${timings.lunch?.display || '12:00 PM – 02:00 PM'}</div>
+    // 2. Lunch (12:00 - 02:00 PM)
+    if (filter === 'all' || filter === 'lunch') {
+      mealCards.push(`
+        <div class="meal-card lunch">
+          <div class="meal-card-header">
+            <div class="meal-title-wrap">
+              <div class="meal-icon-avatar">☀️</div>
+              <div>
+                <div class="meal-label-name">Lunch</div>
+                <div class="meal-time-pill">${timings.lunch?.display || '12:00 PM – 02:00 PM'}</div>
+              </div>
             </div>
+            ${dayData.lunch?.fruit ? `<span class="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">🍎 ${dayData.lunch.fruit}</span>` : ''}
           </div>
-          ${dayData.lunch?.fruit ? `<span class="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm font-semibold">🍎 ${dayData.lunch.fruit}</span>` : ''}
-        </div>
-        <div class="meal-items-list">
-          ${(dayData.lunch?.items || []).map(item => `
-            <div class="food-item-row">
-              <span class="food-bullet">✦</span>
-              <span>${item}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${dayData.lunch?.highlights ? `
-          <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
-            ${dayData.lunch.highlights.map(h => `
-              <span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">
-                🍲 ${h}
-              </span>
+          <div class="meal-items-list">
+            ${(dayData.lunch?.items || []).map(item => `
+              <div class="food-item-row">
+                <span class="food-bullet">✦</span>
+                <span>${item}</span>
+              </div>
             `).join('')}
           </div>
-        ` : ''}
-      </div>
+          ${dayData.lunch?.highlights ? `
+            <div class="flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.04]">
+              ${dayData.lunch.highlights.map(h => `
+                <span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">
+                  🍲 ${h}
+                </span>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `);
+    }
 
-      <!-- Dinner -->
-      <div class="meal-card dinner">
-        <div class="meal-card-header">
-          <div class="meal-title-wrap">
-            <div class="meal-icon-avatar">🌙</div>
-            <div>
-              <div class="meal-label-name">Dinner</div>
-              <div class="meal-time-pill">${timings.dinner?.display || '07:30 PM – 09:00 PM'}</div>
+    // 3. Hostel Chai & Evening Snacks (05:00 - 06:15 PM) [CHRONOLOGICALLY BEFORE DINNER]
+    if (filter === 'all' || filter === 'snacks' || filter === 'tea' || filter === 'chai') {
+      const chaiTitle = dayData.snacks?.title || 'Evening Snacks & Mountain Ginger Chai';
+      mealCards.push(`
+        <div class="meal-card snacks border border-amber-500/20">
+          <div class="meal-card-header">
+            <div class="meal-title-wrap">
+              <div class="meal-icon-avatar bg-amber-500/15 text-amber-300">☕</div>
+              <div>
+                <div class="meal-label-name">Hostel Chai & Evening Snacks</div>
+                <div class="meal-time-pill">${timings.snacks?.display || '05:00 PM – 06:15 PM'}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 font-label-sm text-label-sm font-semibold">☕ Quad & Balcony Counters</span>
+              <button type="button" class="btn-locate-mess-counter hidden sm:inline-flex px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-[11px] text-primary font-medium items-center gap-1 transition-colors cursor-pointer" data-building="annapurna_a">
+                <span class="material-symbols-outlined text-[13px]">explore</span>
+                <span>Locate</span>
+              </button>
             </div>
           </div>
-          ${dayData.dinner?.sweet ? `<span class="px-2.5 py-1 rounded-full bg-pink-500/15 text-pink-400 font-label-sm text-label-sm font-semibold">🍨 ${dayData.dinner.sweet}</span>` : ''}
-        </div>
-        <div class="meal-items-list">
-          ${(dayData.dinner?.items || []).map(item => `
-            <div class="food-item-row">
-              <span class="food-bullet">✦</span>
-              <span>${item}</span>
-            </div>
-          `).join('')}
-        </div>
-        ${dayData.dinner?.sweetDish ? `
-          <div class="flex items-center gap-2 p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-300 font-body-sm text-body-sm mt-1">
-            <span>🍨</span>
-            <span><strong>Sweet Dish:</strong> ${dayData.dinner.sweetDish}</span>
+          <div class="text-xs font-semibold text-amber-300 px-3 pt-1">
+            ${chaiTitle}
           </div>
-        ` : ''}
-      </div>
-    `;
+          <div class="meal-items-list">
+            ${(dayData.snacks?.items || [
+              'Hot Pahadi Ginger Tea (Adrak Chai)',
+              'Freshly Fried Bread Pakoras / Samosas',
+              'Green Mint Chutney',
+              'Bakery Cookies & Biscuits'
+            ]).map(item => `
+              <div class="food-item-row">
+                <span class="food-bullet text-amber-400">☕</span>
+                <span>${item}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${dayData.snacks?.highlights ? `
+            <div class="flex flex-wrap items-center justify-between gap-1.5 pt-2 border-t border-white/[0.04]">
+              <div class="flex flex-wrap gap-1.5">
+                ${dayData.snacks.highlights.map(h => `
+                  <span class="px-2 py-0.5 rounded bg-surface-container text-amber-300 font-label-sm text-label-sm">
+                    ☕ ${h}
+                  </span>
+                `).join('')}
+              </div>
+              <span class="text-[11px] text-on-surface-variant font-mono">📍 Annapurna Quad & Hostels</span>
+            </div>
+          ` : ''}
+        </div>
+      `);
+    }
+
+    // 4. Dinner (07:30 - 09:00 PM)
+    if (filter === 'all' || filter === 'dinner') {
+      mealCards.push(`
+        <div class="meal-card dinner">
+          <div class="meal-card-header">
+            <div class="meal-title-wrap">
+              <div class="meal-icon-avatar">🌙</div>
+              <div>
+                <div class="meal-label-name">Dinner</div>
+                <div class="meal-time-pill">${timings.dinner?.display || '07:30 PM – 09:00 PM'}</div>
+              </div>
+            </div>
+            ${dayData.dinner?.sweet ? `<span class="px-2.5 py-1 rounded-full bg-pink-500/15 text-pink-400 font-label-sm text-label-sm font-semibold">🍨 ${dayData.dinner.sweet}</span>` : ''}
+          </div>
+          <div class="meal-items-list">
+            ${(dayData.dinner?.items || []).map(item => `
+              <div class="food-item-row">
+                <span class="food-bullet">✦</span>
+                <span>${item}</span>
+              </div>
+            `).join('')}
+          </div>
+          ${dayData.dinner?.sweetDish ? `
+            <div class="flex items-center gap-2 p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-300 font-body-sm text-body-sm mt-1">
+              <span>🍨</span>
+              <span><strong>Sweet Dish:</strong> ${dayData.dinner.sweetDish}</span>
+            </div>
+          ` : ''}
+        </div>
+      `);
+    }
+
+    // 5. Night Milk & Bournvita Distribution (09:15 - 10:15 PM)
+    if (filter === 'all' || filter === 'night-milk' || filter === 'nightMilk') {
+      const milkTitle = dayData.nightMilk?.title || 'Night Milk & Haldi Bournvita Counter';
+      mealCards.push(`
+        <div class="meal-card night-milk border border-sky-500/25">
+          <div class="meal-card-header">
+            <div class="meal-title-wrap">
+              <div class="meal-icon-avatar bg-sky-500/15 text-sky-300">🥛</div>
+              <div>
+                <div class="meal-label-name">Night Milk & Bournvita Counter</div>
+                <div class="meal-time-pill">${timings.nightMilk?.display || '09:15 PM – 10:15 PM'}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-300 font-label-sm text-label-sm font-semibold">🥛 Hostels & Dining Hall 1</span>
+              <button type="button" class="btn-locate-mess-counter hidden sm:inline-flex px-2 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-[11px] text-primary font-medium items-center gap-1 transition-colors cursor-pointer" data-building="annapurna_a">
+                <span class="material-symbols-outlined text-[13px]">explore</span>
+                <span>Locate</span>
+              </button>
+            </div>
+          </div>
+          <div class="text-xs font-semibold text-sky-300 px-3 pt-1">
+            ${milkTitle}
+          </div>
+          <div class="meal-items-list">
+            ${(dayData.nightMilk?.items || [
+              'Hot Kesar-Haldi Milk',
+              'Bournvita & Horlicks Dispenser Counter',
+              'Sweet Digestive Biscuits'
+            ]).map(item => `
+              <div class="food-item-row">
+                <span class="food-bullet text-sky-400">🥛</span>
+                <span>${item}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-white/[0.04] text-[11px]">
+            <div class="p-1.5 rounded bg-surface-container text-sky-300 flex items-center gap-1">
+              <span>🌸</span>
+              <span><strong>Girls:</strong> Geeta & Malviya-B (9:15 PM)</span>
+            </div>
+            <div class="p-1.5 rounded bg-surface-container text-sky-300 flex items-center gap-1">
+              <span>🌲</span>
+              <span><strong>Boys:</strong> Dining Hall 1 (9:15 PM)</span>
+            </div>
+            <div class="p-1.5 rounded bg-surface-container text-amber-300 flex items-center gap-1">
+              <span>🏔️</span>
+              <span><strong>Terrace:</strong> Azad & Shastri (7:30 PM)</span>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+
+    container.innerHTML = mealCards.join('');
+
+    // Bind dynamic locate buttons on cards
+    container.querySelectorAll('.btn-locate-mess-counter').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const bId = btn.dataset.building || 'annapurna_a';
+        this.locateCounterOnCampusMap(bId);
+      });
+    });
   },
 
   renderMilkDistribution() {
     const tableBody = document.getElementById('milk-schedule-tbody');
     if (!tableBody) return;
 
-    const list = this.data.milkDistribution || [];
-    tableBody.innerHTML = list.map(item => `
-      <tr>
-        <td style="font-weight: 700;">${item.group}</td>
-        <td><span class="kbd-shortcut" style="color: var(--color-milk);">${item.timing}</span></td>
-        <td style="color: var(--text-secondary);">${item.place}</td>
-      </tr>
-    `).join('');
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const weekly = this.data.weeklyMenu || {};
+
+    tableBody.innerHTML = days.map(day => {
+      const dayData = weekly[day] || {};
+      const chaiFlavor = dayData.snacks?.highlights?.[0] || dayData.snacks?.title || 'Adrak Chai & Paneer Bread Pakora';
+      const chaiSnack = (dayData.snacks?.items && dayData.snacks.items[1]) || 'Fresh Snacks & Biscuits';
+      const milkFlavor = dayData.nightMilk?.highlights?.[0] || dayData.nightMilk?.title || 'Hot Kesar-Haldi Milk';
+      const milkCounter = (dayData.nightMilk?.items && dayData.nightMilk.items[1]) || 'Bournvita Counter & Biscuits';
+      const isToday = (day === this.activeDay);
+
+      return `
+        <tr class="${isToday ? 'bg-primary/10 font-semibold' : ''}">
+          <td class="font-bold text-on-surface whitespace-nowrap">
+            ${day} ${isToday ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-primary text-on-primary ml-1">Today</span>' : ''}
+          </td>
+          <td>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-xs text-amber-300 font-semibold">☕ ${chaiFlavor}</span>
+              <span class="text-[11px] text-on-surface-variant font-mono">5:00 PM – 6:15 PM • ${chaiSnack}</span>
+            </div>
+          </td>
+          <td>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-xs text-sky-300 font-semibold">🥛 ${milkFlavor}</span>
+              <span class="text-[11px] text-on-surface-variant font-mono">9:15 PM – 10:15 PM • ${milkCounter}</span>
+            </div>
+          </td>
+          <td class="text-xs">
+            <div class="flex flex-col gap-0.5 text-on-surface-variant text-[11px]">
+              <span>🌸 <strong>Girls:</strong> Geeta, Malviya-B (9:15 PM)</span>
+              <span>🌲 <strong>Boys:</strong> Dining Hall 1 & 1st Year (9:15 PM)</span>
+              <span class="text-amber-400">🏔️ <strong>Terraces:</strong> Azad & Shastri (7:30 PM)</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
   },
 
   getCurrentMealStatus() {
@@ -222,8 +429,9 @@ const MessController = {
 
     // 07:30 = 450, 09:30 = 570
     // 12:00 = 720, 14:00 = 840
+    // 17:00 = 1020, 18:15 = 1095
     // 19:30 = 1170, 21:00 = 1260
-    // 21:15 = 1275, 21:45 = 1305
+    // 21:15 = 1275, 22:15 = 1335
 
     if (curMinutes >= 450 && curMinutes <= 570) {
       return { serving: true, meal: 'Breakfast', endsIn: 570 - curMinutes };
@@ -233,12 +441,16 @@ const MessController = {
       return { serving: true, meal: 'Lunch', endsIn: 840 - curMinutes };
     } else if (curMinutes > 570 && curMinutes < 720) {
       return { serving: false, nextMeal: 'Lunch', startsIn: 720 - curMinutes };
+    } else if (curMinutes >= 1020 && curMinutes <= 1095) {
+      return { serving: true, meal: 'Hostel Chai & Snacks', endsIn: 1095 - curMinutes };
+    } else if (curMinutes > 840 && curMinutes < 1020) {
+      return { serving: false, nextMeal: 'Hostel Chai & Snacks', startsIn: 1020 - curMinutes };
     } else if (curMinutes >= 1170 && curMinutes <= 1260) {
       return { serving: true, meal: 'Dinner', endsIn: 1260 - curMinutes };
-    } else if (curMinutes > 840 && curMinutes < 1170) {
+    } else if (curMinutes > 1095 && curMinutes < 1170) {
       return { serving: false, nextMeal: 'Dinner', startsIn: 1170 - curMinutes };
-    } else if (curMinutes >= 1275 && curMinutes <= 1305) {
-      return { serving: true, meal: 'Night Milk', endsIn: 1305 - curMinutes };
+    } else if (curMinutes >= 1275 && curMinutes <= 1335) {
+      return { serving: true, meal: 'Night Milk', endsIn: 1335 - curMinutes };
     } else if (curMinutes > 1260 && curMinutes < 1275) {
       return { serving: false, nextMeal: 'Night Milk', startsIn: 1275 - curMinutes };
     } else {

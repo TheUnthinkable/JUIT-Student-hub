@@ -26,9 +26,16 @@
     "nightMilk": {
       "label": "Night Milk Distribution",
       "start": "21:15",
-      "end": "21:45",
-      "display": "09:15 PM – 09:45 PM",
+      "end": "22:15",
+      "display": "09:15 PM – 10:15 PM",
       "locations": "Geeta Bhawan, Malviya-B, Dining Hall 1, Azad & Shastri Extension"
+    },
+    "snacks": {
+      "label": "Hostel Chai & Evening Snacks",
+      "start": "17:00",
+      "end": "18:15",
+      "display": "05:00 PM – 06:15 PM",
+      "locations": "Annapurna Dining Halls & Hostel Quads"
     }
   },
   "milkDistribution": [
@@ -107,6 +114,35 @@
           "Hot Milk",
           "Veg. Soup"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Mountain Ginger Chai",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Hot Pahadi Ginger Tea (Adrak Chai)",
+          "Paneer Bread Pakora",
+          "Fresh Green Mint Chutney",
+          "Marie & Parle-G Biscuits"
+        ],
+        "highlights": [
+          "Paneer Bread Pakora",
+          "Fresh Ginger Chai",
+          "Mint Chutney"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Haldi Bournvita Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Hot Kesar-Haldi Milk",
+          "Bournvita & Horlicks Dispenser Counter",
+          "Sweet Digestive Biscuits"
+        ],
+        "highlights": [
+          "Hot Kesar-Haldi Milk",
+          "Bournvita Counter"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Tuesday": {
@@ -162,6 +198,34 @@
           "Multi Grain Chapati",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Masala Chai",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Kadak Masala Chai",
+          "Crispy Vegetable Cutlet",
+          "Tomato Ketchup",
+          "Crispy Rusk & Cookies"
+        ],
+        "highlights": [
+          "Crispy Veg Cutlet",
+          "Kadak Masala Chai"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Badam Bournvita Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Hot Badam (Almond) Sweet Milk",
+          "Bournvita & Boost Dispenser Counter",
+          "Marie Biscuits"
+        ],
+        "highlights": [
+          "Hot Badam Milk",
+          "Bournvita & Boost"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Wednesday": {
@@ -218,6 +282,34 @@
           "Sweet Semiya",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Special Chai",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Special Pahadi Chai",
+          "Mix Vegetable Pakoda (Gobi, Onion & Potato)",
+          "Sweet Saunth Chutney",
+          "Salted Crackers"
+        ],
+        "highlights": [
+          "Mix Veg Pakodas",
+          "Pahadi Chai"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Cardamom Bournvita Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Warm Cardamom (Elaichi) Milk",
+          "Bournvita Dispenser Counter",
+          "Parle-G & Sweet Biscuits"
+        ],
+        "highlights": [
+          "Cardamom Milk",
+          "Bournvita Counter"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Thursday": {
@@ -277,6 +369,34 @@
           "Aaloo Gobhi",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Elaichi Chai",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Cardamom Elaichi Chai",
+          "Crispy Potato Samosa",
+          "Tamarind Chutney",
+          "Roasted Salted Peanuts"
+        ],
+        "highlights": [
+          "Crispy Samosa",
+          "Cardamom Elaichi Chai"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Steamed Bournvita Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Fresh Steamed Pure Milk",
+          "Bournvita & Horlicks Dispenser Counter",
+          "Good Day Butter Biscuits"
+        ],
+        "highlights": [
+          "Fresh Steamed Milk",
+          "Horlicks & Bournvita"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Friday": {
@@ -334,6 +454,34 @@
           "Dal Green Moong Sabut",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Cutting Chai",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Special Cutting Chai",
+          "Crispy Veg Spring Roll / Puff",
+          "Garlic Chilli Dip",
+          "Bakery Cookies"
+        ],
+        "highlights": [
+          "Veg Spring Roll / Puff",
+          "Special Cutting Chai"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Kesar-Pista Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Hot Kesar-Pista Flavoured Milk",
+          "Bournvita Dispenser Counter",
+          "Digestive Crackers"
+        ],
+        "highlights": [
+          "Hot Kesar-Pista Milk",
+          "Bournvita Dispenser"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Saturday": {
@@ -391,6 +539,34 @@
           "Besan Ladoo",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Evening Snacks & Masala Tea",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Himachali Spiced Chai",
+          "Crispy Aloo Tikki with Chholey",
+          "Sweet & Sour Dip",
+          "Namkeen Mathri"
+        ],
+        "highlights": [
+          "Crispy Aloo Tikki",
+          "Himachali Spiced Chai"
+        ]
+      },
+      "nightMilk": {
+        "title": "Night Milk & Chocolate Warm Milk Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Warm Chocolate Milk & Pure Milk",
+          "Bournvita Dispenser Counter",
+          "Crispy Rusk & Cookies"
+        ],
+        "highlights": [
+          "Warm Chocolate Milk",
+          "Crispy Rusk"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     },
     "Sunday": {
@@ -447,6 +623,35 @@
           "Dal Chana Masala",
           "Hot Milk"
         ]
+      },
+      "snacks": {
+        "title": "Sunday Special Chai & Bhajji",
+        "timing": "05:00 PM – 06:15 PM",
+        "items": [
+          "Sunday Special Masala Chai & Filter Coffee",
+          "Kanda (Onion) & Palak Bhajji",
+          "Fresh Hot Jalebi / Cookies",
+          "Mint Dip"
+        ],
+        "highlights": [
+          "Kanda & Palak Bhajji",
+          "Hot Jalebi",
+          "Filter Coffee"
+        ]
+      },
+      "nightMilk": {
+        "title": "Sunday Night Special Sweet Milk Counter",
+        "timing": "09:15 PM – 10:15 PM",
+        "items": [
+          "Special Steamed Sweet Milk",
+          "Bournvita & Horlicks Dispenser Counter",
+          "Bakery Cookies"
+        ],
+        "highlights": [
+          "Special Sweet Milk",
+          "Bournvita & Horlicks"
+        ],
+        "locations": "Dining Hall 1, Geeta Bhawan, Malviya-B, Azad & Shastri Terraces"
       }
     }
   }

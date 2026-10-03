@@ -817,32 +817,114 @@
           </div>
         </div>
 
-        <!-- Full Daily Meals Container (Breakfast, Lunch, Snacks, Dinner) -->
-        <div class="space-y-space-md" id="mess-meals-container">
-          <!-- Dynamically populated by MessController -->
+        <!-- Quick Meal Period Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1" id="mess-meal-filter-bar">
+          <button type="button" class="mess-meal-filter-pill active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm" data-filter="all">
+            <span>All Daily Meals</span>
+          </button>
+          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="snacks">
+            <span>☕ Hostel Chai (5:00 PM)</span>
+          </button>
+          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="night-milk">
+            <span>🥛 Night Milk (9:15 PM)</span>
+          </button>
+          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="breakfast">
+            <span>🌅 Breakfast</span>
+          </button>
+          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="lunch">
+            <span>☀️ Lunch</span>
+          </button>
+          <button type="button" class="mess-meal-filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-filter="dinner">
+            <span>🌙 Dinner</span>
+          </button>
         </div>
 
-        <!-- Night Milk Table & Rebate Pass Note -->
-        <div class="rounded-xl bg-surface-container-low p-space-lg border border-white/[0.06] shadow-sm space-y-3">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-[20px]">local_cafe</span>
-            <h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Night Milk & Hostel Chai</h3>
+        <!-- Full Daily Meals Container (Breakfast, Lunch, Chai, Dinner, Night Milk) -->
+        <div class="space-y-space-md" id="mess-meals-container">
+          <!-- Dynamically populated by MessController in chronological order -->
+        </div>
+
+        <!-- Night Milk & Hostel Chai Hub -->
+        <div class="rounded-2xl bg-surface-container-low p-4 sm:p-5 border border-white/[0.08] shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[24px]">local_cafe</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold">Night Milk & Hostel Chai Distribution Hub</h3>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-sky-500/15 text-sky-400 font-semibold border border-sky-500/30">Daily Campus Essential</span>
+                </div>
+                <p class="font-body-sm text-xs text-on-surface-variant mt-0.5">
+                  Hot evening mountain tea & late-night warm flavored milk served directly at residential hostel counters.
+                </p>
+              </div>
+            </div>
+            <button type="button" id="btn-locate-milk-on-map" class="px-3.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer border border-white/[0.06] shrink-0 self-start sm:self-auto">
+              <span class="material-symbols-outlined text-[15px]">explore</span>
+              <span>Locate Counters on 3D Map</span>
+            </button>
           </div>
-          <p class="font-body-sm text-body-sm text-on-surface-variant">
-            Served daily from 9:15 PM to 10:15 PM at hostel counters. Carry your own travel mug or flask.
-          </p>
-          <div class="overflow-x-auto">
-            <table class="milk-table">
+
+          <!-- 3-Block Hostel Counters Info Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-pink-400 flex items-center gap-1">
+                  <span>🌸</span>
+                  <span>Girls Hostels</span>
+                </span>
+                <span class="text-[10px] font-mono text-on-surface-variant">09:15 – 09:45 PM</span>
+              </div>
+              <p class="text-[11px] text-on-surface font-semibold">Geeta Bhawan, Geeta Ext. & Malviya-B</p>
+              <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                Dedicated counters in hostel reception lobby with hot haldi/bournvita dispenser & Marie/digestive biscuits.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 flex items-center gap-1">
+                  <span>🌲</span>
+                  <span>Boys Senior & 1st Year</span>
+                </span>
+                <span class="text-[10px] font-mono text-on-surface-variant">09:15 – 09:45 PM</span>
+              </div>
+              <p class="text-[11px] text-on-surface font-semibold">Dining Hall 1 & First Year Dining Annex</p>
+              <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                Large capacity double-barrel steamed milk boilers, bournvita/horlicks mixes, and student travel flask refills.
+              </p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-container border border-white/[0.04] space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-400 flex items-center gap-1">
+                  <span>🏔️</span>
+                  <span>Azad & Shastri Terraces</span>
+                </span>
+                <span class="text-[10px] font-mono text-on-surface-variant">07:30 – 08:30 PM</span>
+              </div>
+              <p class="text-[11px] text-on-surface font-semibold">Terrace Counter during Dinner Hours</p>
+              <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                Early distribution counter set up right at the hostel dining terrace for senior boys during dinner timing.
+              </p>
+            </div>
+          </div>
+
+          <!-- Weekly Flavors & Schedule Table -->
+          <div class="overflow-x-auto rounded-xl border border-white/[0.04]">
+            <table class="milk-table w-full">
               <thead>
                 <tr>
                   <th>Day</th>
-                  <th>Counter Flavor</th>
-                  <th>Timings</th>
-                  <th>Location</th>
+                  <th>Chai & Evening Snack (5:00 PM)</th>
+                  <th>Night Milk Counter (9:15 PM)</th>
+                  <th>Counter Locations</th>
                 </tr>
               </thead>
               <tbody id="milk-schedule-tbody">
-                <!-- Dynamically populated -->
+                <!-- Dynamically populated by MessController -->
               </tbody>
             </table>
           </div>
@@ -865,21 +947,25 @@
               Turn-by-turn navigation, 3D architectural landmarks, classroom finder, and real campus gallery imagery.
             </p>
           </div>
-          <!-- 2D / 3D Mode & Trail Indicator -->
+          <!-- 3D / 2D Perspective Controls -->
           <div class="flex items-center gap-2">
             <div class="inline-flex p-1 bg-surface-container rounded-xl border border-white/[0.06] shadow-sm">
-              <button type="button" id="btn-map-mode-3d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm" data-mode="3d">
-                <span class="material-symbols-outlined text-[15px]">view_in_ar</span>
-                <span>3D Campus</span>
+              <button type="button" id="btn-map-mode-g3d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 active bg-primary text-on-primary shadow-sm" data-mode="google3d" title="Google 3D Satellite & Terrain Map">
+                <span class="material-symbols-outlined text-[15px]">public</span>
+                <span>Google 3D</span>
               </button>
-              <button type="button" id="btn-map-mode-2d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface" data-mode="2d">
+              <button type="button" id="btn-map-mode-3d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface" data-mode="3d" title="3D Architectural Blueprint Map">
+                <span class="material-symbols-outlined text-[15px]">view_in_ar</span>
+                <span>3D Blueprint</span>
+              </button>
+              <button type="button" id="btn-map-mode-2d" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface" data-mode="2d" title="2D Floor & Ground Plan">
                 <span class="material-symbols-outlined text-[15px]">map</span>
                 <span>2D Plan</span>
               </button>
             </div>
             <span class="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono px-2.5 py-1.5 rounded-xl bg-surface-container-high text-secondary border border-white/[0.06]">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span>Walkways Dry</span>
+              <span>GPS 1,550m Live</span>
             </span>
           </div>
         </div>
@@ -946,10 +1032,42 @@
             <span>JUIT Waknaghat</span>
           </div>
 
-          <!-- SVG Canvas Container with 3D Mode Class -->
-          <div class="w-full h-[52vh] sm:h-[620px] rounded-2xl overflow-hidden bg-surface-container-lowest relative flex items-center justify-center select-none map-mode-3d" id="map-canvas-container" style="touch-action: none;">
-            <svg class="w-full h-full" id="campus-vector-svg" viewBox="0 0 1000 680" style="touch-action: none;"></svg>
+          <!-- Dual Engine Map Canvas Container (Google 3D WebGL & Architectural 3D Vector) -->
+          <div class="w-full h-[52vh] sm:h-[620px] rounded-2xl overflow-hidden bg-surface-container-lowest relative flex items-center justify-center select-none" id="map-canvas-container" style="touch-action: none;">
+            <!-- Google 3D Satellite & Terrain WebGL Map Canvas -->
+            <div id="google-3d-map-canvas" class="w-full h-full absolute inset-0 z-10 rounded-2xl"></div>
+
+            <!-- Architectural 3D / 2D Vector Blueprint Canvas -->
+            <svg class="w-full h-full hidden" id="campus-vector-svg" viewBox="0 0 1000 680" style="touch-action: none;"></svg>
             <div id="map-hud-overlay-layer"></div>
+
+            <!-- Google 3D Camera Controls Floating Bar -->
+            <div id="google-3d-controls-toolbar" class="absolute bottom-3 left-3 z-30 flex flex-wrap items-center gap-1.5 bg-surface-container-lowest/90 backdrop-blur-md px-2 py-1.5 rounded-xl border border-white/[0.1] shadow-lg">
+              <button type="button" id="btn-gmap-orbit" class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-sky-400 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer border border-sky-500/20" title="Start 360° 3D Flyover Orbit around JUIT campus">
+                <span class="material-symbols-outlined text-[15px]">orbit</span>
+                <span id="gmap-orbit-label">🚁 3D Flyover Orbit</span>
+              </button>
+              <button type="button" id="btn-gmap-tilt-toggle" class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer" title="Toggle 3D Tilt Angle (67.5° / 0°)">
+                <span class="material-symbols-outlined text-[15px]">3d_rotation</span>
+                <span id="gmap-tilt-label">3D Tilt: 67.5°</span>
+              </button>
+              <button type="button" id="btn-gmap-rotate-cw" class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer" title="Rotate Camera 45°">
+                <span class="material-symbols-outlined text-[15px]">rotate_right</span>
+                <span>Rotate 45°</span>
+              </button>
+              <button type="button" id="btn-gmap-type-toggle" class="px-2.5 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer" title="Switch Satellite / Terrain">
+                <span class="material-symbols-outlined text-[15px]">satellite_alt</span>
+                <span id="gmap-type-label">Hybrid 3D</span>
+              </button>
+              <button type="button" id="btn-gmap-recenter" class="px-2.5 py-1 rounded-lg bg-primary text-on-primary hover:brightness-110 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-sm" title="Recenter JUIT Waknaghat">
+                <span class="material-symbols-outlined text-[15px]">my_location</span>
+                <span>Recenter JUIT</span>
+              </button>
+              <span class="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 font-mono text-[10px] border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>Photorealistic 3D Active</span>
+              </span>
+            </div>
           </div>
         </div>
 
@@ -1099,19 +1217,434 @@
           </div>
         </div>
 
-        <!-- Senior Exam Advice Card -->
-        <div class="rounded-2xl bg-gradient-to-r from-primary-container/20 via-surface-container to-surface-container-low p-4 sm:p-5 border border-white/[0.06] shadow-sm flex items-start gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[22px]">lightbulb</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between gap-2 mb-0.5">
-              <span class="font-label-md text-xs sm:text-sm text-primary font-bold">Senior Strategy for T-1 & T-2 Examinations</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-surface-container-highest text-secondary border border-white/[0.04]">Solan Campus Tips</span>
+        <!-- Senior Strategy for T-1 & T-2 Examinations Master Center -->
+        <div class="rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm p-4 sm:p-5 relative overflow-hidden" id="senior-strategy-container">
+          <div class="absolute -right-8 -top-8 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+          <!-- Header Strip -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[24px]">workspace_premium</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold">Senior Strategy for T-1 & T-2 Examinations</h3>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-secondary/15 text-secondary font-semibold border border-secondary/30">Verified Playbook</span>
+                </div>
+                <p class="font-body-sm text-xs text-on-surface-variant">4th-year scholar blueprint for relative grading, numericals, high-yield topics & CGPA optimization</p>
+              </div>
             </div>
-            <p class="font-body-sm text-xs sm:text-body-sm text-on-surface leading-relaxed">
-              Focus on the last 4-year PYQ patterns and complete tutorial sheets—they cover 80% of test questions. Download the complete problem set bundles below.
-            </p>
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+              <button type="button" id="btn-open-full-playbook-modal" class="px-3 py-1.5 rounded-xl bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs">
+                <span class="material-symbols-outlined text-[15px]">menu_book</span>
+                <span>Full Playbook</span>
+              </button>
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-mono bg-surface-container-high text-primary border border-white/[0.06] shrink-0">
+                JUIT 10-Point CGPA
+              </span>
+            </div>
+          </div>
+
+          <!-- Interactive Strategy Navigation Tabs -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 mb-4 border-b border-white/[0.06]" id="strategy-tabs-bar">
+            <button type="button" class="strategy-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-primary text-on-primary shadow-sm" data-tab="overview">
+              <span class="material-symbols-outlined text-[15px]">dashboard_customize</span>
+              <span>Overview & Pillars</span>
+            </button>
+            <button type="button" class="strategy-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-tab="t1">
+              <span class="material-symbols-outlined text-[15px]">edit_note</span>
+              <span>T-1 Exam (15M)</span>
+            </button>
+            <button type="button" class="strategy-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-tab="t2">
+              <span class="material-symbols-outlined text-[15px]">quiz</span>
+              <span>T-2 Exam (25M)</span>
+            </button>
+            <button type="button" class="strategy-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-tab="ta">
+              <span class="material-symbols-outlined text-[15px]">biotech</span>
+              <span>Internal TA & Labs (25M)</span>
+            </button>
+            <button type="button" class="strategy-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface bg-surface-container" data-tab="calc">
+              <span class="material-symbols-outlined text-[15px]">calculate</span>
+              <span>CGPA Predictor</span>
+            </button>
+          </div>
+
+          <!-- Tab Content 1: Overview & 3-Pillar Cards -->
+          <div class="strategy-tab-content space-y-3" id="strat-content-overview">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <!-- T-1 Exam Card -->
+              <div class="rounded-xl bg-surface-container p-3.5 border border-white/[0.04] flex flex-col justify-between hover:border-sky-500/40 transition-all">
+                <div>
+                  <div class="flex items-center justify-between gap-1 mb-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30">
+                      T-1 EXAM • 15 MARKS
+                    </span>
+                    <span class="text-[11px] font-mono text-on-surface-variant">Units 1 & 2 • 1 Hr</span>
+                  </div>
+                  <h4 class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface mb-1">
+                    Master Tutorial Sheets 1 & 2
+                  </h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant leading-relaxed mb-3">
+                    ECE, Math & CSE faculty pull 70–80% of T-1 numericals directly from Tutorial Sheets with minor parameter changes.
+                  </p>
+                  <div class="text-[11px] text-sky-300/80 mb-3 space-y-1 bg-surface-container-high/40 p-2 rounded-lg border border-sky-500/10">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-sky-400">check_circle</span>
+                      <span>Show all SI units for 60% partial credit</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-sky-400">check_circle</span>
+                      <span>Target 12+/15 for top 10% percentile</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="btn-strategy-shortcut flex-1 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer" data-strategy-type="Tutorial">
+                    <span class="material-symbols-outlined text-[15px]">edit_note</span>
+                    <span>Filter Tutorials</span>
+                  </button>
+                  <button type="button" class="btn-goto-strat-tab px-3 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 text-xs font-semibold cursor-pointer" data-target-tab="t1">
+                    Strategy →
+                  </button>
+                </div>
+              </div>
+
+              <!-- T-2 Exam Card -->
+              <div class="rounded-xl bg-surface-container p-3.5 border border-white/[0.04] flex flex-col justify-between hover:border-rose-500/40 transition-all">
+                <div>
+                  <div class="flex items-center justify-between gap-1 mb-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                      T-2 EXAM • 25 MARKS
+                    </span>
+                    <span class="text-[11px] font-mono text-on-surface-variant">Units 1–4 • 1.5 Hrs</span>
+                  </div>
+                  <h4 class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface mb-1">
+                    Solve Last 4-Year PYQ Archives
+                  </h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant leading-relaxed mb-3">
+                    The crucial CGPA decider. Past papers repeat core derivation styles, multi-step circuits, and state machine tracing.
+                  </p>
+                  <div class="text-[11px] text-rose-300/80 mb-3 space-y-1 bg-surface-container-high/40 p-2 rounded-lg border border-rose-500/10">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-rose-400">check_circle</span>
+                      <span>60% weightage on Units 3 & 4</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-rose-400">check_circle</span>
+                      <span>Scoring 19+/25 secures 'A' grade</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="btn-strategy-shortcut flex-1 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-rose-400 font-label-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer" data-strategy-type="PYQ">
+                    <span class="material-symbols-outlined text-[15px]">quiz</span>
+                    <span>Filter PYQs</span>
+                  </button>
+                  <button type="button" class="btn-goto-strat-tab px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-semibold cursor-pointer" data-target-tab="t2">
+                    Strategy →
+                  </button>
+                </div>
+              </div>
+
+              <!-- Internal TA & Labs Card -->
+              <div class="rounded-xl bg-surface-container p-3.5 border border-white/[0.04] flex flex-col justify-between hover:border-emerald-500/40 transition-all">
+                <div>
+                  <div class="flex items-center justify-between gap-1 mb-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      INTERNAL TA • 25 MARKS
+                    </span>
+                    <span class="text-[11px] font-mono text-on-surface-variant">Attendance + Vivas</span>
+                  </div>
+                  <h4 class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface mb-1">
+                    Submit Tutorials & Keep 80%+
+                  </h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant leading-relaxed mb-3">
+                    Secure full 25 marks through regular tutorial submission, verified lab manuals, and maintaining attendance above 80%.
+                  </p>
+                  <div class="text-[11px] text-emerald-300/80 mb-3 space-y-1 bg-surface-container-high/40 p-2 rounded-lg border border-emerald-500/10">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-emerald-400">check_circle</span>
+                      <span>5 Marks guaranteed for 80%+ attendance</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-emerald-400">check_circle</span>
+                      <span>Aim, circuit & formula in 5m gets 10/10 viva</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" class="btn-strategy-shortcut flex-1 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-emerald-400 font-label-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer" data-strategy-type="Lab Manual">
+                    <span class="material-symbols-outlined text-[15px]">biotech</span>
+                    <span>Filter Manuals</span>
+                  </button>
+                  <button type="button" class="btn-goto-strat-tab px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-semibold cursor-pointer" data-target-tab="ta">
+                    Strategy →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Senior Tips Strip -->
+            <div class="pt-2.5 border-t border-white/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-on-surface-variant">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-amber-400 text-[16px]">tips_and_updates</span>
+                <span><strong>Senior Pro-Tip:</strong> State KVL/KCL, boundary conditions, and state transitions clearly—evaluators award 60% partial marks on incomplete problems.</span>
+              </div>
+              <span class="font-mono text-[10px] text-secondary shrink-0">JUIT Relative Grading Architecture</span>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: T-1 Strategy Deep Dive (15 Marks) -->
+          <div class="strategy-tab-content hidden space-y-3" id="strat-content-t1">
+            <div class="bg-surface-container rounded-xl p-4 border border-sky-500/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold font-mono text-sm">T-1</span>
+                  <div>
+                    <h4 class="font-headline-sm text-sm font-bold text-on-surface">T-1 Examination Blueprint (15 Marks • 60 Minutes)</h4>
+                    <p class="text-xs text-on-surface-variant">Syllabus: Strictly Units 1 & 2. Typically 3 to 4 questions.</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-sky-500/15 text-sky-300 border border-sky-500/30">15% Total Weightage</span>
+              </div>
+
+              <!-- 48-Hour Sprint Plan -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-sky-400 block mb-1">STAGE 1: 48H BEFORE</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Solve Tutorial Sheets by Hand</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    Never just browse PDF solutions. Write every numerical step. 75% of questions are exact copies of TR Sheet 1 & 2 problems with updated resistor or matrix values.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-amber-400 block mb-1">STAGE 2: 24H BEFORE</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Standard Derivations & Diagrams</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    Memorize standard textbook derivations (Kreyszig ODEs, Boylestad diode approximations, Cormen recursion trees). Labeled diagrams bag 30% instant marks.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-emerald-400 block mb-1">STAGE 3: EXAM HALL</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">60-Minute Tactical Clock</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    • First 15m: Theory/Derivation (guaranteed marks)<br>
+                    • Next 30m: 2 Core numericals with SI units<br>
+                    • Final 15m: Re-calculate arithmetic & write final boxes around answers.
+                  </p>
+                </div>
+              </div>
+
+              <!-- High Yield Branch Matrix -->
+              <div class="p-3 rounded-xl bg-surface-container-lowest/80 border border-white/[0.06] space-y-2">
+                <span class="text-xs font-bold text-primary flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">verified</span>
+                  <span>Branch-Specific High Yield Topics (T-1 Units 1 & 2):</span>
+                </span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div class="p-2 rounded-lg bg-surface-container border border-white/[0.04]">
+                    <strong class="text-sky-300 block mb-0.5">ECE / EE</strong>
+                    <span class="text-on-surface-variant text-[11px]">Diode models, BJT DC load line, CE biasing, Thevenin / Norton theorems.</span>
+                  </div>
+                  <div class="p-2 rounded-lg bg-surface-container border border-white/[0.04]">
+                    <strong class="text-purple-300 block mb-0.5">CSE / IT</strong>
+                    <span class="text-on-surface-variant text-[11px]">Big-O analysis, recursion trees, pointer arithmetic, array manipulation.</span>
+                  </div>
+                  <div class="p-2 rounded-lg bg-surface-container border border-white/[0.04]">
+                    <strong class="text-emerald-300 block mb-0.5">Math-I / II</strong>
+                    <span class="text-on-surface-variant text-[11px]">Eigenvalues/vectors, Cayley-Hamilton, Taylor series, exact ODEs.</span>
+                  </div>
+                  <div class="p-2 rounded-lg bg-surface-container border border-white/[0.04]">
+                    <strong class="text-amber-300 block mb-0.5">BT / Civil</strong>
+                    <span class="text-on-surface-variant text-[11px]">Cell energetics, Michaelis-Menten kinetics, stress-strain tensor, coplanar forces.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-xs text-on-surface-variant">Ready to practice? Load verified tutorial sheets from the vault:</span>
+                <button type="button" class="btn-strategy-shortcut px-4 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-on-primary font-semibold text-xs transition-colors cursor-pointer" data-strategy-type="Tutorial">
+                  View T-1 Tutorial Sheets
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: T-2 Strategy Deep Dive (25 Marks) -->
+          <div class="strategy-tab-content hidden space-y-3" id="strat-content-t2">
+            <div class="bg-surface-container rounded-xl p-4 border border-rose-500/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold font-mono text-sm">T-2</span>
+                  <div>
+                    <h4 class="font-headline-sm text-sm font-bold text-on-surface">T-2 Examination Mastery (25 Marks • 90 Minutes)</h4>
+                    <p class="text-xs text-on-surface-variant">Syllabus: Cumulative Units 1–4 (60% weight on Units 3 & 4). The ultimate SGPA decider.</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-rose-500/15 text-rose-300 border border-rose-500/30">25% Total Weightage</span>
+              </div>
+
+              <!-- The PYQ Rule & Relative Grading Edge -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-rose-400 block mb-1">THE 4-YEAR PYQ RULE</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Past Papers Repeat Archetypes</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    JUIT examination papers follow cyclical archetypes. Solving the last 4 years of PYQs covers 70% of question variations and prevents exam-hall surprises.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-purple-400 block mb-1">RELATIVE GRADING SECRET</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">The Batch Median Advantage</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    Because Units 3 & 4 are heavier, the batch average in T-2 drops to 11–13/25. Scoring 19+ puts you in the top 5% percentile, almost locking an A/A+ grade band.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-emerald-400 block mb-1">90-MINUTE GAMEPLAN</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Order of Attack</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    • 0–25m: Unit 3 major question (highest marks)<br>
+                    • 25–50m: Unit 4 deep application<br>
+                    • 50–70m: Unit 1 & 2 multi-part numericals<br>
+                    • 70–90m: Cross-check calculations & graphs.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Evaluator Step Marking Protocol -->
+              <div class="p-3 rounded-xl bg-surface-container-lowest/80 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex items-start gap-2">
+                  <span class="material-symbols-outlined text-rose-400 text-[18px] shrink-0 mt-0.5">draw</span>
+                  <div>
+                    <strong class="text-on-surface block mb-0.5">Faculty Evaluation Protocol:</strong>
+                    <span class="text-on-surface-variant text-[11px]">Always write: 1) Formula used, 2) State assumptions (e.g. "Assume ideal op-amp"), 3) Draw schematic diagram, 4) Substitute with SI units. Even if arithmetic fails, you get 75% marks!</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-strategy-shortcut px-4 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs transition-colors cursor-pointer shrink-0 self-start sm:self-auto" data-strategy-type="PYQ">
+                  Filter T-2 PYQ Archives
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 4: Internal TA & Labs (25 Marks) -->
+          <div class="strategy-tab-content hidden space-y-3" id="strat-content-ta">
+            <div class="bg-surface-container rounded-xl p-4 border border-emerald-500/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold font-mono text-sm">TA</span>
+                  <div>
+                    <h4 class="font-headline-sm text-sm font-bold text-on-surface">Teacher Assessment (TA) & Lab Vivas (25 Marks)</h4>
+                    <p class="text-xs text-on-surface-variant">The easiest marks to score 23+/25 with simple discipline and zero stress.</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">25% Total Weightage</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-emerald-400 block mb-1">PILLAR 1 • 5 MARKS</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">80%+ Attendance Buffer</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    Faculty award full 5 marks automatically if attendance is >= 80%. Dropping below 75% invites debarment notices and mandatory makeup sessions.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-sky-400 block mb-1">PILLAR 2 • 5 MARKS</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Tutorial Submission Deadlines</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    Submit tutorials during the tutorial hour. Faculty deduct 2 marks per week of delay. Neat handwriting on official tutorial sheets earns instant full credit.
+                  </p>
+                </div>
+                <div class="bg-surface-container-high/60 p-3 rounded-xl border border-white/[0.04]">
+                  <span class="text-[10px] font-mono font-bold text-amber-400 block mb-1">PILLAR 3 • 15 MARKS</span>
+                  <h5 class="text-xs font-semibold text-on-surface mb-1">Lab Viva 5-Minute Trick</h5>
+                  <p class="text-[11px] text-on-surface-variant leading-relaxed">
+                    In the first 5 minutes of your lab practical, write Aim, Apparatus, Circuit/Flowchart, and Formula with units on your sheet. This earns immediate respect from the external examiner.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-xs text-on-surface-variant">Looking for verified lab manuals & experiment codes?</span>
+                <button type="button" class="btn-strategy-shortcut px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs transition-colors cursor-pointer" data-strategy-type="Lab Manual">
+                  Filter Lab Manuals
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Content 5: Interactive CGPA & Grade Predictor -->
+          <div class="strategy-tab-content hidden space-y-3" id="strat-content-calc">
+            <div class="bg-surface-container rounded-xl p-4 border border-primary/20 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-bold font-mono text-sm">🧮</span>
+                  <div>
+                    <h4 class="font-headline-sm text-sm font-bold text-on-surface">JUIT 10-Point Relative Grading Predictor</h4>
+                    <p class="text-xs text-on-surface-variant">Enter your anticipated or actual marks in T-1, T-2, and TA to calculate required T-3 marks.</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono bg-primary/15 text-primary border border-primary/30">Total: 100 Marks</span>
+              </div>
+
+              <!-- Interactive Input Sliders -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-surface-container-lowest/80 p-3.5 rounded-xl border border-white/[0.04]">
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-semibold text-sky-400">T-1 Score (out of 15)</span>
+                    <span class="font-mono font-bold text-on-surface text-sm" id="strat-val-t1">12</span>
+                  </div>
+                  <input type="range" id="strat-input-t1" min="0" max="15" value="12" class="w-full accent-sky-500 cursor-pointer" />
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-semibold text-rose-400">T-2 Score (out of 25)</span>
+                    <span class="font-mono font-bold text-on-surface text-sm" id="strat-val-t2">19</span>
+                  </div>
+                  <input type="range" id="strat-input-t2" min="0" max="25" value="19" class="w-full accent-rose-500 cursor-pointer" />
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-semibold text-emerald-400">Internal TA (out of 25)</span>
+                    <span class="font-mono font-bold text-on-surface text-sm" id="strat-val-ta">22</span>
+                  </div>
+                  <input type="range" id="strat-input-ta" min="0" max="25" value="22" class="w-full accent-emerald-500 cursor-pointer" />
+                </div>
+              </div>
+
+              <!-- Result Projection Cards -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
+                <div class="p-2.5 rounded-xl bg-surface-container-high/70 border border-white/[0.04]">
+                  <span class="text-[10px] font-mono text-on-surface-variant block uppercase">Accumulated</span>
+                  <div class="text-xl font-bold font-mono text-primary" id="strat-calc-accumulated">53 / 65</div>
+                  <span class="text-[10px] text-on-surface-variant">Pre-Endsem Buffer</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <span class="text-[10px] font-mono text-amber-300 block uppercase">For A+ (10.0)</span>
+                  <div class="text-xl font-bold font-mono text-amber-300" id="strat-calc-need-aplus">27 / 35</div>
+                  <span class="text-[10px] text-amber-400/80">Need 77% in T-3</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <span class="text-[10px] font-mono text-emerald-300 block uppercase">For A (9.0)</span>
+                  <div class="text-xl font-bold font-mono text-emerald-300" id="strat-calc-need-a">19 / 35</div>
+                  <span class="text-[10px] text-emerald-400/80">Need 54% in T-3</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20">
+                  <span class="text-[10px] font-mono text-sky-300 block uppercase">For B+ (8.0)</span>
+                  <div class="text-xl font-bold font-mono text-sky-300" id="strat-calc-need-bplus">11 / 35</div>
+                  <span class="text-[10px] text-sky-400/80">Need 31% in T-3</span>
+                </div>
+              </div>
+
+              <!-- Senior Advice dynamically calculated -->
+              <div class="p-2.5 rounded-lg bg-surface-container-high text-xs text-on-surface-variant flex items-center gap-2" id="strat-calc-feedback">
+                <span class="material-symbols-outlined text-emerald-400 text-[18px]">verified</span>
+                <span><strong>Stellar Foundation:</strong> With 53/65 marks in hand, an average T-3 performance locks a 9.0+ SGPA comfortably!</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2456,6 +2989,8 @@
   <script src="js/theme.js"></script>
   <script src="js/timetable.js"></script>
   <script src="js/mess.js"></script>
+  <!-- Google Maps Photorealistic 3D Engine API (User Key AIzaSyAj_PvwjGJw6iXZz6mzNv8K_k8NOGzFXmI) -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAj_PvwjGJw6iXZz6mzNv8K_k8NOGzFXmI&libraries=maps3d,places,geometry&v=alpha"></script>
   <script src="js/map.js"></script>
   <script src="js/resources.js"></script>
   <script src="js/utilities.js"></script>
