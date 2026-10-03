@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>JUIT Student Hub • Instagram Story</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --primary: #f59e0b;
+      --primary-rgb: 245, 158, 11;
+      --accent: #06b6d4;
+      --accent-rgb: 6, 182, 212;
+      --emerald: #10b981;
+      --purple: #8b5cf6;
+      --bg-dark: #0a0c14;
+      --card-bg: rgba(18, 22, 34, 0.75);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: #030407;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    /* Ambient background glow elements */
+    .ambient-glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      opacity: 0.25;
+      z-index: 0;
+      transition: all 1s ease;
+    }
+    .glow-1 { top: -100px; left: -100px; background: #8b5cf6; }
+    .glow-2 { bottom: -100px; right: -100px; background: #06b6d4; }
+    .glow-3 { top: 40%; left: 30%; background: #f59e0b; opacity: 0.15; }
+
+    /* Instagram Story Container (9:16 vertical ratio) */
+    .story-wrapper {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 410px;
+      max-height: 800px;
+      background: linear-gradient(180deg, #0e1220 0%, #07090f 100%);
+      border-radius: 28px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 480px) {
+      .story-wrapper {
+        max-width: 100vw;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+        margin-bottom: 0;
+      }
+      .desktop-controls {
+        display: none !important;
+      }
+    }
+
+    /* Top Progress Segments */
+    .story-progress-container {
+      display: flex;
+      gap: 5px;
+      padding: 12px 14px 6px;
+      z-index: 30;
+      position: relative;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #ffffff;
+      border-radius: 3px;
+      transition: width 0.05s linear;
+    }
+
+    .progress-bar.active .progress-fill {
+      background: linear-gradient(90deg, #f59e0b, #06b6d4);
+      box-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
+    }
+
+    .progress-bar.completed .progress-fill {
+      width: 100% !important;
+      background: #ffffff;
+    }
+
+    /* Instagram Header Bar */
+    .story-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px 10px;
+      z-index: 30;
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-avatar-ring {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 2.5px;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(220, 39, 67, 0.4);
+    }
+
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #38bdf8;
+      border: 1.5px solid #07090f;
+    }
+
+    .profile-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .profile-username {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: #ffffff;
+    }
+
+    .verified-badge {
+      color: #38bdf8;
+      font-size: 14px;
+      display: inline-flex;
+    }
+
+    .profile-sub {
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .story-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    /* Tap zones for Instagram Story Navigation */
+    .tap-zone {
+      position: absolute;
+      top: 70px;
+      bottom: 120px;
+      width: 35%;
+      z-index: 25;
+      cursor: pointer;
+    }
+    .tap-left { left: 0; }
+    .tap-right { right: 0; }
+
+    /* Main Story Stage */
+    .story-content {
+      position: relative;
+      flex: 1;
+      padding: 12px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 20;
+      overflow: hidden;
+    }
+
+    /* Ambient dynamic backdrop for current feature */
+    .feature-backdrop-pattern {
+      position: absolute;
+      inset: 0;
+      background-size: 24px 24px;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Top Feature Pill Tag */
+    .feature-tag-pill {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    .tag-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.4); }
+    }
+
+    /* Terminal Glass Card */
+    .terminal-card {
+      position: relative;
+      background: rgba(14, 18, 30, 0.82);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 18px 16px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      margin: auto 0;
+      min-height: 270px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      cursor: pointer;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.02em;
+    }
+
+    .feature-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Live Typewriter Text Box */
+    .typing-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: #e2e8f0;
+      word-wrap: break-word;
+      min-height: 135px;
+    }
+
+    .typing-box .headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .typing-box .bullet {
+      color: #38bdf8;
+      margin-right: 6px;
+    }
+
+    .typing-box .highlight {
+      color: #f59e0b;
+      font-weight: 700;
+    }
+
+    .typing-box .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      color: #a5b4fc;
+      margin: 2px 2px;
+    }
+
+    /* Blinking Cursor */
+    .type-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.15em;
+      background: #06b6d4;
+      vertical-align: -0.15em;
+      margin-left: 2px;
+      border-radius: 2px;
+      box-shadow: 0 0 10px #06b6d4, 0 0 20px #06b6d4;
+      animation: blink 0.75s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Instagram Interactive Sticker / Bottom CTA */
+    .story-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 30;
+      padding-top: 6px;
+    }
+
+    /* Authentic Instagram Link Sticker */
+    .ig-link-sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 12.5px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(255, 255, 255, 0.2);
+      text-decoration: none;
+      transform: rotate(-1.5deg);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .ig-link-sticker:hover {
+      transform: rotate(0deg) scale(1.04);
+    }
+
+    .ig-link-sticker span.material-symbols-outlined {
+      color: #0284c7;
+      font-size: 16px;
+    }
+
+    .music-sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .music-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 11px;
+    }
+
+    .music-bar span {
+      width: 2px;
+      background: #38bdf8;
+      border-radius: 1px;
+      animation: musicWave 1.2s infinite ease-in-out;
+    }
+    .music-bar span:nth-child(1) { height: 5px; animation-delay: 0.1s; }
+    .music-bar span:nth-child(2) { height: 11px; animation-delay: 0.3s; }
+    .music-bar span:nth-child(3) { height: 7px; animation-delay: 0.2s; }
+
+    @keyframes musicWave {
+      0%, 100% { height: 4px; }
+      50% { height: 11px; }
+    }
+
+    /* Swipe Up Button with Neon Gradient */
+    .cta-button {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f59e0b 0%, #ec4899 50%, #8b5cf6 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13.5px;
+      letter-spacing: -0.2px;
+      text-decoration: none;
+      box-shadow: 0 8px 20px -4px rgba(236, 72, 153, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .cta-button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%);
+      transform: rotate(30deg);
+      animation: shine 4s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      20%, 100% { transform: translateX(100%) rotate(30deg); }
+    }
+
+    .cta-button:active {
+      transform: scale(0.97);
+    }
+
+    /* Floating Navigation Controls below Story on Desktop */
+    .desktop-controls {
+      position: fixed;
+      bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+    }
+
+    .desktop-btn {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .desktop-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .desktop-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow Blobs -->
+  <div class="ambient-glow glow-1" id="ambient-1"></div>
+  <div class="ambient-glow glow-2" id="ambient-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Story Phone Container -->
+  <div class="story-wrapper" id="story-wrapper">
+
+    <!-- Segmented Story Progress Bars -->
+    <div class="story-progress-container" id="progress-container">
+      <!-- Dynamically generated progress segments -->
+    </div>
+
+    <!-- Instagram Header -->
+    <header class="story-header">
+      <div class="profile-info">
+        <div class="profile-avatar-ring">
+          <div class="profile-avatar">JUIT</div>
+        </div>
+        <div class="profile-text">
+          <div class="profile-name-row">
+            <span class="profile-username">juit.studenthub</span>
+            <span class="material-symbols-outlined verified-badge">verified</span>
+          </div>
+          <span class="profile-sub">
+            <span>Waknaghat, HP</span>
+            <span>•</span>
+            <span id="story-time-ago">Just now</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="story-actions">
+        <!-- Sound Toggle -->
+        <button class="icon-btn" id="btn-sound-toggle" title="Toggle Typing Audio">
+          <span class="material-symbols-outlined text-[17px]" id="sound-icon">volume_off</span>
+        </button>
+        <!-- Pause / Play -->
+        <button class="icon-btn" id="btn-pause-toggle" title="Pause / Resume">
+          <span class="material-symbols-outlined text-[17px]" id="pause-icon">pause</span>
+        </button>
+        <!-- Exit to Hub -->
+        <a href="index.html" class="icon-btn" title="Back to App">
+          <span class="material-symbols-outlined text-[17px]">close</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Tap zones for Instagram Story Navigation (Left=Back, Right=Next) -->
+    <div class="tap-zone tap-left" id="tap-prev" title="Tap for previous feature"></div>
+    <div class="tap-zone tap-right" id="tap-next" title="Tap for next feature"></div>
+
+    <!-- Interactive Story Content -->
+    <main class="story-content">
+      <div class="feature-backdrop-pattern"></div>
+
+      <!-- Top Tag Pill -->
+      <div class="feature-tag-pill" id="feature-tag">
+        <span class="tag-pulse"></span>
+        <span id="tag-label">CAMPUS OS 2.0</span>
+      </div>
+
+      <!-- Terminal / Card Container -->
+      <div class="terminal-card" id="terminal-card">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+          </div>
+          <div class="terminal-title" id="terminal-title">~/features/timetable.sh</div>
+        </div>
+
+        <!-- Animated Feature Icon -->
+        <div class="feature-icon-badge" id="feature-icon">📅</div>
+
+        <!-- Typewriter Container -->
+        <div class="typing-box" id="typing-box">
+          <!-- Text will be typed out char by char -->
+        </div>
+      </div>
+
+      <!-- Story Footer / Interactive Stickers & CTA -->
+      <div class="story-footer">
+        <!-- Authentic Instagram Link Sticker -->
+        <a href="index.html" class="ig-link-sticker" title="Open JUIT Student Hub">
+          <span class="material-symbols-outlined">link</span>
+          <span>JUIT-STUDENT-HUB</span>
+          <span class="material-symbols-outlined text-[15px]">arrow_outward</span>
+        </a>
+
+        <div class="music-sticker">
+          <div class="music-bar">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span>JUIT Anthems • Lo-Fi Hill Chill</span>
+        </div>
+
+        <a href="index.html" class="cta-button" id="cta-link">
+          <span>Swipe Up to Open Hub</span>
+          <span class="material-symbols-outlined text-[18px]">keyboard_double_arrow_up</span>
+        </a>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Desktop floating controls for testing/previewing -->
+  <div class="desktop-controls">
+    <button class="desktop-btn" id="dt-prev">
+      <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+      Prev
+    </button>
+    <button class="desktop-btn" id="dt-pause">
+      <span class="material-symbols-outlined text-[16px]">pause</span>
+      Pause
+    </button>
+    <button class="desktop-btn" id="dt-next">
+      Next
+      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+    </button>
+    <button class="desktop-btn" id="dt-audio">
+      <span class="material-symbols-outlined text-[16px]">volume_up</span>
+      Audio
+    </button>
+    <button class="desktop-btn" id="dt-copy" title="Copy features script for Instagram caption">
+      <span class="material-symbols-outlined text-[16px]">content_copy</span>
+      Copy Script
+    </button>
+  </div>
+
+  <script>
+    // Feature slides definition
+    const features = [
+      {
+        id: "intro",
+        tag: "ALL-IN-ONE CAMPUS OS",
+        icon: "⚡",
+        iconBg: "rgba(245, 158, 11, 0.18)",
+        titlePath: "~/juit-hub/welcome.sh",
+        accent: "#f59e0b",
+        glow: "#f59e0b",
+        headline: "JUIT Student Hub",
+        text: `Tired of hunting through 10-page timetable PDFs, missing the Waknaghat bus, or asking "mess mein kya bana hai?"\n\nMeet the high-performance, unified web hub built specifically for JUITians.`
+      },
+      {
+        id: "timetable",
+        tag: "ACADEMIC TIMETABLE",
+        icon: "📅",
+        iconBg: "rgba(245, 158, 11, 0.18)",
+        titlePath: "~/features/timetable.sh",
+        accent: "#f59e0b",
+        glow: "#f59e0b",
+        headline: "Smart Live Timetable",
+        text: `✦ Real-Time Live Period: Highlights current class & minutes remaining.\n✦ Full 6-Day Matrix: View weekly schedule across all 8 periods.\n✦ Batch Filter: Instant CSE, IT, ECE, BT & Civil batch schedules.\n✦ Attendance Tracker: 1-click logs with 75% eligibility warning.`
+      },
+      {
+        id: "bus",
+        tag: "NH-5 TRANSIT RADAR",
+        icon: "🚌",
+        iconBg: "rgba(6, 182, 212, 0.18)",
+        titlePath: "~/features/nh5-bus.sh",
+        accent: "#06b6d4",
+        glow: "#06b6d4",
+        headline: "NH-5 Smart Bus Tracker",
+        text: `✦ Live Departures: Shimla ↔ Waknaghat ↔ Solan timetable.\n✦ Live Countdown: "Next bus in 14 mins" real-time status.\n✦ Route Stops: Verified timings for Domehar, Kaithlighat & Kandaghat.\n✦ Fare Matrix: Student rate cards & verified local pickup spots.`
+      },
+      {
+        id: "mess",
+        tag: "ANNAPURNA DINING",
+        icon: "🍽️",
+        iconBg: "rgba(239, 68, 68, 0.18)",
+        titlePath: "~/features/annapurna.sh",
+        accent: "#ef4444",
+        glow: "#ef4444",
+        headline: "Live Mess Menu & Meals",
+        text: `✦ Real-Time Meal Tracker: Breakfast, Lunch, Snacks & Dinner.\n✦ Countdown Timer: Time remaining until the next dining slot.\n✦ Complete Weekly Diet: Daily specials, Sunday treats & sweets.\n✦ Never walk down 200 stairs without checking the menu first!`
+      },
+      {
+        id: "wayfinder",
+        tag: "3D CAMPUS RADAR",
+        icon: "🗺️",
+        iconBg: "rgba(16, 185, 129, 0.18)",
+        titlePath: "~/features/campus-3d.sh",
+        accent: "#10b981",
+        glow: "#10b981",
+        headline: "3D Campus Wayfinder",
+        text: `✦ Interactive Floorplans: Locate CR classrooms, tutorial rooms & labs.\n✦ One-Tap Timetable Link: Tap "CR17" on your schedule to pinpoint it!\n✦ Landmark Directory: Tagore Bhawan, Azad, LHC, Temple & Café.\n✦ No more getting lost in Academic Block 1 & 2.`
+      },
+      {
+        id: "vault",
+        tag: "ACADEMIC VAULT",
+        icon: "📚",
+        iconBg: "rgba(139, 92, 246, 0.18)",
+        titlePath: "~/features/resource-vault.sh",
+        accent: "#8b5cf6",
+        glow: "#8b5cf6",
+        headline: "PYQs & Resource Vault",
+        text: `✦ Verified Exam Archive: T1, T2 & T3 past year question papers.\n✦ Tutorial Sheets & Formulas: Curated math sheets & lab manuals.\n✦ Zero Ads, Zero Paywalls: Direct 1-click verified PDF viewing.\n✦ Organized by semester, branch & official course code.`
+      },
+      {
+        id: "events",
+        tag: "CAMPUS LIFE & CLUBS",
+        icon: "🎭",
+        iconBg: "rgba(236, 72, 153, 0.18)",
+        titlePath: "~/features/clubs-events.sh",
+        accent: "#ec4899",
+        glow: "#ec4899",
+        headline: "Clubs, Events & Portals",
+        text: `✦ Technical & Cultural: TIEDC, ACM, IEEE, CSI & Rotaract.\n✦ Campus Portals: Direct launchpad to Webkiosk, LMS & Fee Portal.\n✦ PWA Installable: Zero lag, works offline, pins straight to home screen.\n✦ Swipe Up to experience JUIT Student Hub now!`
+      }
+    ];
+
+    // State Variables
+    let currentSlide = 0;
+    let isPaused = false;
+    let isTyping = false;
+    let audioEnabled = false;
+    let typeTimeout = null;
+    let progressInterval = null;
+    let slideProgress = 0;
+    const SLIDE_DURATION = 7500; // ms per story slide
+
+    // Web Audio Synthesizer for Mechanical Keyboard / Typewriter Click
+    let audioCtx = null;
+    function playTypingClick() {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+
+        // Subtle randomized typewriter chirp
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600 + Math.random() * 300, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.035);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } catch (e) {
+        // Audio policy or unsupported
+      }
+    }
+
+    // Initialize Progress Bars
+    const progressContainer = document.getElementById('progress-container');
+    function initProgressBars() {
+      progressContainer.innerHTML = '';
+      features.forEach((_, idx) => {
+        const bar = document.createElement('div');
+        bar.className = 'progress-bar';
+        bar.id = `pbar-${idx}`;
+        const fill = document.createElement('div');
+        fill.className = 'progress-fill';
+        bar.appendChild(fill);
+        progressContainer.appendChild(bar);
+      });
+    }
+
+    // Update Progress Bars UI
+    function updateProgressBars() {
+      features.forEach((_, idx) => {
+        const bar = document.getElementById(`pbar-${idx}`);
+        const fill = bar.querySelector('.progress-fill');
+        if (idx < currentSlide) {
+          bar.className = 'progress-bar completed';
+          fill.style.width = '100%';
+        } else if (idx === currentSlide) {
+          bar.className = 'progress-bar active';
+          fill.style.width = `${slideProgress}%`;
+        } else {
+          bar.className = 'progress-bar';
+          fill.style.width = '0%';
+        }
+      });
+    }
+
+    // Start progress timer for current slide
+    function startProgressTimer() {
+      clearInterval(progressInterval);
+      const step = 50; // update every 50ms
+      progressInterval = setInterval(() => {
+        if (isPaused) return;
+        slideProgress += (step / SLIDE_DURATION) * 100;
+        if (slideProgress >= 100) {
+          slideProgress = 100;
+          updateProgressBars();
+          nextSlide();
+        } else {
+          updateProgressBars();
+        }
+      }, step);
+    }
+
+    // Typewriter Engine
+    function startTypewriter(feature) {
+      if (typeTimeout) clearTimeout(typeTimeout);
+      isTyping = true;
+
+      const box = document.getElementById('typing-box');
+      const tagLabel = document.getElementById('tag-label');
+      const titlePath = document.getElementById('terminal-title');
+      const icon = document.getElementById('feature-icon');
+      const ambient1 = document.getElementById('ambient-1');
+      const ambient2 = document.getElementById('ambient-2');
+
+      // Update static badges
+      tagLabel.textContent = feature.tag;
+      titlePath.textContent = feature.titlePath;
+      icon.textContent = feature.icon;
+      icon.style.background = feature.iconBg;
+      ambient1.style.background = feature.glow;
+      ambient2.style.background = feature.accent;
+
+      // Prepare text chunks
+      const fullText = feature.text;
+      box.innerHTML = `<span class="headline" style="color: ${feature.accent}">${feature.headline}</span><span id="typed-body"></span><span class="type-cursor"></span>`;
+      const bodySpan = document.getElementById('typed-body');
+
+      let charIndex = 0;
+      const speed = Math.max(16, Math.floor(SLIDE_DURATION * 0.65 / fullText.length));
+
+      function typeChar() {
+        if (charIndex < fullText.length) {
+          const char = fullText.charAt(charIndex);
+          if (char === '\n') {
+            bodySpan.innerHTML += '<br/>';
+          } else {
+            bodySpan.innerHTML += char;
+            if (charIndex % 2 === 0) playTypingClick();
+          }
+          charIndex++;
+          typeTimeout = setTimeout(typeChar, speed);
+        } else {
+          isTyping = false;
+        }
+      }
+
+      typeChar();
+    }
+
+    // Render Slide
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= features.length) index = 0;
+      currentSlide = index;
+      slideProgress = 0;
+      updateProgressBars();
+
+      const feature = features[currentSlide];
+      startTypewriter(feature);
+      startProgressTimer();
+    }
+
+    function nextSlide() {
+      if (currentSlide < features.length - 1) {
+        showSlide(currentSlide + 1);
+      } else {
+        showSlide(0); // loop back or stay
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        showSlide(currentSlide - 1);
+      } else {
+        showSlide(0);
+      }
+    }
+
+    // Controls & Interaction
+    document.getElementById('tap-next').addEventListener('click', (e) => {
+      e.stopPropagation();
+      nextSlide();
+    });
+
+    document.getElementById('tap-prev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      prevSlide();
+    });
+
+    // Hold to pause (like Instagram Story)
+    const storyWrapper = document.getElementById('story-wrapper');
+    const pauseIcon = document.getElementById('pause-icon');
+
+    function togglePause(forceState) {
+      if (typeof forceState === 'boolean') {
+        isPaused = forceState;
+      } else {
+        isPaused = !isPaused;
+      }
+      pauseIcon.textContent = isPaused ? 'play_arrow' : 'pause';
+      document.getElementById('dt-pause').innerHTML = `<span class="material-symbols-outlined text-[16px]">${isPaused ? 'play_arrow' : 'pause'}</span> ${isPaused ? 'Resume' : 'Pause'}`;
+    }
+
+    document.getElementById('btn-pause-toggle').addEventListener('click', () => togglePause());
+    document.getElementById('dt-pause').addEventListener('click', () => togglePause());
+
+    // Mouse/Touch hold to pause
+    storyWrapper.addEventListener('mousedown', (e) => {
+      if (e.target.closest('#tap-prev') || e.target.closest('#tap-next')) return;
+      togglePause(true);
+    });
+    window.addEventListener('mouseup', () => {
+      if (isPaused) togglePause(false);
+    });
+    storyWrapper.addEventListener('touchstart', (e) => {
+      if (e.target.closest('#tap-prev') || e.target.closest('#tap-next') || e.target.closest('a') || e.target.closest('button')) return;
+      togglePause(true);
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      if (isPaused) togglePause(false);
+    });
+
+    // Sound toggle
+    const soundBtn = document.getElementById('btn-sound-toggle');
+    const soundIcon = document.getElementById('sound-icon');
+    const dtAudio = document.getElementById('dt-audio');
+
+    function toggleSound() {
+      audioEnabled = !audioEnabled;
+      soundIcon.textContent = audioEnabled ? 'volume_up' : 'volume_off';
+      dtAudio.classList.toggle('active', audioEnabled);
+      if (audioEnabled) {
+        playTypingClick();
+      }
+    }
+    soundBtn.addEventListener('click', toggleSound);
+    dtAudio.addEventListener('click', toggleSound);
+
+    // Desktop controls
+    document.getElementById('dt-prev').addEventListener('click', prevSlide);
+    document.getElementById('dt-next').addEventListener('click', nextSlide);
+
+    // Terminal card click: instant autocomplete typing
+    document.getElementById('terminal-card').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isTyping && typeTimeout) {
+        clearTimeout(typeTimeout);
+        isTyping = false;
+        const feature = features[currentSlide];
+        const bodySpan = document.getElementById('typed-body');
+        if (bodySpan) {
+          bodySpan.innerHTML = feature.text.replace(/\n/g, '<br/>');
+        }
+      }
+    });
+
+    // Copy Instagram Story Script
+    const dtCopy = document.getElementById('dt-copy');
+    if (dtCopy) {
+      dtCopy.addEventListener('click', () => {
+        const fullScript = `🔥 JUIT STUDENT HUB // ALL-IN-ONE CAMPUS COMPANION ⚡
+
+📅 SMART ACADEMIC TIMETABLE
+• Real-time period tracker with countdown to next class
+• Full 6-day x 8-slot interactive weekly matrix
+• Direct venue links & 1-tap attendance logs
+
+🚌 NH-5 SMART BUS TRANSIT RADAR
+• Live Shimla ↔ Waknaghat ↔ Solan bus schedules
+• Next-departure live countdowns & verified route fare tables
+
+🍽️ ANNAPURNA MESS LIVE MENU
+• Breakfast, Lunch, Snacks & Dinner real-time menu sync
+• Live meal status and next dining countdown
+
+🗺️ 3D CAMPUS WAYFINDER & RADAR
+• Tagore Bhawan, Azad, CR classrooms & engineering labs
+• One-tap room locator directly from your timetable
+
+📚 RESOURCE VAULT & EXAM ARCHIVE
+• Verified T1, T2 & T3 Past Year Question Papers (PYQs)
+• Curated math tutorial sheets, formulas & verified PDFs
+
+🎭 CAMPUS LIFE, CLUBS & EVENTS
+• TIEDC, ACM, IEEE, CSI & cultural fests
+• Instant access to Webkiosk, LMS & Campus Portals
+
+👉 Install PWA / Try now: https://github.com/TheUnthinkable/JUIT-Student-hub`;
+
+        navigator.clipboard.writeText(fullScript).then(() => {
+          const originalHTML = dtCopy.innerHTML;
+          dtCopy.innerHTML = `<span class="material-symbols-outlined text-[16px] text-emerald-400">check</span> Copied Script!`;
+          setTimeout(() => {
+            dtCopy.innerHTML = originalHTML;
+          }, 2500);
+        }).catch(() => {
+          alert('Story script copied to clipboard!');
+        });
+      });
+    }
+
+    // Keyboard navigation (Arrow keys, Space)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowRight' || e.code === 'KeyL') nextSlide();
+      if (e.code === 'ArrowLeft' || e.code === 'KeyJ') prevSlide();
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePause();
+      }
+    });
+
+    // Init
+    initProgressBars();
+    showSlide(0);
+  </script>
+</body>
+</html>
