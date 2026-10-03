@@ -225,6 +225,7 @@ const CampusMap = {
     this.renderMapControlsUI();
     this.renderSVGMap();
     this.bindMapControls();
+    this.set3DMode(true);
     this.bindSearch();
     this.bindBuildingCards();
     this.bindTurnByTurn();

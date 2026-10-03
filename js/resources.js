@@ -1,14 +1,86 @@
 /**
  * Academic Resource Hub & Vault Controller for JUIT Student Hub
  * Organizes lecture notes, PYQs, lab manuals, reference books, and tutorial sheets.
- * Provides direct PDF viewing and downloads.
+ * Provides intuitive course-based browsing, clean category filters, and direct PDF viewing/downloads.
  */
 
 const ResourcesController = {
-  activeSubject: 'all', // 'all' | 'SDF' | 'Basic Electronics' | 'Mathematics' | 'English' | 'Physics'
-  activeType: 'all',    // 'all' | 'Tutorial' | 'Notes' | 'PYQ' | 'Lab Manual' | 'Book'
+  activeSubject: 'all', // 'all' | 'Basic Electronics' | 'Mathematics' | 'SDF' | 'Physics' | 'English'
+  activeType: 'all',    // 'all' | 'Tutorial' | 'PYQ' | 'Notes' | 'Lab Manual' | 'Book'
   activeSemester: 'all',
   searchQuery: '',
+
+  courses: [
+    {
+      id: 'all',
+      name: 'All Courses',
+      code: 'First Year Core',
+      dept: 'All 5 Departments',
+      icon: 'auto_stories',
+      color: 'text-primary',
+      bg: 'bg-primary/10',
+      border: 'border-primary/30'
+    },
+    {
+      id: 'Basic Electronics',
+      name: 'Basic Electronics',
+      code: '25B11EC111',
+      dept: 'Dept of ECE',
+      icon: 'memory',
+      color: 'text-sky-400',
+      bg: 'bg-sky-500/10',
+      border: 'border-sky-500/30'
+    },
+    {
+      id: 'Mathematics',
+      name: 'Mathematics I',
+      code: '25B11MA113',
+      dept: 'Dept of Mathematics',
+      icon: 'functions',
+      color: 'text-indigo-400',
+      bg: 'bg-indigo-500/10',
+      border: 'border-indigo-500/30'
+    },
+    {
+      id: 'SDF',
+      name: 'C Programming (SDF)',
+      code: '25B11CI112',
+      dept: 'Dept of CSE',
+      icon: 'terminal',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/30'
+    },
+    {
+      id: 'Physics',
+      name: 'Engineering Physics',
+      code: '25B11PH111',
+      dept: 'Dept of Physics',
+      icon: 'science',
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/30'
+    },
+    {
+      id: 'English',
+      name: 'Technical English',
+      code: '25B11HS111',
+      dept: 'Dept of HSS',
+      icon: 'record_voice_over',
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10',
+      border: 'border-rose-500/30'
+    }
+  ],
+
+  materialTypes: [
+    { id: 'all', label: 'All Materials', icon: 'folder' },
+    { id: 'Tutorial', label: 'Tutorial Sheets', icon: 'edit_note' },
+    { id: 'PYQ', label: 'Past Papers (PYQ)', icon: 'quiz' },
+    { id: 'Notes', label: 'Lecture Notes', icon: 'description' },
+    { id: 'Lab Manual', label: 'Lab Manuals', icon: 'biotech' },
+    { id: 'Book', label: 'Reference Books', icon: 'menu_book' }
+  ],
 
   init() {
     this.renderSubjectFilters();
@@ -25,67 +97,87 @@ const ResourcesController = {
     localStorage.setItem('juit_resources', JSON.stringify(window.JUIT_DATA.resources));
   },
 
+  /* 1. RENDER COURSE EXPLORER CARDS */
   renderSubjectFilters() {
     const container = document.getElementById('resource-subject-filters');
+    const labelEl = document.getElementById('resources-active-subject-label');
     if (!container) return;
 
-    const subjects = [
-      { id: 'all', label: 'All Subjects', icon: 'apps' },
-      { id: 'Basic Electronics', label: 'Basic Electronics', icon: 'memory' },
-      { id: 'Mathematics', label: 'Mathematics I', icon: 'functions' },
-      { id: 'SDF', label: 'SDF (C Programming)', icon: 'terminal' },
-      { id: 'Physics', label: 'Physics (Optics)', icon: 'science' },
-      { id: 'English', label: 'English (Communication)', icon: 'record_voice_over' }
-    ];
+    const allItems = this.getResources();
 
-    container.innerHTML = subjects.map(s => {
-      const isActive = (s.id === this.activeSubject);
-      const itemsCount = this.getResources().filter(r => s.id === 'all' || r.subject === s.id).length;
+    container.innerHTML = this.courses.map(c => {
+      const isActive = (c.id === this.activeSubject);
+      const count = allItems.filter(r => c.id === 'all' || r.subject === c.id).length;
+
       return `
-        <button type="button" class="category-pill flex items-center gap-1.5 px-3 py-1.5 rounded-full font-label-md text-xs transition-all flex-shrink-0 cursor-pointer ${
-          isActive
-            ? 'bg-primary text-on-primary font-bold shadow-sm'
-            : 'bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
-        }" data-subject="${s.id}">
-          <span class="material-symbols-outlined text-[15px]">${s.icon}</span>
-          <span>${s.label}</span>
-          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-on-primary/20 text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'}">${itemsCount}</span>
+        <button type="button" 
+                class="course-explorer-card text-left p-3 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between relative group ${
+                  isActive
+                    ? 'bg-surface-container-high border-2 border-primary shadow-md ring-2 ring-primary/20'
+                    : 'bg-surface-container hover:bg-surface-container-high border border-white/[0.06] hover:border-white/[0.12]'
+                }" 
+                data-subject="${c.id}">
+          <div>
+            <div class="flex items-center justify-between gap-1 mb-2">
+              <div class="w-8 h-8 rounded-xl ${c.bg} ${c.color} flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[18px]">${c.icon}</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold ${
+                isActive ? 'bg-primary text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'
+              }">${count} files</span>
+            </div>
+            <h4 class="font-headline-sm text-xs font-semibold text-on-surface leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+              ${c.name}
+            </h4>
+            <p class="font-mono text-[10px] text-on-surface-variant truncate mt-0.5">${c.code}</p>
+          </div>
+          <div class="mt-2 pt-1.5 border-t border-white/[0.04] flex items-center justify-between text-[10px]">
+            <span class="text-on-surface-variant font-mono truncate">${c.dept}</span>
+            <span class="material-symbols-outlined text-[13px] text-primary transition-transform ${isActive ? 'translate-x-0' : 'group-hover:translate-x-0.5'}">arrow_forward</span>
+          </div>
         </button>
       `;
     }).join('');
 
-    container.querySelectorAll('.category-pill').forEach(btn => {
+    if (labelEl) {
+      const current = this.courses.find(c => c.id === this.activeSubject);
+      labelEl.textContent = current ? `${current.name} • ${current.code}` : 'All Courses';
+    }
+
+    container.querySelectorAll('.course-explorer-card').forEach(btn => {
       btn.addEventListener('click', () => {
         this.activeSubject = btn.dataset.subject;
         this.renderSubjectFilters();
+        this.renderTypeFilters();
         this.renderResources();
       });
     });
   },
 
+  /* 2. RENDER MATERIAL TYPE PILLS */
   renderTypeFilters() {
     const typeContainer = document.getElementById('resource-type-filters');
     if (!typeContainer) return;
 
-    const types = [
-      { id: 'all', label: 'All Materials', icon: 'folder' },
-      { id: 'Tutorial', label: 'Tutorial Sheets', icon: 'edit_note' },
-      { id: 'Notes', label: 'Lecture Notes', icon: 'description' },
-      { id: 'PYQ', label: 'Past Papers (PYQ)', icon: 'quiz' },
-      { id: 'Lab Manual', label: 'Lab Manuals', icon: 'biotech' },
-      { id: 'Book', label: 'Reference Books', icon: 'menu_book' }
-    ];
+    const allItems = this.getResources().filter(r => this.activeSubject === 'all' || r.subject === this.activeSubject);
 
-    typeContainer.innerHTML = types.map(t => {
+    typeContainer.innerHTML = this.materialTypes.map(t => {
       const isActive = (t.id === this.activeType);
+      const count = allItems.filter(r => t.id === 'all' || r.type === t.id).length;
+
       return `
-        <button type="button" class="category-pill flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-body-sm text-xs transition-all flex-shrink-0 cursor-pointer ${
-          isActive
-            ? 'bg-surface-container-highest text-primary font-bold border border-primary/30 shadow-sm'
-            : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-        }" data-type="${t.id}">
+        <button type="button" 
+                class="category-pill flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-label-md text-xs transition-all flex-shrink-0 cursor-pointer ${
+                  isActive
+                    ? 'bg-primary text-on-primary font-bold shadow-sm'
+                    : 'bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high border border-white/[0.04]'
+                }" 
+                data-type="${t.id}">
           <span class="material-symbols-outlined text-[15px]">${t.icon}</span>
           <span>${t.label}</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${
+            isActive ? 'bg-on-primary/20 text-on-primary' : 'bg-surface-container-highest text-on-surface-variant'
+          }">${count}</span>
         </button>
       `;
     }).join('');
@@ -99,6 +191,7 @@ const ResourcesController = {
     });
   },
 
+  /* 3. RENDER RESOURCE ITEMS & SPOTLIGHT BUNDLES */
   renderResources() {
     const container = document.getElementById('resources-grid-container');
     const countLabel = document.getElementById('resources-count-label');
@@ -116,13 +209,7 @@ const ResourcesController = {
       items = items.filter(r => r.type === this.activeType);
     }
 
-    // 3. Filter by Semester
-    if (this.activeSemester !== 'all') {
-      const semNum = parseInt(this.activeSemester, 10);
-      items = items.filter(r => r.semester === semNum);
-    }
-
-    // 4. Search Filter
+    // 3. Search Filter
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
       items = items.filter(r => 
@@ -130,7 +217,8 @@ const ResourcesController = {
         (r.code && r.code.toLowerCase().includes(q)) ||
         (r.description && r.description.toLowerCase().includes(q)) ||
         (r.unit && r.unit.toLowerCase().includes(q)) ||
-        (r.subject && r.subject.toLowerCase().includes(q))
+        (r.subject && r.subject.toLowerCase().includes(q)) ||
+        (r.author && r.author.toLowerCase().includes(q))
       );
     }
 
@@ -138,120 +226,89 @@ const ResourcesController = {
       countLabel.textContent = `${items.length} verified item${items.length === 1 ? '' : 's'}`;
     }
 
-    // Featured Curated Shelves
-    let featuredShelfHtml = '';
-    if (this.activeSubject === 'all' || this.activeSubject === 'Basic Electronics') {
-      const elecTutorials = [
-        { num: 1, title: 'Tutorial 1: Charge, Current, Voltage & Power', desc: 'Charge waveforms q(t), current density, energy balance & independent source circuits.', file: 'vault/Basic_Electronics_Tutorial_1.pdf', size: '124 KB' },
-        { num: 2, title: 'Tutorial 2: Circuit Topology, KVL, KCL & Resistors', desc: 'Node identification, branch loop equations, Kirchhoff laws & bridge reduction.', file: 'vault/Basic_Electronics_Tutorial_2.pdf', size: '136 KB' },
-        { num: 3, title: 'Tutorial 3: Nodal Analysis, Supernodes & Mesh Analysis', desc: 'Node matrix formulation, supernode constraints, planar mesh with dependent sources.', file: 'vault/Basic_Electronics_Tutorial_3.pdf', size: '165 KB' },
-        { num: 4, title: 'Tutorial 4: Superposition, Thévenin & Norton Theorems', desc: 'Multi-source circuits, source conversions, Thévenin open-circuit & Norton equivalents.', file: 'vault/Basic_Electronics_Tutorial_4.pdf', size: '156 KB' },
-        { num: 5, title: 'Tutorial 5: PN Junction Diode & Zener Regulators', desc: 'Shockley diode equation, piecewise linear modeling, Zener reverse breakdown.', file: 'vault/Basic_Electronics_Tutorial_5.pdf', size: '193 KB' },
-        { num: '★', title: 'Complete Tutorial Problem Sets Bundle (1–5)', desc: 'Official verified compilation of all 5 Basic Electronics assignment question sheets.', file: 'vault/Basic_Electronics_All_Tutorials_Bundle.pdf', size: '772 KB', isBundle: true }
-      ];
+    // Master Bundles Definition
+    const bundles = [
+      {
+        id: 'res-18',
+        subject: 'Basic Electronics',
+        code: '25B11EC111',
+        title: 'Basic Electronics: Complete Tutorial Problem Sets Bundle (1–5)',
+        desc: 'Official compiled 18-page tutorial package containing all 5 Basic Electronics assignment sheets with verified circuit schematics.',
+        file: 'vault/Basic_Electronics_All_Tutorials_Bundle.pdf',
+        size: '772 KB',
+        pages: '18 Pages',
+        icon: 'memory',
+        color: 'sky'
+      },
+      {
+        id: 'res-23',
+        subject: 'Mathematics',
+        code: '25B11MA113',
+        title: 'Mathematics I: Complete Tutorial Problem Sets Bundle (Sheets 1–4)',
+        desc: 'Complete official compilation of all 4 Mathematics I tutorial sheets covering Multivariable Calculus, Series & Double Integrals.',
+        file: 'vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf',
+        size: '1.5 MB',
+        pages: '8 Pages',
+        icon: 'functions',
+        color: 'indigo'
+      }
+    ];
 
-      featuredShelfHtml = `
-        <div class="col-span-full mb-4">
-          <div class="rounded-2xl bg-surface-container-low p-4 sm:p-5 border border-white/[0.06] shadow-sm mb-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
-                  <span class="material-symbols-outlined text-[22px]">memory</span>
-                </div>
-                <div>
-                  <h3 class="font-headline-sm text-base text-on-surface font-semibold">Basic Electronics — Verified Problem Sets (1–5)</h3>
-                  <p class="font-body-sm text-xs text-on-surface-variant">Dept of Electronics & Communication • Course Code: 25B11EC111</p>
-                </div>
-              </div>
-              <a href="vault/Basic_Electronics_All_Tutorials_Bundle.pdf" download="Basic_Electronics_All_Tutorials_Bundle.pdf" class="px-3.5 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm self-start sm:self-auto">
-                <span class="material-symbols-outlined text-[15px]">download</span>
-                <span>Download All (18p Bundle)</span>
-              </a>
+    // Determine which bundles to spotlight
+    const showBundles = (this.activeType === 'all' || this.activeType === 'Tutorial') && !this.searchQuery;
+    let relevantBundles = [];
+    if (showBundles) {
+      if (this.activeSubject === 'all') {
+        relevantBundles = bundles;
+      } else {
+        relevantBundles = bundles.filter(b => b.subject === this.activeSubject);
+      }
+    }
+
+    // Featured Bundles HTML
+    let bundleHtml = '';
+    if (relevantBundles.length > 0) {
+      bundleHtml = `
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+              <span class="font-label-sm text-xs font-mono uppercase tracking-wider text-secondary font-bold">Official Problem Set Compilations</span>
             </div>
+            <span class="font-mono text-[11px] text-on-surface-variant">Recommended for Exam Prep</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            ${elecTutorials.map(t => `
-              <div class="rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] p-4 flex flex-col justify-between transition-all duration-200 shadow-sm hover:border-white/[0.1]">
+          <div class="grid grid-cols-1 ${relevantBundles.length > 1 ? 'md:grid-cols-2' : ''} gap-3">
+            ${relevantBundles.map(b => `
+              <div class="rounded-2xl bg-gradient-to-br from-surface-container via-surface-container-low to-surface-container border border-secondary/25 p-4 sm:p-5 flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-secondary/40 transition-all">
+                <div class="absolute -right-4 -bottom-4 w-28 h-28 bg-secondary/5 rounded-full blur-2xl pointer-events-none"></div>
                 <div>
-                  <div class="flex items-center justify-between gap-2 mb-2">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
-                      t.isBundle ? 'bg-primary text-on-primary' : 'bg-primary/15 text-primary'
-                    }">
-                      ${t.isBundle ? 'FULL COMPILATION' : `TUTORIAL ${t.num}`}
+                  <div class="flex items-center justify-between gap-2 mb-2.5">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-secondary/20 text-secondary border border-secondary/30">
+                      ★ COMPLETE COMPILATION
                     </span>
-                    <span class="font-mono text-[11px] text-on-surface-variant">${t.size} • PDF</span>
+                    <span class="font-mono text-[11px] text-on-surface-variant">${b.pages} • ${b.size}</span>
                   </div>
-                  <h4 class="font-headline-sm text-sm text-on-surface font-semibold line-clamp-1 mb-1">${t.title}</h4>
-                  <p class="font-body-sm text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-3">${t.desc}</p>
+                  <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold line-clamp-2 mb-1.5 group-hover:text-secondary transition-colors">
+                    ${b.title}
+                  </h3>
+                  <p class="font-body-sm text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-3">
+                    ${b.desc}
+                  </p>
                 </div>
-                <div class="flex items-center gap-2 pt-2 border-t border-white/[0.04]">
-                  <button type="button" class="btn-preview-resource flex-1 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center justify-center gap-1 transition-colors cursor-pointer" data-link="${t.file}" data-title="${t.title}">
-                    <span class="material-symbols-outlined text-[14px]">visibility</span>
-                    <span>View PDF</span>
+                <div class="flex items-center gap-2 pt-2.5 border-t border-white/[0.06]">
+                  <button type="button" 
+                          class="btn-preview-resource flex-1 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer" 
+                          data-link="${b.file}" 
+                          data-title="${b.title}">
+                    <span class="material-symbols-outlined text-[15px]">visibility</span>
+                    <span>Preview in Hub</span>
                   </button>
-                  <a href="${t.file}" download="${t.file.split('/').pop()}" class="flex-1 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center justify-center gap-1 transition-colors shadow-sm">
-                    <span class="material-symbols-outlined text-[14px]">download</span>
-                    <span>Download</span>
-                  </a>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    } else if (this.activeSubject === 'Mathematics') {
-      const mathTutorials = [
-        { num: 1, title: 'Tutorial Sheet 1: Limits, Continuity & Jacobian', desc: 'Delta-epsilon limits, partial derivatives, Euler theorem on homogeneous functions & Jacobians.', file: 'vault/Math1_Tutorial_Sheet_1.pdf', size: '383 KB' },
-        { num: 2, title: 'Tutorial Sheet 2: Taylor Series & Lagrange Multipliers', desc: 'Taylor series multivariable expansions, stationary points classification & constrained optimization.', file: 'vault/Math1_Tutorial_Sheet_2.pdf', size: '450 KB' },
-        { num: 3, title: 'Tutorial Sheet 3: Double Integrals & Beta-Gamma Functions', desc: 'Double integrals, order inversion, polar transformation & Beta-Gamma special integral functions.', file: 'vault/Math1_Tutorial_Sheet_3.pdf', size: '254 KB' },
-        { num: 4, title: 'Tutorial Sheet 4: Applications to Area & Volume', desc: 'Planar area computation, volume under paraboloids, surface area & physical applications.', file: 'vault/Math1_Tutorial_Sheet_4.pdf', size: '448 KB' },
-        { num: '★', title: 'Complete Tutorial Problem Sets Bundle (1–4)', desc: 'Complete verified compilation of all 4 Mathematics I tutorial assignment sheets.', file: 'vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf', size: '1.5 MB', isBundle: true }
-      ];
-
-      featuredShelfHtml = `
-        <div class="col-span-full mb-4">
-          <div class="rounded-2xl bg-surface-container-low p-4 sm:p-5 border border-white/[0.06] shadow-sm mb-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-secondary/20 text-secondary flex items-center justify-center shrink-0">
-                  <span class="material-symbols-outlined text-[22px]">functions</span>
-                </div>
-                <div>
-                  <h3 class="font-headline-sm text-base text-on-surface font-semibold">Mathematics I — Verified Problem Sets (Sheets 1–4)</h3>
-                  <p class="font-body-sm text-xs text-on-surface-variant">Dept of Mathematics • Course Code: 25B11MA113</p>
-                </div>
-              </div>
-              <a href="vault/Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" download="Math1_All_Tutorial_Sheets_1_to_4_Complete_Bundle.pdf" class="px-3.5 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm self-start sm:self-auto">
-                <span class="material-symbols-outlined text-[15px]">download</span>
-                <span>Download All (8p Bundle)</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            ${mathTutorials.map(t => `
-              <div class="rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] p-4 flex flex-col justify-between transition-all duration-200 shadow-sm hover:border-white/[0.1]">
-                <div>
-                  <div class="flex items-center justify-between gap-2 mb-2">
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
-                      t.isBundle ? 'bg-secondary text-on-secondary' : 'bg-secondary/15 text-secondary'
-                    }">
-                      ${t.isBundle ? 'FULL COMPILATION' : `SHEET ${t.num}`}
-                    </span>
-                    <span class="font-mono text-[11px] text-on-surface-variant">${t.size} • PDF</span>
-                  </div>
-                  <h4 class="font-headline-sm text-sm text-on-surface font-semibold line-clamp-1 mb-1">${t.title}</h4>
-                  <p class="font-body-sm text-xs text-on-surface-variant line-clamp-2 leading-relaxed mb-3">${t.desc}</p>
-                </div>
-                <div class="flex items-center gap-2 pt-2 border-t border-white/[0.04]">
-                  <button type="button" class="btn-preview-resource flex-1 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center justify-center gap-1 transition-colors cursor-pointer" data-link="${t.file}" data-title="${t.title}">
-                    <span class="material-symbols-outlined text-[14px]">visibility</span>
-                    <span>View PDF</span>
-                  </button>
-                  <a href="${t.file}" download="${t.file.split('/').pop()}" class="flex-1 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center justify-center gap-1 transition-colors shadow-sm">
-                    <span class="material-symbols-outlined text-[14px]">download</span>
-                    <span>Download</span>
+                  <a href="${b.file}" 
+                     download="${b.file.split('/').pop()}" 
+                     class="flex-1 py-2 rounded-xl bg-secondary text-on-secondary hover:brightness-110 font-label-md text-xs font-bold inline-flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[15px]">download</span>
+                    <span>Download PDF</span>
                   </a>
                 </div>
               </div>
@@ -261,66 +318,76 @@ const ResourcesController = {
       `;
     }
 
-    if (items.length === 0) {
-      container.innerHTML = featuredShelfHtml + `
-        <div class="col-span-full p-8 text-center bg-surface-container-low rounded-2xl border border-white/[0.06]">
-          <div class="text-4xl mb-3">📂</div>
-          <h3 class="font-headline-sm text-base text-on-surface font-semibold mb-1">No Additional Resources Found</h3>
+    // Filter out the bundles from the list of cards if they're already spotlit at the top
+    const spotlitBundleIds = relevantBundles.map(b => b.id);
+    const individualCards = items.filter(r => !spotlitBundleIds.includes(r.id));
+
+    // Empty State
+    if (individualCards.length === 0 && relevantBundles.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full p-10 text-center bg-surface-container-low rounded-2xl border border-white/[0.06]">
+          <div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-on-surface-variant mx-auto mb-3">
+            <span class="material-symbols-outlined text-[32px]">folder_off</span>
+          </div>
+          <h3 class="font-headline-sm text-base text-on-surface font-semibold mb-1">No Resources Found</h3>
           <p class="font-body-sm text-xs text-on-surface-variant max-w-sm mx-auto mb-4">
-            No materials found matching your selected filters.
+            No materials found matching "${this.searchQuery || this.activeType}". Try clearing your search or switching filters.
           </p>
-          <button type="button" class="px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm cursor-pointer" onclick="ResourcesController.resetFilters()">
+          <button type="button" 
+                  class="px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm cursor-pointer" 
+                  onclick="ResourcesController.resetFilters()">
             Reset All Filters
           </button>
         </div>
       `;
-      container.querySelectorAll('.btn-preview-resource').forEach(btn => {
-        btn.addEventListener('click', () => {
-          this.previewDocument(btn.dataset.link, btn.dataset.title);
-        });
-      });
       return;
     }
 
-    const cardsHtml = items.map(r => {
+    // Individual Item Cards
+    const cardsHtml = individualCards.map(r => {
       let icon = 'description';
       let typeLabel = r.type || 'Notes';
       let typeColor = 'text-primary';
       let typeBg = 'bg-primary/10';
+      let typeBorder = 'border-primary/20';
 
       if (r.type === 'PYQ') {
         icon = 'quiz';
         typeColor = 'text-rose-400';
         typeBg = 'bg-rose-500/15';
+        typeBorder = 'border-rose-500/30';
       } else if (r.type === 'Lab Manual') {
         icon = 'biotech';
         typeColor = 'text-amber-400';
         typeBg = 'bg-amber-500/15';
+        typeBorder = 'border-amber-500/30';
       } else if (r.type === 'Book') {
         icon = 'menu_book';
         typeColor = 'text-emerald-400';
         typeBg = 'bg-emerald-500/15';
+        typeBorder = 'border-emerald-500/30';
       } else if (r.type === 'Tutorial') {
         icon = 'edit_note';
         typeColor = 'text-secondary';
         typeBg = 'bg-secondary/15';
+        typeBorder = 'border-secondary/30';
       }
 
       const hasDownload = (r.link && r.link !== '#');
       const filename = hasDownload ? r.link.split('/').pop() : `${r.title}.pdf`;
 
       return `
-        <div class="group rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 shadow-sm hover:border-white/[0.12]">
+        <div class="rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] hover:border-white/[0.12] p-4 sm:p-5 flex flex-col justify-between transition-all duration-200 shadow-sm group">
           <div>
-            <!-- Header Meta Strip -->
+            <!-- Top Meta Strip -->
             <div class="flex items-center justify-between gap-2 mb-2.5">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium ${typeBg} ${typeColor}">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${typeBg} ${typeColor} border ${typeBorder}">
                   <span class="material-symbols-outlined text-[13px]">${icon}</span>
                   <span>${typeLabel}</span>
                 </span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-surface-container text-on-surface-variant border border-white/[0.04]">
-                  Sem ${r.semester} • ${r.code || r.subject}
+                  ${r.code || r.subject}
                 </span>
               </div>
               <span class="font-mono text-[11px] text-on-surface-variant shrink-0">${r.size || 'PDF'}</span>
@@ -334,7 +401,7 @@ const ResourcesController = {
             <!-- Scope / Unit Tag -->
             <div class="inline-flex items-center gap-1 text-[11px] text-secondary font-mono bg-secondary/10 px-2 py-0.5 rounded-md mb-2">
               <span class="material-symbols-outlined text-[13px]">bookmark</span>
-              <span class="truncate">${r.unit || 'All Units Syllabus'}</span>
+              <span class="truncate">${r.unit || 'Semester 1 Syllabus'}</span>
             </div>
 
             <!-- Description -->
@@ -343,15 +410,20 @@ const ResourcesController = {
             </p>
           </div>
 
-          <!-- Action Footer -->
+          <!-- Footer Actions -->
           <div class="pt-3 border-t border-white/[0.04] flex items-center justify-between gap-2">
             ${hasDownload ? `
-              <button type="button" class="btn-preview-resource flex-1 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center justify-center gap-1 transition-colors cursor-pointer" data-link="${r.link}" data-title="${r.title}">
-                <span class="material-symbols-outlined text-[14px]">visibility</span>
-                <span>View</span>
+              <button type="button" 
+                      class="btn-preview-resource flex-1 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center justify-center gap-1 transition-colors cursor-pointer" 
+                      data-link="${r.link}" 
+                      data-title="${r.title}">
+                <span class="material-symbols-outlined text-[15px]">visibility</span>
+                <span>View PDF</span>
               </button>
-              <a href="${r.link}" download="${filename}" class="flex-1 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center justify-center gap-1 transition-colors shadow-sm">
-                <span class="material-symbols-outlined text-[14px]">download</span>
+              <a href="${r.link}" 
+                 download="${filename}" 
+                 class="flex-1 py-1.5 rounded-xl bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container font-label-md text-xs font-semibold inline-flex items-center justify-center gap-1 transition-colors shadow-sm">
+                <span class="material-symbols-outlined text-[15px]">download</span>
                 <span>Download</span>
               </a>
             ` : `
@@ -359,8 +431,11 @@ const ResourcesController = {
                 <span class="material-symbols-outlined text-[14px]">verified</span>
                 <span>Verified Peer Notes</span>
               </span>
-              <button type="button" class="btn-preview-resource px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center gap-1 transition-colors" data-link="${r.link}" data-title="${r.title}">
-                <span>Read in Vault</span>
+              <button type="button" 
+                      class="btn-preview-resource px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs font-medium inline-flex items-center gap-1 transition-colors cursor-pointer" 
+                      data-link="${r.link}" 
+                      data-title="${r.title}">
+                <span>Read Notes</span>
               </button>
             `}
           </div>
@@ -368,7 +443,20 @@ const ResourcesController = {
       `;
     }).join('');
 
-    container.innerHTML = featuredShelfHtml + `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">${cardsHtml}</div>`;
+    container.innerHTML = `
+      ${bundleHtml}
+      ${individualCards.length > 0 ? `
+        <div class="mb-2 flex items-center justify-between">
+          <span class="font-label-sm text-xs font-mono uppercase tracking-wider text-on-surface-variant">
+            ${this.activeSubject === 'all' ? 'All Course Materials' : `${this.activeSubject} Course Library`}
+          </span>
+          <span class="font-mono text-[11px] text-on-surface-variant">${individualCards.length} documents</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
+          ${cardsHtml}
+        </div>
+      ` : ''}
+    `;
 
     // Bind preview triggers
     container.querySelectorAll('.btn-preview-resource').forEach(btn => {
@@ -378,6 +466,7 @@ const ResourcesController = {
     });
   },
 
+  /* 4. MODAL DOCUMENT PREVIEWER */
   closePreviewModal() {
     const modal = document.getElementById('pdf-preview-modal');
     if (modal) {
@@ -390,18 +479,17 @@ const ResourcesController = {
 
   previewDocument(link, title) {
     if (!link || link === '#') {
-      alert(`Document: "${title}"\nDirect cloud copy is compiling on LRC servers. You can download problem sets from the featured shelf above.`);
+      alert(`Document: "${title}"\nDirect copy is compiling on LRC servers. Please download available problem set bundles.`);
       return;
     }
-    
-    // Check if modal exists
+
     let modal = document.getElementById('pdf-preview-modal');
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'pdf-preview-modal';
-      modal.className = 'fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6';
+      modal.className = 'fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6';
       modal.innerHTML = `
-        <div class="w-full max-w-4xl h-[88vh] rounded-2xl bg-surface-container-low border border-white/[0.1] shadow-2xl flex flex-col justify-between overflow-hidden">
+        <div class="w-full max-w-4xl h-[90vh] rounded-2xl bg-surface-container-low border border-white/[0.1] shadow-2xl flex flex-col justify-between overflow-hidden">
           <div class="flex items-center justify-between p-4 border-b border-white/[0.08] bg-surface-container">
             <div class="flex items-center gap-2.5 overflow-hidden">
               <span class="material-symbols-outlined text-primary text-[22px]">description</span>
@@ -476,7 +564,9 @@ const ResourcesController = {
     this.activeSemester = 'all';
     this.searchQuery = '';
     const searchInput = document.getElementById('resource-search-input');
+    const clearBtn = document.getElementById('btn-clear-resource-search');
     if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.classList.add('hidden');
     this.renderSubjectFilters();
     this.renderTypeFilters();
     this.renderResources();
@@ -488,7 +578,7 @@ const ResourcesController = {
     const code = prompt('Course Code (e.g. 25B11CI514):', '25B11CI112');
     const sem = parseInt(prompt('Semester (1 - 8):', '1'), 10) || 1;
     const subject = prompt('Subject Category (SDF / Basic Electronics / Mathematics / Physics / English):', 'SDF') || 'SDF';
-    const type = prompt('Type (Notes / PYQ / Lab Manual / Book):', 'Notes') || 'Notes';
+    const type = prompt('Type (Notes / PYQ / Lab Manual / Book / Tutorial):', 'Notes') || 'Notes';
     const desc = prompt('Short description:', 'Key notes and solved questions');
 
     const newRes = {
@@ -510,15 +600,30 @@ const ResourcesController = {
     window.JUIT_DATA.resources.unshift(newRes);
     this.saveResources();
     this.renderSubjectFilters();
+    this.renderTypeFilters();
     this.renderResources();
     alert('Resource added to your local library! Thank you for sharing.');
   },
 
   bindEvents() {
     const searchInput = document.getElementById('resource-search-input');
+    const clearBtn = document.getElementById('btn-clear-resource-search');
+
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this.searchQuery = e.target.value.trim();
+        if (clearBtn) {
+          clearBtn.classList.toggle('hidden', !this.searchQuery);
+        }
+        this.renderResources();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        this.searchQuery = '';
+        clearBtn.classList.add('hidden');
         this.renderResources();
       });
     }

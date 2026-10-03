@@ -965,4 +965,76 @@ html[data-theme-mode="light"] {
   --border-active: #0284c7;
 }
 
+/* ==========================================================================
+   3D ISOMETRIC ARCHITECTURAL CAMPUS MAP PERSPECTIVE & TRANSFORMS
+   ========================================================================== */
+#map-viewport-box {
+  background: radial-gradient(circle at 50% 30%, #0d1527 0%, #060a14 100%);
+}
+
+#map-canvas-container {
+  position: relative;
+  overflow: hidden;
+  transition: perspective 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#map-canvas-container.map-mode-3d {
+  perspective: 1200px;
+  perspective-origin: 50% 38%;
+}
+
+#map-canvas-container.map-mode-3d #campus-vector-svg {
+  transform-origin: center center;
+  transform: rotateX(38deg) rotateZ(-14deg) scale(0.92);
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 40px 65px rgba(0, 0, 0, 0.9));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+#map-canvas-container.map-mode-2d #campus-vector-svg {
+  transform-origin: center center;
+  transform: rotateX(0deg) rotateZ(0deg) scale(1);
+  transform-style: flat;
+  filter: none;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bldg-node-3d {
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease;
+}
+
+.bldg-node-3d:hover {
+  filter: brightness(1.22) drop-shadow(0 10px 22px rgba(0, 229, 255, 0.5));
+}
+
+.walking-route-path {
+  stroke-dasharray: 12 6;
+  animation: routePulseFlow 1.4s linear infinite;
+}
+
+@keyframes routePulseFlow {
+  from {
+    stroke-dashoffset: 36;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.beacon-radar-pulse {
+  animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes radarPing {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.9;
+  }
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
 

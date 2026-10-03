@@ -171,7 +171,11 @@ const App = {
     if (viewId === 'dash') {
       this.refreshDashboard();
     } else if (viewId === 'campus' && window.CampusMap) {
-      window.CampusMap.renderSVGMap();
+      if (typeof window.CampusMap.set3DMode === 'function') {
+        window.CampusMap.set3DMode(window.CampusMap.is3DMode !== false);
+      } else {
+        window.CampusMap.renderSVGMap();
+      }
     } else if (viewId === 'timetable' && window.TimetableController) {
       window.TimetableController.renderSchedule();
     } else if (viewId === 'mess' && window.MessController) {
@@ -179,6 +183,9 @@ const App = {
     } else if (viewId === 'resources' && window.ResourcesController) {
       window.ResourcesController.renderResources();
     } else if (viewId === 'utilities' && window.UtilitiesController) {
+      if (typeof window.UtilitiesController.initPomodoro === 'function') {
+        window.UtilitiesController.initPomodoro();
+      }
       if (typeof window.UtilitiesController.renderActiveTab === 'function') {
         window.UtilitiesController.renderActiveTab();
       }

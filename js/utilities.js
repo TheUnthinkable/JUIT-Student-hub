@@ -309,58 +309,148 @@ const UtilitiesController = {
     });
   },
 
+  initPomodoro() {
+    this.updatePomoDisplay();
+    this.bindPomoControls();
+  },
+
+  bindPomoControls() {
+    const btnFocus = document.getElementById('btn-pomo-focus');
+    const btnShort = document.getElementById('btn-pomo-short');
+    const btnLong = document.getElementById('btn-pomo-long');
+    const btnStart = document.getElementById('btn-pomo-start-pause');
+    const btnReset = document.getElementById('btn-pomo-reset');
+
+    if (btnFocus) {
+      btnFocus.onclick = () => this.setPomoMode('focus', 25 * 60);
+    }
+    if (btnShort) {
+      btnShort.onclick = () => this.setPomoMode('short', 5 * 60);
+    }
+    if (btnLong) {
+      btnLong.onclick = () => this.setPomoMode('long', 15 * 60);
+    }
+
+    if (btnStart) {
+      btnStart.onclick = () => {
+        if (this.timerState === 'running') {
+          this.pausePomodoro();
+        } else {
+          this.startPomodoro();
+        }
+      };
+    }
+
+    if (btnReset) {
+      btnReset.onclick = () => this.resetPomodoro();
+    }
+
+    this.updatePomoModeButtons();
+  },
+
+  updatePomoModeButtons() {
+    const modes = [
+      { id: 'btn-pomo-focus', mode: 'focus' },
+      { id: 'btn-pomo-short', mode: 'short' },
+      { id: 'btn-pomo-long', mode: 'long' }
+    ];
+    modes.forEach(({ id, mode }) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const isActive = (this.timerMode === mode);
+      if (isActive) {
+        btn.className = 'px-3 py-1 rounded-lg bg-primary text-on-primary font-bold text-xs shadow-sm transition-all cursor-pointer';
+      } else {
+        btn.className = 'px-3 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-xs transition-all cursor-pointer';
+      }
+    });
+  },
+
+  updatePomoDisplay() {
+    const mins = Math.floor(this.timerRemaining / 60);
+    const secs = this.timerRemaining % 60;
+    const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    const el = document.getElementById('pomo-time-display');
+    if (el) el.textContent = display;
+
+    const btn = document.getElementById('btn-pomo-start-pause');
+    if (btn) {
+      if (this.timerState === 'running') {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-[20px]">pause</span>
+          <span>Pause Session</span>
+        `;
+        btn.className = 'h-12 px-6 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-label-lg text-label-lg flex items-center gap-2 active:scale-95 transition-all shadow-md font-bold cursor-pointer';
+      } else if (this.timerState === 'paused') {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+          <span>Resume Session</span>
+        `;
+        btn.className = 'h-12 px-6 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg flex items-center gap-2 active:scale-95 transition-all shadow-md font-bold cursor-pointer';
+      } else {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+          <span>Start Pacing</span>
+        `;
+        btn.className = 'h-12 px-6 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg flex items-center gap-2 active:scale-95 transition-all shadow-md font-bold cursor-pointer';
+      }
+    }
+  },
+
   setPomoMode(mode, duration) {
     this.timerMode = mode;
     this.timerDuration = duration;
     this.timerRemaining = duration;
     this.timerState = 'stopped';
     clearInterval(this.timerInterval);
-    this.renderPomodoro(document.getElementById('utilities-tab-content'));
+    this.updatePomoDisplay();
+    this.updatePomoModeButtons();
   },
 
   startPomodoro() {
     this.timerState = 'running';
     clearInterval(this.timerInterval);
+    this.updatePomoDisplay();
+
     this.timerInterval = setInterval(() => {
       if (this.timerRemaining > 0) {
         this.timerRemaining--;
-        const mins = Math.floor(this.timerRemaining / 60);
-        const secs = this.timerRemaining % 60;
-        const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        const el = document.getElementById('pomo-time-display');
-        if (el) el.textContent = display;
+        this.updatePomoDisplay();
       } else {
         clearInterval(this.timerInterval);
         this.timerState = 'stopped';
         if (this.timerMode === 'focus') {
           this.pomodoroSessions++;
-          alert('🎉 Great work! Study focus session completed. Take a well-deserved 5-minute break.');
+          if (window.App && typeof window.App.showToast === 'function') {
+            window.App.showToast('🎉 Focus session completed! Take a 5-minute break.', 'success');
+          } else {
+            alert('🎉 Focus session completed! Take a well-deserved 5-minute break.');
+          }
         } else {
-          alert('🔔 Break over! Ready to dive back into your studies?');
+          if (window.App && typeof window.App.showToast === 'function') {
+            window.App.showToast('🔔 Break over! Ready to return to studies?', 'info');
+          } else {
+            alert('🔔 Break over! Ready to return to studies?');
+          }
         }
         this.resetPomodoro();
       }
     }, 1000);
-
-    const btn = document.getElementById('btn-pomo-start-pause');
-    if (btn) btn.textContent = 'Pause ⏸';
   },
 
   pausePomodoro() {
     this.timerState = 'paused';
     clearInterval(this.timerInterval);
-    const btn = document.getElementById('btn-pomo-start-pause');
-    if (btn) btn.textContent = 'Resume ▶';
+    this.updatePomoDisplay();
   },
 
   resetPomodoro() {
     clearInterval(this.timerInterval);
     this.timerState = 'stopped';
     this.timerRemaining = this.timerDuration;
-    this.renderPomodoro(document.getElementById('utilities-tab-content'));
+    this.updatePomoDisplay();
+    this.updatePomoModeButtons();
   },
-
-  initPomodoro() {},
 
   /* 4. Personal Quick Notes */
   renderNotes(container) {
