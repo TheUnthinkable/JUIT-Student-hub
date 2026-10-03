@@ -118,26 +118,26 @@ const TimetableController = {
 
   getCleanSubjectName(code, subject) {
     const c = (code || '').toUpperCase();
-    if (c.includes('HS111')) return 'English';
-    if (c.includes('CI112')) return 'SDF';
-    if (c.includes('MA113') || c.includes('MA111') || c.includes('MA112')) return 'Mathematics';
-    if (c.includes('PH111') || c.includes('PH112')) return 'Physics';
-    if (c.includes('EC111') || c.includes('EC112')) return 'Basic Electronics';
-    if (c.includes('GE171')) return 'Workshop Lab';
-    if (c.includes('GE172')) return 'Engineering Drawing (CAD)';
-    if (c.includes('CI172')) return 'SDF Lab';
-    if (c.includes('PH171')) return 'Physics Lab';
-    if (c.includes('EC171')) return 'Electronics Lab';
-    if (c.includes('CI312') || c.includes('CI211')) return 'Data Structures (DSA)';
+    if (c.includes('HS111')) return 'Technical English & Communication';
+    if (c.includes('CI112')) return 'Software Development Fundamentals (C)';
+    if (c.includes('MA113') || c.includes('MA111') || c.includes('MA112')) return 'Mathematics I (Calculus & Matrices)';
+    if (c.includes('PH111') || c.includes('PH112')) return 'Engineering Physics';
+    if (c.includes('EC111') || c.includes('EC112')) return 'Basic Electronics Engineering';
+    if (c.includes('GE171')) return 'Workshop Practice Lab';
+    if (c.includes('GE172')) return 'Engineering Drawing & CAD';
+    if (c.includes('CI172')) return 'SDF C Programming Lab';
+    if (c.includes('PH171')) return 'Physics Laboratory';
+    if (c.includes('EC171')) return 'Electronics Engineering Lab';
+    if (c.includes('CI312') || c.includes('CI211')) return 'Data Structures & Algorithms';
     if (c.includes('CI375')) return 'Data Structures Lab';
-    if (c.includes('CI311')) return 'Object-Oriented Programming (OOP)';
-    if (c.includes('CI313')) return 'Computer Organization (COA)';
+    if (c.includes('CI311')) return 'Object-Oriented Programming (Java/C++)';
+    if (c.includes('CI313')) return 'Computer Organization & Architecture';
     if (c.includes('CI514') || c.includes('CI411')) return 'Operating Systems';
     if (c.includes('CI517') || c.includes('CI612')) return 'Computer Networks';
     if (c.includes('CI611')) return 'Design & Analysis of Algorithms';
     if (c.includes('CI613')) return 'Software Engineering';
-    if (c.includes('CI740')) return 'AI & Machine Learning';
-    if (c.includes('CI742')) return 'Cyber Security';
+    if (c.includes('CI740')) return 'Artificial Intelligence & Machine Learning';
+    if (c.includes('CI742')) return 'Cyber Security & Defense';
     
     if (subject && subject.includes('(')) {
       return subject.split('(')[0].trim();
@@ -324,6 +324,20 @@ const TimetableController = {
     semSelect.innerHTML = html;
   },
 
+  updateBatchDisplayLabels() {
+    const label = document.getElementById('timetable-batch-display-label');
+    if (label) {
+      label.textContent = (!this.activeBatch || this.activeBatch === 'ALL') ? 'All Batches' : `Batch ${this.activeBatch}`;
+      const currentSheet = this.data[this.activeSemesterId];
+      if (label.parentElement) {
+        const semBadge = label.parentElement.querySelector('span:last-child');
+        if (semBadge && currentSheet) {
+          semBadge.textContent = currentSheet.term || currentSheet.title || '1st Sem';
+        }
+      }
+    }
+  },
+
   populateBatchDropdown() {
     const batchSelect = document.getElementById('timetable-batch-select');
     if (!batchSelect) return;
@@ -333,6 +347,7 @@ const TimetableController = {
       batchSelect.innerHTML = '<option value="ALL">All Batches</option>';
       this.activeBatch = 'ALL';
       batchSelect.value = 'ALL';
+      this.updateBatchDisplayLabels();
       return;
     }
 
@@ -348,6 +363,7 @@ const TimetableController = {
 
     batchSelect.innerHTML = html;
     batchSelect.value = this.activeBatch || 'ALL';
+    this.updateBatchDisplayLabels();
   },
 
   renderQuickBatchChips() {
@@ -390,6 +406,7 @@ const TimetableController = {
         localStorage.setItem('juit_selected_batch', this.activeBatch);
         const batchSelect = document.getElementById('timetable-batch-select');
         if (batchSelect) batchSelect.value = this.activeBatch;
+        this.updateBatchDisplayLabels();
         if (window.JUIT_PROFILE) {
           window.JUIT_PROFILE.batch = this.activeBatch;
           localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));
@@ -691,33 +708,32 @@ const TimetableController = {
       if (item.type === 'break') {
         const isLunch = item.isLunch;
         const breakTitle = isLunch ? 'Lunch Break & Campus Leisure' : `Free Period (${item.durationMins >= 60 ? `${Math.round(item.durationMins/60)} hr` : `${item.durationMins} mins`})`;
-        const breakSub = isLunch ? 'Annapurna Mess is serving fresh lunch' : 'LRC Library study cubicles available';
+        const breakSub = isLunch ? 'Annapurna Mess is serving hot lunch' : 'LRC Library study cubicles available';
         const tagLabel = isLunch ? 'MESS ACTIVE' : 'FREE TIME';
 
         return `
-          <div class="bg-surface-container-lowest/80 p-3 sm:p-space-md rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-space-md border border-outline-variant/20 shadow-sm w-full max-w-full">
+          <div class="bg-surface-container-lowest/80 p-3 sm:p-space-md rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border border-white/[0.05] shadow-sm w-full max-w-full">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-outline shrink-0">
-                <span class="material-symbols-outlined text-[18px] sm:text-[20px]">${isLunch ? 'restaurant' : 'coffee'}</span>
+              <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-outline shrink-0">
+                <span class="material-symbols-outlined text-[20px]">${isLunch ? 'restaurant' : 'coffee'}</span>
               </div>
               <div class="min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
                   <p class="font-body-md text-sm sm:text-body-md font-semibold text-on-surface truncate">${breakTitle}</p>
-                  <span class="font-label-sm text-[10px] sm:text-label-sm px-1.5 py-0.5 rounded bg-surface-container-high ${isLunch ? 'text-secondary' : 'text-outline'} shrink-0">${tagLabel}</span>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-container-high ${isLunch ? 'text-secondary' : 'text-outline'} shrink-0">${tagLabel}</span>
                 </div>
-                <p class="font-label-sm text-[11px] sm:text-label-sm text-outline mt-0.5 truncate">${item.timeLabel} • ${breakSub}</p>
+                <p class="font-label-sm text-xs text-outline mt-0.5 truncate">${item.timeLabel} • ${breakSub}</p>
               </div>
             </div>
             ${isLunch
-              ? `<a class="font-label-sm text-xs sm:text-label-sm text-secondary hover:underline flex items-center gap-1 font-medium whitespace-nowrap self-end sm:self-auto shrink-0" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>View Mess Menu</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>`
-              : `<a class="font-label-sm text-xs sm:text-label-sm text-secondary hover:underline flex items-center gap-1 font-medium whitespace-nowrap self-end sm:self-auto shrink-0" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Reserve Cubicle</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span></a>`
+              ? `<a class="inline-flex items-center gap-1 font-label-sm text-xs text-secondary hover:underline font-semibold whitespace-nowrap self-end sm:self-auto shrink-0" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>View Mess Menu</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
+              : `<a class="inline-flex items-center gap-1 font-label-sm text-xs text-secondary hover:underline font-semibold whitespace-nowrap self-end sm:self-auto shrink-0" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Explore Resources</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
             }
           </div>
         `;
       }
 
       const c = item.data;
-      const durationBadge = c.durationSlots > 1 ? `<span class="font-code-sm text-[11px] sm:text-code-sm px-1.5 py-0.5 rounded bg-surface-container-lowest text-outline font-mono">${c.durationSlots} hrs</span>` : '';
       
       // Co-attending batches
       let coAttending = '';
@@ -733,82 +749,161 @@ const TimetableController = {
       const attState = attendanceRecords[c.uniqueId];
       const isAttended = attState === 'attended';
       const isMissed = attState === 'missed';
-      const attBtnLabel = isAttended ? '✓ Attended' : (isMissed ? '✕ Missed' : 'Mark Attended');
-      const typeLabel = c.type === 'L' ? 'Lecture (L)' : (c.type === 'P' ? 'Lab (P)' : 'Tutorial (T)');
+      
+      let attBtnClass = 'bg-surface-container-high hover:bg-surface-bright text-on-surface border border-white/[0.08]';
+      let attIcon = 'how_to_reg';
+      let attBtnLabel = 'Mark Attended';
+
+      if (isAttended) {
+        attBtnClass = 'bg-secondary/20 text-secondary border border-secondary/40 font-bold';
+        attIcon = 'check_circle';
+        attBtnLabel = 'Attended';
+      } else if (isMissed) {
+        attBtnClass = 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold';
+        attIcon = 'cancel';
+        attBtnLabel = 'Missed';
+      }
+
+      let typeBadgeStyle = 'bg-amber-500/15 text-amber-300 border border-amber-500/30';
+      let typeIcon = 'school';
+      let typeLabel = 'Lecture (L)';
+      if (c.type === 'P') {
+        typeBadgeStyle = 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+        typeIcon = 'science';
+        typeLabel = 'Lab (P)';
+      } else if (c.type === 'T') {
+        typeBadgeStyle = 'bg-sky-500/15 text-sky-300 border border-sky-500/30';
+        typeIcon = 'groups';
+        typeLabel = 'Tutorial (T)';
+      }
+
+      let liveStatusBadge = '';
+      if (c.status === 'LIVE_NOW') {
+        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] sm:text-[11px] font-bold animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>LIVE NOW (${c.timeDiff}m left)</span>`;
+      } else if (c.status === 'NEXT_UP') {
+        liveStatusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/40 text-[10px] sm:text-[11px] font-semibold">⏳ NEXT UP (${c.timeDiff}m)</span>`;
+      }
+
+      const timeParts = (c.time || '').split(/[-–—]/).map(t => t.trim());
+      const startTime = timeParts[0] || '09:00 AM';
+      const endTime = timeParts[1] || '09:55 AM';
+      const durSlots = c.durationSlots || 1;
+      const durText = durSlots > 1 ? `${durSlots} hrs` : (c.parsedRange ? `${c.parsedRange.end - c.parsedRange.start}m` : '55m');
+
       const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
+      let vaultBtn = '';
+      if (vaultRes) {
+        if (vaultRes.hasMultiple) {
+          vaultBtn = `
+            <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors cursor-pointer" 
+              data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
+              data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}'>
+              <span class="material-symbols-outlined text-[15px]">folder_open</span>
+              <span>${vaultRes.shortTitle || 'Tutorials'}</span>
+            </button>
+          `;
+        } else {
+          vaultBtn = `
+            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors" title="Download Material">
+              <span class="material-symbols-outlined text-[15px]">download</span>
+              <span>${vaultRes.shortTitle || 'Notes'}</span>
+            </a>
+          `;
+        }
+      }
 
       return `
-        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-3 sm:p-space-md rounded-xl shadow-sm transition-colors flex flex-col gap-2.5 sm:gap-3 border border-outline-variant/15 group ${c.status === 'LIVE_NOW' ? 'ring-1 ring-primary' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
-          <!-- Top Row: Icon + Subject Details & Status Badges -->
-          <div class="flex items-start gap-2.5 sm:gap-3.5 min-w-0 w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${c.type === 'P' ? 'bg-secondary/20 text-secondary' : (c.type === 'T' ? 'bg-secondary-container/20 text-secondary-container' : 'bg-primary-container/20 text-primary')} flex items-center justify-center shrink-0 mt-0.5">
-              <span class="material-symbols-outlined text-[20px] sm:text-[24px]">${c.type === 'P' ? 'science' : (c.type === 'T' ? 'groups' : 'school')}</span>
-            </div>
-            <div class="space-y-1 min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-1.5 sm:gap-space-xs">
-                <span class="font-headline-sm text-sm sm:text-headline-sm font-semibold text-on-surface break-words">${c.cleanSubject}</span>
-                <span class="font-code-sm text-[10px] sm:text-code-sm px-1.5 py-0.5 rounded bg-surface-container-lowest text-outline font-mono">${c.code}</span>
-                <span class="font-label-sm text-[10px] sm:text-label-sm px-1.5 py-0.5 rounded ${c.type === 'P' ? 'bg-secondary text-on-secondary-fixed-variant font-semibold' : (c.type === 'T' ? 'bg-secondary-container text-on-secondary font-medium' : 'bg-primary-container text-on-primary font-medium')}">${typeLabel}</span>
-                ${durationBadge}
-                ${c.status === 'LIVE_NOW' ? '<span class="px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-sm text-[10px] sm:text-label-sm font-semibold animate-pulse">● LIVE NOW</span>' : ''}
-                ${c.status === 'NEXT_UP' ? '<span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-label-sm text-[10px] sm:text-label-sm font-medium">⏳ NEXT UP</span>' : ''}
+        <div class="class-schedule-card bg-surface-container-low hover:bg-surface-container p-3.5 sm:p-4 rounded-2xl shadow-sm transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-3.5 border border-white/[0.06] hover:border-white/[0.12] group ${c.status === 'LIVE_NOW' ? 'ring-2 ring-primary/80 bg-surface-container' : ''} cursor-pointer w-full max-w-full" id="${c.uniqueId}" data-unique-id="${c.uniqueId}">
+          
+          <!-- Left Side: Time Pillar + Main Subject Details -->
+          <div class="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+            
+            <!-- Time Pillar: High-contrast, easy to read -->
+            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-1.5 rounded-xl bg-surface-container-lowest border border-white/[0.05] text-center select-none">
+              <span class="font-mono text-xs sm:text-sm font-bold text-primary tracking-tight">${startTime}</span>
+              <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[10px]">
+                <span class="material-symbols-outlined text-[12px]">arrow_downward</span>
+                <span>to</span>
               </div>
-              <div class="flex items-center gap-x-3 gap-y-1 text-on-surface-variant font-label-sm text-[11px] sm:text-label-sm flex-wrap pt-0.5">
-                <div class="flex items-center gap-1 text-on-surface font-medium">
-                  <span class="material-symbols-outlined text-[14px] sm:text-[15px] text-primary">schedule</span>
-                  <span>${c.time}</span>
-                </div>
+              <span class="font-mono text-xs sm:text-sm font-semibold text-on-surface-variant">${endTime}</span>
+              <span class="mt-1 px-1.5 py-0.5 rounded-md font-mono text-[10px] font-semibold bg-surface-container-high text-outline">${durText}</span>
+            </div>
+
+            <!-- Subject & Academic Details -->
+            <div class="space-y-1.5 min-w-0 flex-1">
+              
+              <!-- Meta Badges: Type Pill + Course Code + Status -->
+              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold ${typeBadgeStyle}">
+                  <span class="material-symbols-outlined text-[14px]">${typeIcon}</span>
+                  <span>${typeLabel}</span>
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-lg font-mono text-[11px] sm:text-xs font-semibold bg-surface-container-highest text-on-surface border border-white/[0.06]">
+                  ${c.code}
+                </span>
+                ${c.durationSlots > 1 ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md font-mono text-[10px] bg-surface-container-highest text-on-surface-variant font-medium">${c.durationSlots} hrs</span>` : ''}
+                ${liveStatusBadge}
+              </div>
+
+              <!-- Prominent Subject Title -->
+              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight line-clamp-2">
+                ${c.cleanSubject}
+              </h3>
+
+              <!-- Faculty & Batch Details -->
+              <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs text-on-surface-variant pt-0.5">
                 ${c.faculty ? `
-                  <div class="flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[14px] sm:text-[15px] text-outline">person</span>
-                    <span class="truncate max-w-[150px] sm:max-w-none">Faculty: ${c.faculty}</span>
+                  <div class="inline-flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[15px] text-primary">person</span>
+                    <span class="font-medium text-on-surface">Prof. ${c.faculty}</span>
                   </div>
                 ` : ''}
                 ${coAttending ? `
-                  <div class="flex items-center gap-1 text-outline">
-                    <span class="material-symbols-outlined text-[14px] sm:text-[15px]">group</span>
-                    <span class="truncate max-w-[150px] sm:max-w-none">${coAttending}</span>
+                  <div class="inline-flex items-center gap-1 text-outline">
+                    <span class="material-symbols-outlined text-[15px]">groups</span>
+                    <span class="truncate max-w-[200px] sm:max-w-none">${coAttending}</span>
                   </div>
                 ` : ''}
               </div>
+
             </div>
           </div>
 
-          <!-- Bottom Actions Bar: Wraps gracefully without expanding card width -->
-          <div class="flex flex-wrap items-center gap-2 w-full pt-2 border-t border-white/[0.04]">
-            <button type="button" class="btn-attendance-toggle px-2.5 sm:px-space-md py-1.5 rounded-lg font-body-sm text-xs sm:text-body-sm transition-colors cursor-pointer ${isAttended ? 'bg-secondary-container text-on-secondary font-semibold' : (isMissed ? 'bg-error-container text-on-error-container' : 'bg-surface-container-highest hover:bg-surface-bright text-on-surface')}" data-unique-id="${c.uniqueId}" title="Track your class attendance">
-              ${attBtnLabel}
-            </button>
+          <!-- Right Side: Venue & Action Buttons -->
+          <div class="flex flex-wrap md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-white/[0.06]">
+            
+            <!-- Prominent Venue Locator Button -->
             ${c.venue ? `
-              <button type="button" class="venue-locator-pill flex items-center gap-1 px-2.5 sm:px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-secondary font-label-md text-xs sm:text-label-md transition-colors shadow-sm cursor-pointer border border-outline-variant/30" data-venue="${c.venue}" title="Show location on campus map">
-                <span class="material-symbols-outlined text-[15px] text-error">location_on</span>
-                <span>Venue: ${c.venue}</span>
+              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-semibold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show on 3D campus map">
+                <span class="material-symbols-outlined text-rose-400 text-[15px]">location_on</span>
+                <span class="font-bold text-primary font-mono">Room ${c.venue}</span>
               </button>
             ` : `
-              <div class="flex items-center gap-1 px-2.5 sm:px-space-md py-1.5 rounded-lg bg-surface-container-lowest text-outline font-label-md text-xs sm:text-label-md">
+              <div class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container text-outline text-xs">
                 <span class="material-symbols-outlined text-[15px]">location_off</span>
                 <span>Venue TBA</span>
               </div>
             `}
-            ${vaultRes ? `
-              ${vaultRes.hasMultiple ? `
-                <button type="button" class="btn-tutorials-modal-trigger inline-flex items-center gap-1 px-2.5 sm:px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-xs sm:text-label-md transition-colors border border-outline-variant/30 cursor-pointer" 
-                  data-tutorials='${JSON.stringify(vaultRes.tutorials).replace(/'/g, "&apos;")}' 
-                  data-meta='${JSON.stringify({ title: vaultRes.title, dept: vaultRes.dept || '', subjectType: vaultRes.subjectType || 'generic' }).replace(/'/g, "&apos;")}'>
-                  <span class="material-symbols-outlined text-[15px]">folder_open</span>
-                  <span>${vaultRes.shortTitle || 'Tutorials'}</span>
-                </button>
-              ` : `
-                <a href="${vaultRes.link}" download class="inline-flex items-center gap-1 px-2.5 sm:px-space-md py-1.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-secondary font-label-md text-xs sm:text-label-md transition-colors border border-outline-variant/30" title="Download Material">
-                  <span class="material-symbols-outlined text-[15px]">download</span>
-                  <span>${vaultRes.shortTitle || 'Notes'}</span>
-                </a>
-              `}
-            ` : ''}
-            <button type="button" class="btn-class-inspect ml-auto w-8 h-8 rounded-lg bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-outline-variant/30 shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
-              <span class="material-symbols-outlined text-[17px]">info</span>
-            </button>
+
+            <!-- Actions Row: Attendance + Study Notes + Info -->
+            <div class="flex items-center gap-1.5">
+              <!-- Attendance Button -->
+              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl font-label-md text-xs font-semibold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track attendance">
+                <span class="material-symbols-outlined text-[15px]">${attIcon}</span>
+                <span>${attBtnLabel}</span>
+              </button>
+
+              <!-- Study Material / Tutorial Link -->
+              ${vaultBtn}
+
+              <!-- Info Inspector -->
+              <button type="button" class="btn-class-inspect w-8 h-8 rounded-xl bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-outline hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06] shrink-0" data-class-id="${c.uniqueId}" title="Class Details">
+                <span class="material-symbols-outlined text-[16px]">info</span>
+              </button>
+            </div>
+
           </div>
+
         </div>
       `;
     }).join('');
@@ -890,7 +985,7 @@ const TimetableController = {
 
     const headingEl = document.getElementById('timetable-timeline-heading');
     if (headingEl) {
-      headingEl.textContent = `Viewing Schedule for ${this.dayFullNames[this.activeDay] || this.activeDay}`;
+      headingEl.textContent = 'Waknaghat Academic Blocks • 1,550m Altitude';
     }
 
     const clockBadge = document.getElementById('timetable-live-clock-badge');
@@ -922,7 +1017,7 @@ const TimetableController = {
 
     let statusText = '';
     if (!isToday) {
-      statusText = `Viewing Schedule for ${this.dayFullNames[this.activeDay]}`;
+      statusText = `📅 Academic Day Flow (${classes.length} Sessions Scheduled)`;
     } else if (liveClass) {
       statusText = `🔴 IN PROGRESS: ${liveClass.cleanSubject || liveClass.subject} at ${liveClass.venue || 'Campus'} (${liveClass.range.end - curMins}m remaining)`;
     } else if (nextClass) {
@@ -962,19 +1057,23 @@ const TimetableController = {
         const gapPct = ((gapMins / dayTotal) * 100).toFixed(1);
         const isLunch = (currentMarker >= 760 && cStart <= 860);
         ganttSlotsHtml += `
-          <div class="h-full ${isLunch ? 'bg-surface-container-high/60' : 'bg-surface-container/50 hover:bg-surface-container'} rounded flex items-center justify-center text-outline cursor-pointer transition-colors" style="width: ${gapPct}%;" title="${isLunch ? 'Lunch Break (01:00 - 02:00 PM)' : 'Free Period'}">
-            <span class="font-label-sm text-label-sm truncate px-1">${isLunch ? 'Lunch' : 'Free'}</span>
+          <div class="h-full ${isLunch ? 'bg-surface-container-high/80 text-on-surface' : 'bg-surface-container/60 hover:bg-surface-container text-on-surface-variant'} rounded-md flex items-center justify-center cursor-pointer transition-colors" style="width: ${gapPct}%;" title="${isLunch ? 'Lunch Break (01:00 - 02:00 PM)' : 'Free Period'}">
+            <span class="font-label-sm text-[11px] font-semibold truncate px-1">${isLunch ? 'Lunch' : 'Free'}</span>
           </div>
         `;
       }
 
       const durMins = Math.max(15, cEnd - cStart);
       const slotPct = ((durMins / dayTotal) * 100).toFixed(1);
-      const bgClass = c.type === 'P' ? 'bg-secondary/80 hover:bg-secondary text-on-secondary-fixed-variant' : (c.type === 'T' ? 'bg-secondary-container/90 hover:bg-secondary-container text-on-secondary' : 'bg-primary-container hover:bg-primary text-on-primary');
+      const bgClass = c.type === 'P'
+        ? 'bg-emerald-400 hover:bg-emerald-300 text-neutral-950 font-bold'
+        : (c.type === 'T'
+          ? 'bg-sky-400 hover:bg-sky-300 text-neutral-950 font-bold'
+          : 'bg-amber-400 hover:bg-amber-300 text-neutral-950 font-bold');
 
       const slotLabel = (durMins <= 60 && c.cleanSubject) ? c.cleanSubject.split(' ')[0] : (c.code || c.cleanSubject || 'Class');
       ganttSlotsHtml += `
-        <div class="h-full ${bgClass} rounded flex items-center justify-center font-semibold cursor-pointer transition-colors group relative" style="width: ${slotPct}%;" title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'}">
+        <div class="h-full ${bgClass} rounded-md flex items-center justify-center font-semibold cursor-pointer transition-colors group relative" style="width: ${slotPct}%;" title="${c.cleanSubject || c.subject} • ${c.time} • Room ${c.venue || 'TBA'}">
           <span class="font-code-sm text-[10px] sm:text-code-sm truncate px-0.5 font-mono">${slotLabel}</span>
         </div>
       `;
@@ -1262,6 +1361,7 @@ const TimetableController = {
       batchSelect.addEventListener('change', (e) => {
         this.activeBatch = e.target.value;
         localStorage.setItem('juit_selected_batch', this.activeBatch);
+        this.updateBatchDisplayLabels();
         if (window.JUIT_PROFILE) {
           window.JUIT_PROFILE.batch = this.activeBatch;
           localStorage.setItem('juit_student_profile', JSON.stringify(window.JUIT_PROFILE));

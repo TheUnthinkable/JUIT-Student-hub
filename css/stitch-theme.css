@@ -15,19 +15,85 @@
 
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined' !important;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-size: 20px;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  word-wrap: normal !important;
+  direction: ltr !important;
+  -webkit-font-feature-settings: 'liga' 1 !important;
+  font-feature-settings: 'liga' 1 !important;
   -webkit-font-smoothing: antialiased;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ==========================================================================
+   Universal Optical Text & Background Alignment Rules
+   Ensures badges, chips, pills, and buttons are mathematically and optically centered
+   ========================================================================== */
+.pill,
+.badge,
+.tag,
+.filter-chip,
+.category-pill,
+.term-btn,
+.venue-locator-pill,
+.btn-attendance-toggle,
+.quick-bldg-btn,
+.mess-day-btn,
+.mess-meal-filter-pill,
+.btn-preview-resource,
+.btn-tutorials-modal-trigger,
+.status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  line-height: 1.25 !important;
+  box-sizing: border-box !important;
+}
+
+/* Optical micro-alignment: align Google Material Symbols with font cap-height */
+.pill .material-symbols-outlined,
+.badge .material-symbols-outlined,
+.filter-chip .material-symbols-outlined,
+.category-pill .material-symbols-outlined,
+.term-btn .material-symbols-outlined,
+.venue-locator-pill .material-symbols-outlined,
+.btn-attendance-toggle .material-symbols-outlined,
+.quick-bldg-btn .material-symbols-outlined,
+.mess-day-btn .material-symbols-outlined,
+.btn-preview-resource .material-symbols-outlined,
+.btn-tutorials-modal-trigger .material-symbols-outlined,
+span[class*="rounded"] > .material-symbols-outlined {
+  vertical-align: middle !important;
+  margin-top: -1px;
+}
+
+/* Ensure inline-flex on small badges so text does not clip or sag */
+span[class*="rounded-full"],
+span[class*="rounded-md"],
+span[class*="rounded-lg"],
+span[class*="rounded-xl"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+}
+
+/* Prevent text clipping inside small badges */
+span.font-label-sm,
+span.font-code-sm {
+  align-self: center;
 }
 
 :root {
@@ -348,16 +414,18 @@ body {
 
 /* Interactive Attendance Check Button */
 .btn-attendance-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.375rem !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 0.625rem !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  line-height: 1.25 !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 .btn-attendance-toggle.attended {
   background-color: rgba(69, 223, 164, 0.15) !important;
@@ -372,23 +440,52 @@ body {
 
 /* Venue Locator Pill */
 .venue-locator-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.625rem;
-  border-radius: 0.375rem;
-  background-color: var(--bg-surface-container-high);
-  color: var(--color-primary);
-  font-size: 12px;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  border: 1px solid var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.375rem !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 0.625rem !important;
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-primary) !important;
+  font-size: 12px !important;
+  font-family: var(--font-mono) !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  cursor: pointer !important;
+  line-height: 1.25 !important;
+  transition: all 0.15s ease !important;
 }
 .venue-locator-pill:hover {
-  background-color: var(--bg-surface-container-highest);
-  border-color: var(--color-primary);
+  background-color: var(--bg-surface-container-highest) !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* Term / Mode switcher buttons */
+.term-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.375rem !important;
+  line-height: 1.25 !important;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: 0.625rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 500 !important;
+  color: var(--color-on-surface-variant) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid transparent !important;
+}
+.term-btn:hover {
+  color: var(--color-on-surface) !important;
+  background-color: var(--bg-surface-container) !important;
+}
+.term-btn.active {
+  background-color: var(--bg-surface-container-high) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* Filter Chips Ribbon */
