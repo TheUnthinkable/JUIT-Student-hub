@@ -10,6 +10,7 @@ const TimetableController = {
   densityMode: 'compact', // 'compact' | 'expanded'
   activeDay: 'TUE',
   viewMode: 'today', // 'today' | 'day' | 'week'
+  filterType: 'ALL', // 'ALL' | 'L' | 'P' | 'T'
   searchQuery: '',
   simulatedMinutes: null, // null = live real time
   hidePastClasses: false,
@@ -67,6 +68,7 @@ const TimetableController = {
     this.renderQuickBatchChips();
     this.renderViewModeTabs();
     this.renderDayPills();
+    this.renderTypeFilterChips();
     this.updateDensityButtonUI();
     this.renderSchedule();
     this.bindEvents();
@@ -77,6 +79,236 @@ const TimetableController = {
         this.updateTimeTracker();
       }
     }, 30000);
+  },
+
+  exportToICal() {
+    const currentSheet = this.data[this.activeSemesterId];
+    if (!currentSheet) return;
+    const batch = this.activeBatch || 'ALL';
+    
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//JUIT Student Hub//Academic Schedule//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      `X-WR-CALNAME:JUIT Timetable (${batch})`,
+      'X-WR-TIMEZONE:Asia/Kolkata'
+    ];
+    
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const mondayOffset = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+    const mondayDate = new Date(now);
+    mondayDate.setDate(now.getDate() + mondayOffset);
+    
+    const dayMap = { 'MON': 0, 'TUE': 1, 'WED': 2, 'THU': 3, 'FRI': 4, 'SAT': 5 };
+    const rruleDays = { 'MON': 'MO', 'TUE': 'TU', 'WED': 'WE', 'THU': 'TH', 'FRI': 'FR', 'SAT': 'SA' };
+    
+    const formatIcalDate = (d, timeMins) => {
+      const yr = d.getFullYear();
+      const mo = String(d.getMonth() + 1).padStart(2, '0');
+      const da = String(d.getDate()).padStart(2, '0');
+      const hr = String(Math.floor(timeMins / 60)).padStart(2, '0');
+      const mi = String(timeMins % 60).padStart(2, '0');
+      return `${yr}${mo}${da}T${hr}${mi}00`;
+    };
+
+    let count = 0;
+    this.days.forEach(day => {
+      const classes = this.filterAndMergeEntries(day);
+      const dayOffset = dayMap[day] || 0;
+      const targetDate = new Date(mondayDate);
+      targetDate.setDate(mondayDate.getDate() + dayOffset);
+      
+      classes.forEach((c) => {
+        const parsedRange = this.parseTimeRange(c.time);
+        if (!parsedRange) return;
+        count++;
+        
+        const cleanSubj = this.getCleanSubjectName(c.code, c.subject);
+        const dtStart = formatIcalDate(targetDate, parsedRange.start);
+        const dtEnd = formatIcalDate(targetDate, parsedRange.end);
+        const uid = `juit-${this.activeSemesterId}-${day}-${c.code}-${parsedRange.start}@juithub`;
+        const desc = `Course: ${cleanSubj} (${c.code})\\nType: ${c.typeName || c.type}\\nFaculty: Prof. ${c.faculty || 'JUIT Faculty'}\\nBatch: ${c.batchesRaw || batch}\\nVenue: ${c.venue || 'Campus Room'}\\nJaypee University of Information Technology, Waknaghat, Solan`;
+        
+        ics.push(
+          'BEGIN:VEVENT',
+          `UID:${uid}`,
+          `DTSTAMP:${formatIcalDate(new Date(), now.getHours()*60 + now.getMinutes())}Z`,
+          `DTSTART;TZID=Asia/Kolkata:${dtStart}`,
+          `DTEND;TZID=Asia/Kolkata:${dtEnd}`,
+          `RRULE:FREQ=WEEKLY;BYDAY=${rruleDays[day]};UNTIL=20261231T235959Z`,
+          `SUMMARY:${cleanSubj} (${c.code}) - Room ${c.venue || 'Classroom'}`,
+          `LOCATION:Room ${c.venue || 'Classroom'}, JUIT Waknaghat, Solan`,
+          `DESCRIPTION:${desc}`,
+          'END:VEVENT'
+        );
+      });
+    });
+    
+    ics.push('END:VCALENDAR');
+    
+    const blob = new Blob([ics.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `JUIT_Timetable_${batch}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    if (window.App && window.App.showNotification) {
+      window.App.showNotification(`Exported ${count} weekly classes for Batch ${batch} as .ics! Import into Google or Apple Calendar.`);
+    }
+  },
+
+  printTimetable() {
+    window.print();
+  },
+
+  renderTypeFilterChips() {
+    const container = document.getElementById('timetable-type-filters');
+    if (!container) return;
+
+    const dayClasses = this.filterAndMergeEntries(this.activeDay);
+    const totalCount = dayClasses.length;
+    const lecCount = dayClasses.filter(c => c.type === 'L' || !c.type).length;
+    const labCount = dayClasses.filter(c => c.type === 'P').length;
+    const tutCount = dayClasses.filter(c => c.type === 'T').length;
+
+    const filters = [
+      { key: 'ALL', label: 'All Sessions', count: totalCount },
+      { key: 'L', label: 'Lectures', count: lecCount },
+      { key: 'P', label: 'Labs', count: labCount },
+      { key: 'T', label: 'Tutorials', count: tutCount }
+    ];
+
+    container.innerHTML = filters.map(f => {
+      const isActive = (this.filterType === f.key);
+      return `
+        <button type="button" class="px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer border ${isActive ? 'bg-primary text-on-primary border-primary shadow-sm scale-[1.02]' : 'bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface border-white/[0.06]'}" data-type-filter="${f.key}">
+          <span>${f.label}</span>
+          <span class="ml-1 text-[10px] opacity-75">(${f.count})</span>
+        </button>
+      `;
+    }).join('');
+
+    container.querySelectorAll('[data-type-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.filterType = btn.dataset.typeFilter;
+        this.renderTypeFilterChips();
+        this.renderSchedule();
+      });
+    });
+  },
+
+  renderVisualDayFlow(classes) {
+    const container = document.getElementById('timetable-visual-day-flow');
+    if (!container) return;
+
+    const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
+    const isToday = (this.activeDay === currentDayCode);
+    const curMins = this.getCurrentMinutes();
+
+    const startDayMins = 540; // 9:00 AM
+    const totalDayMins = 480; // 8 hours to 5:00 PM
+
+    let blocksHtml = '';
+    classes.forEach((c) => {
+      const r = c.parsedRange;
+      if (!r) return;
+      const leftPercent = Math.max(0, Math.min(100, ((r.start - startDayMins) / totalDayMins) * 100));
+      const widthPercent = Math.max(4, Math.min(100 - leftPercent, ((r.end - r.start) / totalDayMins) * 100));
+      const typeClass = c.type === 'P' ? 'type-lab' : (c.type === 'T' ? 'type-tutorial' : 'type-lecture');
+      const cleanSubj = c.cleanSubject || c.subject || c.code;
+
+      const isFilteredOut = (this.filterType !== 'ALL' && c.type !== this.filterType);
+      const opacityStyle = isFilteredOut ? 'opacity: 0.25; filter: grayscale(0.8);' : '';
+
+      blocksHtml += `
+        <div class="day-flow-session-block ${typeClass}" 
+             style="left: ${leftPercent}%; width: ${widthPercent}%; ${opacityStyle}"
+             title="${cleanSubj} (${c.code}) • ${c.time} • Room ${c.venue || 'TBA'}"
+             onclick="var el = document.getElementById('${c.uniqueId}'); if (el) { el.scrollIntoView({behavior:'smooth', block:'center'}); el.classList.add('ring-2', 'ring-primary'); setTimeout(() => el.classList.remove('ring-2', 'ring-primary'), 1200); }">
+          <div class="flex items-center justify-between gap-1 overflow-hidden leading-none">
+            <span class="font-mono text-[10px] sm:text-[11px] font-bold truncate">${c.code}</span>
+            <span class="text-[9px] font-bold opacity-80 shrink-0">${c.type === 'P' ? 'LAB' : (c.type === 'T' ? 'TUT' : 'LEC')}</span>
+          </div>
+          <span class="text-[9px] sm:text-[10px] truncate opacity-90 font-medium">${c.venue ? `Rm ${c.venue}` : cleanSubj}</span>
+        </div>
+      `;
+    });
+
+    // Lunch break block (01:00 PM to 02:00 PM = 780 to 840)
+    const lunchLeft = ((780 - startDayMins) / totalDayMins) * 100;
+    const lunchWidth = (60 / totalDayMins) * 100;
+    blocksHtml += `
+      <div class="day-flow-session-block type-lunch" style="left: ${lunchLeft}%; width: ${lunchWidth}%;" title="Annapurna Dining Lunch Break (01:00 PM - 02:00 PM)" onclick="if(window.App) App.switchView('mess')">
+        <span class="font-mono text-[10px] font-bold text-center">🍽️ Lunch</span>
+      </div>
+    `;
+
+    // Live "NOW" indicator line
+    let nowIndicatorHtml = '';
+    if (isToday && curMins >= startDayMins && curMins <= (startDayMins + totalDayMins)) {
+      const nowPercent = ((curMins - startDayMins) / totalDayMins) * 100;
+      nowIndicatorHtml = `
+        <div class="day-flow-now-indicator" style="left: ${nowPercent}%;">
+          <span class="day-flow-now-badge">NOW</span>
+        </div>
+      `;
+    }
+
+    const totalHours = (classes.reduce((acc, c) => acc + (c.parsedRange ? (c.parsedRange.end - c.parsedRange.start) : 55), 0) / 60).toFixed(1);
+    const lecs = classes.filter(c => c.type === 'L' || !c.type).length;
+    const labs = classes.filter(c => c.type === 'P').length;
+    const tuts = classes.filter(c => c.type === 'T').length;
+
+    container.innerHTML = `
+      <div class="flex items-center justify-between gap-2 flex-wrap text-xs">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[16px] text-primary">timeline</span>
+          <span class="font-bold text-on-surface">Daily Schedule Flow</span>
+          <span class="text-on-surface-variant font-mono text-[11px] hidden sm:inline">• 09:00 AM – 05:00 PM</span>
+        </div>
+        <div class="flex items-center gap-2 text-on-surface-variant text-[11px] font-medium flex-wrap">
+          <span>${classes.length} Sessions (${totalHours} hrs)</span>
+          <span class="text-outline/40">•</span>
+          <span class="text-amber-300 font-semibold">${lecs} Lec</span>
+          <span class="text-outline/40">•</span>
+          <span class="text-emerald-300 font-semibold">${labs} Lab</span>
+          <span class="text-outline/40">•</span>
+          <span class="text-sky-300 font-semibold">${tuts} Tut</span>
+        </div>
+      </div>
+
+      <!-- Timeline Gantt Track -->
+      <div class="day-flow-timeline-track">
+        <div class="day-flow-hour-marks">
+          <div class="day-flow-hour-line" style="left: 0%;"></div>
+          <div class="day-flow-hour-line" style="left: 12.5%;"></div>
+          <div class="day-flow-hour-line" style="left: 25%;"></div>
+          <div class="day-flow-hour-line" style="left: 37.5%;"></div>
+          <div class="day-flow-hour-line" style="left: 50%;"></div>
+          <div class="day-flow-hour-line" style="left: 62.5%;"></div>
+          <div class="day-flow-hour-line" style="left: 75%;"></div>
+          <div class="day-flow-hour-line" style="left: 87.5%;"></div>
+          <div class="day-flow-hour-line" style="left: 100%;"></div>
+        </div>
+        ${blocksHtml}
+        ${nowIndicatorHtml}
+      </div>
+
+      <div class="flex items-center justify-between text-[10px] font-mono text-outline px-1">
+        <span>09:00 AM</span>
+        <span>11:00 AM</span>
+        <span>01:00 PM (Lunch)</span>
+        <span>03:00 PM</span>
+        <span>05:00 PM</span>
+      </div>
+    `;
   },
 
   updateDensityButtonUI() {
@@ -482,13 +714,16 @@ const TimetableController = {
       const fullName = this.dayFullNames[d] || d;
 
       return `
-        <button type="button" class="flex items-center justify-between gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer select-none border ${isActive ? 'bg-primary text-on-primary border-primary shadow-md scale-[1.02]' : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-white/[0.06]'}" data-day="${d}" title="${fullName} (${count} classes scheduled)">
-          <div class="flex items-center gap-1.5 min-w-0">
-            ${isToday ? '<span class="w-2 h-2 rounded-full bg-secondary shrink-0 shadow-sm" title="Today"></span>' : ''}
-            <span class="sm:hidden font-bold">${d}</span>
-            <span class="hidden sm:inline truncate">${fullName}</span>
+        <button type="button" class="day-pill-card ${isActive ? 'is-active-day' : ''}" data-day="${d}" title="${fullName} (${count} classes scheduled)">
+          <div class="flex items-center justify-between gap-1.5 w-full">
+            <div class="flex items-center gap-1.5 min-w-0">
+              ${isToday ? '<span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse shadow-sm" title="Today"></span>' : ''}
+              <span class="font-headline-sm font-bold text-xs sm:text-sm ${isActive ? 'text-primary' : 'text-on-surface'}">${d}</span>
+              ${isToday ? '<span class="hidden sm:inline text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-300 font-mono">TODAY</span>' : ''}
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-mono font-bold shrink-0 ${isActive ? 'bg-primary/25 text-primary border border-primary/40' : 'bg-surface-container-high text-on-surface-variant'}">${count}</span>
           </div>
-          <span class="text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full font-mono font-bold shrink-0 ${isActive ? 'bg-black/30 text-white' : 'bg-surface-container-high text-on-surface-variant'}">${count}</span>
+          <div class="text-[11px] text-on-surface-variant/80 font-medium truncate mt-1 text-left hidden sm:block">${fullName}</div>
         </button>
       `;
     }).join('');
@@ -499,6 +734,7 @@ const TimetableController = {
         this.viewMode = 'day';
         this.renderViewModeTabs();
         this.renderDayPills();
+        this.renderTypeFilterChips();
         this.renderSchedule();
       });
     });
@@ -588,24 +824,28 @@ const TimetableController = {
     const headerTitle = document.getElementById('schedule-day-title');
     const headerCount = document.getElementById('schedule-classes-count');
     const dayPillsWrap = document.getElementById('timetable-day-pills');
+    const dayNavWrap = document.getElementById('timetable-day-nav-wrapper');
+    const dayFlowWrap = document.getElementById('timetable-visual-day-flow');
     if (!container) return;
 
     if (this.searchQuery) {
       if (dayPillsWrap) dayPillsWrap.style.display = 'none';
+      if (dayFlowWrap) dayFlowWrap.style.display = 'none';
       if (headerTitle) headerTitle.textContent = `Search: "${this.searchQuery}"`;
       this.renderSearchResults(container);
       return;
     }
 
-    const dayNavWrap = document.getElementById('timetable-day-nav-wrapper');
     if (this.viewMode === 'week') {
       if (dayNavWrap) dayNavWrap.style.display = 'none';
       if (dayPillsWrap) dayPillsWrap.style.display = 'none';
+      if (dayFlowWrap) dayFlowWrap.style.display = 'none';
       this.renderWeekView(container);
       return;
     } else {
       if (dayNavWrap) dayNavWrap.style.display = '';
       if (dayPillsWrap) dayPillsWrap.style.display = '';
+      if (dayFlowWrap) dayFlowWrap.style.display = '';
     }
 
     const dayName = this.dayFullNames[this.activeDay] || this.activeDay;
@@ -613,44 +853,7 @@ const TimetableController = {
       headerTitle.textContent = `${dayName} Schedule`;
     }
 
-    const classes = this.filterAndMergeEntries(this.activeDay);
-    if (headerCount) {
-      headerCount.textContent = `${classes.length} classes`;
-    }
-
-    // Render Live Period Tracker Scrubber
-    this.renderPeriodTracker(classes);
-
-    if (classes.length === 0) {
-      container.innerHTML = `
-        <div class="p-8 sm:p-10 rounded-2xl bg-surface-container-low border border-white/[0.06] text-center space-y-3.5 my-2">
-          <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl shadow-inner border border-primary/20">
-            🌿
-          </div>
-          <div>
-            <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">No Classes Scheduled for ${dayName}</h3>
-            <p class="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto mt-1">
-              No lectures, tutorials or laboratory sessions on ${dayName} for Batch ${this.activeBatch}. You can review tutorial sheets in the Academic Vault or inspect the full week matrix.
-            </p>
-          </div>
-          <div class="flex items-center justify-center gap-2 pt-2">
-            <button type="button" class="btn-goto-week inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-bold cursor-pointer hover:brightness-110 shadow-sm transition-all">
-              <span class="material-symbols-outlined text-[16px]">grid_view</span>
-              <span>Open Weekly Grid Matrix</span>
-            </button>
-          </div>
-        </div>
-      `;
-      const gotoWeekBtn = container.querySelector('.btn-goto-week');
-      if (gotoWeekBtn) {
-        gotoWeekBtn.addEventListener('click', () => {
-          this.viewMode = 'week';
-          this.renderViewModeTabs();
-          this.renderSchedule();
-        });
-      }
-      return;
-    }
+    const rawClasses = this.filterAndMergeEntries(this.activeDay);
 
     const currentDayCode = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][new Date().getDay()];
     const isToday = (this.activeDay === currentDayCode);
@@ -658,7 +861,7 @@ const TimetableController = {
 
     // Determine live status for classes
     let firstUpcomingFound = false;
-    const enrichedClasses = classes.map((c, idx) => {
+    const enrichedClasses = rawClasses.map((c, idx) => {
       const parsedRange = this.parseTimeRange(c.time);
       let status = 'NORMAL';
       let progress = 0;
@@ -693,15 +896,86 @@ const TimetableController = {
       };
     });
 
+    // Render interactive Visual Day Flow (Mini-Gantt)
+    this.renderVisualDayFlow(enrichedClasses);
+
+    // Filter by Session Type (All, Lecture, Lab, Tutorial)
+    let classes = enrichedClasses;
+    if (this.filterType && this.filterType !== 'ALL') {
+      classes = enrichedClasses.filter(c => (c.type === this.filterType) || (!c.type && this.filterType === 'L'));
+    }
+
+    if (headerCount) {
+      headerCount.textContent = `${classes.length} ${classes.length === 1 ? 'class' : 'classes'}`;
+    }
+
+    // Render Live Period Tracker Scrubber
+    this.renderPeriodTracker(enrichedClasses);
+
+    if (rawClasses.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 sm:p-10 rounded-2xl bg-surface-container-low border border-white/[0.06] text-center space-y-3.5 my-2">
+          <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl shadow-inner border border-primary/20">
+            🌿
+          </div>
+          <div>
+            <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">No Classes Scheduled for ${dayName}</h3>
+            <p class="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto mt-1">
+              No regular lectures, tutorials or laboratory sessions on ${dayName} for Batch ${this.activeBatch}. Review course materials in the Academic Vault or inspect the full week matrix.
+            </p>
+          </div>
+          <div class="flex items-center justify-center gap-2 pt-2">
+            <button type="button" class="btn-goto-week inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-bold cursor-pointer hover:brightness-110 shadow-sm transition-all">
+              <span class="material-symbols-outlined text-[16px]">grid_view</span>
+              <span>Open Weekly Grid Matrix</span>
+            </button>
+          </div>
+        </div>
+      `;
+      const gotoWeekBtn = container.querySelector('.btn-goto-week');
+      if (gotoWeekBtn) {
+        gotoWeekBtn.addEventListener('click', () => {
+          this.viewMode = 'week';
+          this.renderViewModeTabs();
+          this.renderSchedule();
+        });
+      }
+      return;
+    }
+
+    if (classes.length === 0) {
+      const typeName = this.filterType === 'P' ? 'Laboratory (P)' : (this.filterType === 'T' ? 'Tutorial (T)' : 'Lecture (L)');
+      container.innerHTML = `
+        <div class="p-8 rounded-2xl bg-surface-container-low border border-white/[0.06] text-center space-y-3 my-2">
+          <div class="w-12 h-12 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center mx-auto">
+            <span class="material-symbols-outlined text-[24px]">filter_list_off</span>
+          </div>
+          <h3 class="font-headline-sm text-base font-bold text-on-surface">No ${typeName} Sessions on ${dayName}</h3>
+          <p class="text-xs text-on-surface-variant max-w-sm mx-auto">
+            There are ${rawClasses.length} other sessions scheduled for ${dayName}.
+          </p>
+          <button type="button" class="btn-reset-filter inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-primary border border-white/[0.08] transition-all cursor-pointer">
+            <span>Show All Sessions</span>
+          </button>
+        </div>
+      `;
+      container.querySelector('.btn-reset-filter')?.addEventListener('click', () => {
+        this.filterType = 'ALL';
+        this.renderTypeFilterChips();
+        this.renderSchedule();
+      });
+      return;
+    }
+
     // Build timeline items including breaks
     const scheduleItems = [];
-    for (let k = 0; k < enrichedClasses.length; k++) {
-      const curr = enrichedClasses[k];
+    for (let k = 0; k < classes.length; k++) {
+      const curr = classes[k];
       scheduleItems.push({ type: 'class', data: curr });
 
       // Check for gap to next class
-      if (k < enrichedClasses.length - 1) {
-        const next = enrichedClasses[k + 1];
+      if (k < classes.length - 1) {
+        const next = classes[k + 1];
         if (curr.parsedRange && next.parsedRange) {
           const gap = next.parsedRange.start - curr.parsedRange.end;
           if (gap >= 30) {
@@ -745,25 +1019,25 @@ const TimetableController = {
       if (item.type === 'break') {
         const isLunch = item.isLunch;
         const breakTitle = isLunch ? 'Lunch Break & Campus Leisure' : `Free Period (${item.durationMins >= 60 ? `${Math.round(item.durationMins/60)} hr` : `${item.durationMins} mins`})`;
-        const breakSub = isLunch ? 'Annapurna Mess is serving fresh hot meals in Dining Halls' : 'Quiet reading spaces and laptop study booths open in LRC Library';
+        const breakSub = isLunch ? 'Annapurna Mess is serving fresh hot meals in Dining Halls A & B' : 'Quiet reading cubicles and study booths open in LRC Library';
 
         return `
-          <div class="p-3.5 sm:p-4 rounded-2xl bg-surface-container-lowest/80 border border-white/[0.05] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
-            <div class="flex items-center gap-3 min-w-0">
-              <div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center ${isLunch ? 'text-amber-400' : 'text-outline'} shrink-0">
-                <span class="material-symbols-outlined text-[20px]">${isLunch ? 'restaurant' : 'local_cafe'}</span>
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-surface-container-low/90 to-surface-container/70 border border-white/[0.06] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-11 h-11 rounded-2xl ${isLunch ? 'bg-amber-500/15 text-amber-400 border border-amber-500/25' : 'bg-sky-500/15 text-sky-300 border border-sky-500/25'} flex items-center justify-center shrink-0 shadow-inner">
+                <span class="material-symbols-outlined text-[22px]">${isLunch ? 'restaurant' : 'local_library'}</span>
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">${breakTitle}</span>
                   <span class="text-xs font-mono text-outline">• ${item.timeLabel}</span>
                 </div>
-                <p class="text-xs text-on-surface-variant/80 mt-0.5 truncate">${breakSub}</p>
+                <p class="text-xs text-on-surface-variant/80 mt-0.5">${breakSub}</p>
               </div>
             </div>
             ${isLunch
-              ? `<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-colors border border-white/[0.06]" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>Mess Menu</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
-              : `<a class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-colors border border-white/[0.06]" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Explore Vault</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
+              ? `<a class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-all border border-white/[0.08]" href="#mess" onclick="if(window.App) App.switchView('mess')"><span>View Mess Menu</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
+              : `<a class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-secondary hover:underline self-end sm:self-auto shrink-0 transition-all border border-white/[0.08]" href="#resources" onclick="if(window.App) App.switchView('resources')"><span>Explore Vault</span><span class="material-symbols-outlined text-[15px]">arrow_forward</span></a>`
             }
           </div>
         `;
@@ -791,7 +1065,7 @@ const TimetableController = {
       let attBtnLabel = 'Mark Attended';
 
       if (isAttended) {
-        attBtnClass = 'bg-secondary/20 text-secondary border border-secondary/40 font-bold';
+        attBtnClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold';
         attIcon = 'check_circle';
         attBtnLabel = 'Attended';
       } else if (isMissed) {
@@ -859,14 +1133,13 @@ const TimetableController = {
           <!-- Left Column: Time & Duration Pillar -->
           <div class="flex items-start sm:items-center gap-3.5 sm:gap-4.5 flex-1 min-w-0">
             
-            <div class="flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2 px-2.5 rounded-2xl bg-surface-container-lowest border border-white/[0.08] text-center select-none shadow-sm">
+            <div class="time-pillar-box flex flex-col items-center justify-center shrink-0 w-24 sm:w-28 py-2.5 px-2 rounded-2xl text-center select-none shadow-sm">
               <span class="font-mono text-sm sm:text-base font-bold text-primary tracking-tight">${startTime}</span>
               <div class="flex items-center gap-1 my-0.5 text-on-surface-variant/60 text-[10px] font-semibold">
-                <span class="material-symbols-outlined text-[12px]">south</span>
-                <span>TO</span>
+                <span class="material-symbols-outlined text-[13px]">arrow_downward</span>
               </div>
               <span class="font-mono text-xs sm:text-sm font-semibold text-on-surface-variant">${endTime}</span>
-              <span class="mt-1 px-1.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-surface-container-high text-outline">${durText}</span>
+              <span class="mt-1 px-2 py-0.5 rounded-md font-mono text-[10px] font-bold bg-surface-container-high text-outline">${durText}</span>
             </div>
 
             <!-- Middle Column: Course Details -->
@@ -886,14 +1159,14 @@ const TimetableController = {
               </div>
 
               <!-- Prominent Subject Title -->
-              <h3 class="font-headline-sm text-sm sm:text-base md:text-lg font-bold text-on-surface leading-snug tracking-tight">
+              <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface leading-snug tracking-tight">
                 ${c.cleanSubject}
               </h3>
 
               <!-- Faculty, Venue & Batches -->
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-on-surface-variant pt-0.5">
                 ${c.faculty ? `
-                  <div class="inline-flex items-center gap-1">
+                  <div class="inline-flex items-center gap-1 text-on-surface-variant">
                     <span class="material-symbols-outlined text-[15px] text-primary">person</span>
                     <span class="font-semibold text-on-surface">Prof. ${c.faculty}</span>
                   </div>
@@ -914,7 +1187,7 @@ const TimetableController = {
             
             <!-- Venue Locator Button -->
             ${c.venue ? `
-              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs transition-colors border border-white/[0.08] shadow-sm cursor-pointer" data-venue="${c.venue}" title="Show Room ${c.venue} on 3D Campus Map">
+              <button type="button" class="venue-locator-pill inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface font-bold text-xs transition-all border border-white/[0.08] shadow-sm cursor-pointer hover:border-primary/40" data-venue="${c.venue}" title="Show Room ${c.venue} on 3D Campus Map">
                 <span class="material-symbols-outlined text-rose-400 text-[15px]">location_on</span>
                 <span class="text-primary font-mono font-bold">Room ${c.venue}</span>
               </button>
@@ -927,7 +1200,7 @@ const TimetableController = {
 
             <!-- Actions Row: Attendance + Study Material + Details -->
             <div class="flex items-center gap-2">
-              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-label-md text-xs font-bold cursor-pointer transition-colors ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track Attendance">
+              <button type="button" class="btn-attendance-toggle inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl font-label-md text-xs font-bold cursor-pointer transition-all ${attBtnClass}" data-unique-id="${c.uniqueId}" title="Track Attendance">
                 <span class="material-symbols-outlined text-[15px]">${attIcon}</span>
                 <span>${attBtnLabel}</span>
               </button>
@@ -964,6 +1237,7 @@ const TimetableController = {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const venue = btn.dataset.venue;
+        if (window.App) window.App.switchView('campus');
         if (window.CampusMap && window.CampusMap.focusVenue) {
           window.CampusMap.focusVenue(venue);
         }
@@ -1004,7 +1278,7 @@ const TimetableController = {
 
     container.querySelectorAll('.class-schedule-card').forEach(card => {
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-attendance-toggle') || e.target.closest('a') || e.target.closest('.btn-class-inspect')) {
+        if (e.target.closest('.btn-attendance-toggle') || e.target.closest('a') || e.target.closest('.btn-class-inspect') || e.target.closest('.venue-locator-pill')) {
           return;
         }
         const uId = card.dataset.uniqueId || card.id;
@@ -1295,74 +1569,95 @@ const TimetableController = {
     if (!modal || !content) return;
 
     const vaultRes = this.resolveVaultResource(c.cleanSubject || c.subject, c.code, c.type);
-    const cleanTitle = encodeURIComponent(`${c.cleanSubject || c.subject} (${c.typeName})`);
-    const cleanDetails = encodeURIComponent(`Faculty: ${c.faculty || 'JUIT Faculty'}\nVenue: ${c.venue}\nBatch: ${c.batchesRaw || 'All'}\nJaypee University of Information Technology (JUIT Waknaghat, Solan)`);
-    const cleanLocation = encodeURIComponent(`${c.venue || 'Classroom'}, JUIT Solan`);
+    const cleanTitle = encodeURIComponent(`${c.cleanSubject || c.subject} (${c.typeName || c.type})`);
+    const cleanDetails = encodeURIComponent(`Faculty: ${c.faculty || 'JUIT Faculty'}\nVenue: Room ${c.venue || 'Classroom'}\nBatch: ${c.batchesRaw || 'All'}\nJaypee University of Information Technology, Waknaghat, Solan`);
+    const cleanLocation = encodeURIComponent(`Room ${c.venue || 'Classroom'}, JUIT Waknaghat, Solan`);
     const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${cleanTitle}&details=${cleanDetails}&location=${cleanLocation}`;
 
+    let typeColor = 'text-amber-400 bg-amber-500/15 border-amber-500/30';
+    let typeIcon = 'school';
+    if (c.type === 'P') {
+      typeColor = 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30';
+      typeIcon = 'science';
+    } else if (c.type === 'T') {
+      typeColor = 'text-sky-400 bg-sky-500/15 border-sky-500/30';
+      typeIcon = 'groups';
+    }
+
     content.innerHTML = `
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+      <div class="flex items-start justify-between gap-3 border-b border-white/[0.08] pb-3 mb-4">
         <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="hub-badge" style="color: var(--color-${c.type === 'L' ? 'lecture' : (c.type === 'P' ? 'lab' : 'tutorial')});">
-              ${c.typeName}
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-xs font-bold border ${typeColor}">
+              <span class="material-symbols-outlined text-[14px]">${typeIcon}</span>
+              <span>${c.typeName || (c.type === 'P' ? 'Lab (P)' : (c.type === 'T' ? 'Tutorial (T)' : 'Lecture (L)'))}</span>
             </span>
-            <span class="class-code-tag">${c.code}</span>
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded-xl bg-surface-container-highest text-on-surface border border-white/[0.06]">${c.code}</span>
+            ${c.durationSlots > 1 ? `<span class="text-xs font-mono px-2 py-0.5 rounded-lg bg-surface-container-highest text-on-surface-variant">${c.durationSlots} hrs</span>` : ''}
           </div>
-          <h2 style="font-size: 1.4rem; margin-top: 6px;">${c.cleanSubject || c.subject}</h2>
+          <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface mt-2 tracking-tight">${c.cleanSubject || c.subject}</h2>
         </div>
-        <button type="button" class="btn-close-drawer" onclick="PortalsController.closeModal()">✕</button>
+        <button type="button" class="w-8 h-8 rounded-xl bg-surface-container hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06]" onclick="window.PortalsController?.closeModal()">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
-        <div class="floor-box">
-          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Time Slot</div>
-          <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">🕒 ${c.time}</div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary);">${c.durationSlots} Hour Period</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-outline">Time Slot</div>
+          <div class="font-mono font-bold text-sm sm:text-base text-primary mt-1">🕒 ${c.time}</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">${c.durationSlots || 1} Hour Academic Period</div>
         </div>
 
-        <div class="floor-box">
-          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Classroom / Lab</div>
-          <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">📍 ${c.venue || 'Campus Venue'}</div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary);">${c.venueDetails?.name || 'Classroom'}</div>
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-outline">Classroom / Lab</div>
+          <div class="font-mono font-bold text-sm sm:text-base text-on-surface mt-1">📍 Room ${c.venue || 'TBA'}</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">${c.venueDetails?.name || 'Academic Block'}</div>
         </div>
 
-        <div class="floor-box">
-          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Instructor</div>
-          <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">👨‍🏫 ${c.faculty || 'Department Faculty'}</div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary);">Faculty Cabin in AB1/AB3</div>
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-outline">Instructor</div>
+          <div class="font-bold text-sm sm:text-base text-on-surface mt-1">👨‍🏫 Prof. ${c.faculty || 'JUIT Faculty'}</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">Faculty Cabins AB1 / AB3</div>
         </div>
 
-        <div class="floor-box">
-          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Enrolled Batches</div>
-          <div style="font-weight: 700; font-size: 0.92rem; margin-top: 2px;">👥 ${c.batches?.join(', ') || c.batchesRaw}</div>
-          <div style="font-size: 0.78rem; color: var(--text-secondary);">Jaypee University of IT</div>
+        <div class="p-3.5 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-outline">Enrolled Batches</div>
+          <div class="font-mono font-bold text-sm text-on-surface mt-1">👥 ${c.batches?.join(', ') || c.batchesRaw || 'All Batches'}</div>
+          <div class="text-xs text-on-surface-variant mt-0.5">Waknaghat Campus, Solan</div>
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px;">
+      <div class="flex items-center gap-2 flex-wrap justify-end pt-3 border-t border-white/[0.06] mt-4">
         ${vaultRes ? `
           ${vaultRes.hasMultiple ? `
-            <button type="button" class="btn-class-download-banner btn-inspector-tutorials-trigger" 
-              style="${vaultRes.subjectType === 'math' ? 'background: rgba(2, 132, 199, 0.15); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.35);' : 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35);'} cursor: pointer; text-decoration: none; padding: 7px 14px; width: auto;">
-              <span class="material-symbols-outlined" style="font-size: 16px;">${vaultRes.subjectType === 'math' ? 'functions' : 'folder_open'}</span>
+            <button type="button" class="btn-inspector-tutorials-trigger inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${vaultRes.subjectType === 'math' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/35 hover:bg-sky-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/35 hover:bg-amber-500/30'}">
+              <span class="material-symbols-outlined text-[16px]">${vaultRes.subjectType === 'math' ? 'functions' : 'folder_open'}</span>
               <span>${vaultRes.shortTitle || 'Tutorial Sheets'} (${vaultRes.tutorials.length - 1})</span>
             </button>
           ` : `
-            <a href="${vaultRes.link}" download class="btn-class-download-banner" style="text-decoration: none; padding: 7px 14px; width: auto;" title="Download ${vaultRes.title}">
-              <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+            <a href="${vaultRes.link}" download class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/35 hover:bg-sky-500/30 text-xs font-bold transition-all" title="Download ${vaultRes.title}">
+              <span class="material-symbols-outlined text-[16px]">download</span>
               <span>Download ${vaultRes.shortTitle}</span>
             </a>
           `}
         ` : ''}
-        <button type="button" class="venue-locator-pill" onclick="PortalsController.closeModal(); window.CampusMap.focusVenue('${c.venue}')">
-          📍 Show Location on Campus Map
-        </button>
-        <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="btn-cmd-search" style="text-decoration: none;">
-          📅 Add to Google Calendar ↗
+
+        ${c.venue ? `
+          <button type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface border border-white/[0.08] hover:border-primary/40 text-xs font-bold transition-all cursor-pointer" onclick="window.PortalsController?.closeModal(); if (window.App) App.switchView('campus'); if (window.CampusMap && window.CampusMap.focusVenue) window.CampusMap.focusVenue('${c.venue}');">
+            <span class="material-symbols-outlined text-rose-400 text-[16px]">location_on</span>
+            <span>Locate on 3D Map</span>
+          </button>
+        ` : ''}
+
+        <a href="${gCalUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/30 hover:border-primary text-xs font-bold transition-all" title="Add to Google Calendar">
+          <span class="material-symbols-outlined text-[16px]">calendar_add_on</span>
+          <span>Google Calendar ↗</span>
         </a>
-        <a href="https://lms.juit.ac.in/login/index.php" target="_blank" rel="noopener noreferrer" class="nav-tab-item active" style="text-decoration: none; padding: 6px 14px; font-size: 0.82rem;">
-          🎓 Open in Moodle ↗
+
+        <a href="https://lms.juit.ac.in/login/index.php" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary text-on-primary hover:brightness-110 text-xs font-bold transition-all shadow-sm" title="Open JUIT Moodle LMS">
+          <span class="material-symbols-outlined text-[16px]">school</span>
+          <span>Open Moodle ↗</span>
         </a>
       </div>
     `;
@@ -1396,52 +1691,52 @@ const TimetableController = {
     if (!modal || !content) return;
 
     const isMath = meta.subjectType === 'math' || (meta.title && meta.title.includes('Math'));
-    const themeColor = isMath ? '#0284c7' : '#f59e0b';
-    const themeBg = isMath ? 'rgba(2, 132, 199, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+    const themeColor = isMath ? 'text-sky-300' : 'text-amber-400';
+    const themeBg = isMath ? 'bg-sky-500/15 border-sky-500/30' : 'bg-amber-500/15 border-amber-500/30';
     const headerIcon = isMath ? 'functions' : 'memory';
     const titleText = meta.title || (isMath ? 'Mathematics I: Tutorial Sheets (Sheets 1–4)' : 'Basic Electronics: Tutorial Sheets & Problem Sets (Tutorials 1–5)');
     const deptText = meta.dept || (isMath ? 'Department of Mathematics • 25B11MA113 • Verified Tutorial Problem Sets' : 'Department of ECE • 25B11EC111 • Verified Assignment Problem Sets');
 
     content.innerHTML = `
-      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <div style="width: 42px; height: 42px; border-radius: 10px; background: ${themeBg}; color: ${themeColor}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-            <span class="material-symbols-outlined" style="font-size: 24px;">${headerIcon}</span>
+      <div class="flex items-start justify-between gap-3 border-b border-white/[0.08] pb-3 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl ${themeBg} ${themeColor} flex items-center justify-center shrink-0 border shadow-inner">
+            <span class="material-symbols-outlined text-[24px]">${headerIcon}</span>
           </div>
           <div>
-            <h3 style="font-size: 1.15rem; margin: 0; color: var(--text-primary); font-weight: 700;">${titleText}</h3>
-            <span style="font-size: 0.78rem; color: var(--text-muted);">${deptText}</span>
+            <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface">${titleText}</h3>
+            <span class="text-xs text-on-surface-variant block mt-0.5">${deptText}</span>
           </div>
         </div>
-        <button type="button" class="btn-close-drawer" onclick="PortalsController.closeModal()">✕</button>
+        <button type="button" class="w-8 h-8 rounded-xl bg-surface-container hover:bg-surface-bright flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer border border-white/[0.06]" onclick="window.PortalsController?.closeModal()">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px;">
+      <div class="flex flex-col gap-2.5 max-h-[60vh] overflow-y-auto no-scrollbar py-1">
         ${tutorials.map(t => {
           const isBundle = (t.num === 'Bundle' || t.num === 'Master Bundle');
-          const badgeBg = isBundle ? 'rgba(59, 130, 246, 0.2)' : themeBg;
-          const badgeColor = isBundle ? '#3b82f6' : themeColor;
           const badgeText = isBundle ? (isMath ? 'ALL 8 PAGES' : 'ALL 18 PAGES') : (typeof t.num === 'number' ? `SHEET ${t.num}` : t.num);
 
           return `
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
-              <div style="display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 240px;">
-                <span style="font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: ${badgeBg}; color: ${badgeColor}; white-space: nowrap; margin-top: 2px;">
+            <div class="p-3 sm:p-3.5 rounded-2xl bg-surface-container-low hover:bg-surface-container border border-white/[0.06] hover:border-white/15 flex items-center justify-between gap-3 transition-all flex-wrap sm:flex-nowrap">
+              <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${themeBg} ${themeColor} shrink-0 mt-0.5">
                   ${badgeText}
                 </span>
-                <div>
-                  <span style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary);">${t.title}</span>
-                  ${t.subtitle ? `<div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">${t.subtitle}</div>` : ''}
+                <div class="min-w-0">
+                  <h4 class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface truncate">${t.title}</h4>
+                  ${t.subtitle ? `<p class="text-[11px] text-on-surface-variant truncate mt-0.5">${t.subtitle}</p>` : ''}
                 </div>
               </div>
-              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <button type="button" class="btn-secondary btn-modal-preview-pdf" data-link="${t.link}" data-title="${t.title}" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
-                  <span class="material-symbols-outlined" style="font-size: 15px;">visibility</span>
-                  <span>View PDF</span>
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button" class="btn-modal-preview-pdf inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-semibold text-on-surface border border-white/[0.06] transition-all cursor-pointer" data-link="${t.link}" data-title="${t.title}">
+                  <span class="material-symbols-outlined text-[14px]">visibility</span>
+                  <span>View</span>
                 </button>
-                <a href="${t.link}" download="${t.link.split('/').pop()}" class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                  <span class="material-symbols-outlined" style="font-size: 15px;">download</span>
-                  <span>Download</span>
+                <a href="${t.link}" download class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-primary text-on-primary hover:brightness-110 text-xs font-bold transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-[14px]">download</span>
+                  <span>PDF</span>
                 </a>
               </div>
             </div>
@@ -1453,7 +1748,7 @@ const TimetableController = {
     // Bind preview triggers
     content.querySelectorAll('.btn-modal-preview-pdf').forEach(btn => {
       btn.addEventListener('click', () => {
-        PortalsController.closeModal();
+        window.PortalsController?.closeModal();
         if (window.ResourcesController && window.ResourcesController.previewDocument) {
           window.ResourcesController.previewDocument(btn.dataset.link, btn.dataset.title);
         }
@@ -1507,6 +1802,7 @@ const TimetableController = {
         this.populateBatchDropdown();
         this.renderQuickBatchChips();
         this.renderDayPills();
+        this.renderTypeFilterChips();
         this.renderSchedule();
         this.updateDashboardToday();
       });
@@ -1528,6 +1824,7 @@ const TimetableController = {
         }
         this.renderQuickBatchChips();
         this.renderDayPills();
+        this.renderTypeFilterChips();
         this.renderSchedule();
         this.updateDashboardToday();
       });
@@ -1559,6 +1856,7 @@ const TimetableController = {
         this.viewMode = 'day';
         this.renderViewModeTabs();
         this.renderDayPills();
+        this.renderTypeFilterChips();
         this.renderSchedule();
 
         setTimeout(() => {
@@ -1569,6 +1867,24 @@ const TimetableController = {
             setTimeout(() => liveEl.classList.remove('ring-4', 'ring-primary'), 1500);
           }
         }, 150);
+      });
+    }
+
+    // Bind Export to iCal button
+    const btnExportIcal = document.getElementById('btn-export-ical');
+    if (btnExportIcal && !btnExportIcal._bound) {
+      btnExportIcal._bound = true;
+      btnExportIcal.addEventListener('click', () => {
+        this.exportToICal();
+      });
+    }
+
+    // Bind Print button
+    const btnPrint = document.getElementById('btn-print-timetable');
+    if (btnPrint && !btnPrint._bound) {
+      btnPrint._bound = true;
+      btnPrint.addEventListener('click', () => {
+        this.printTimetable();
       });
     }
   },
@@ -1598,19 +1914,25 @@ const TimetableController = {
     let html = `
       <div class="space-y-3">
         <!-- Week View Banner -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-white/[0.06] shadow-sm">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[20px]">calendar_view_week</span>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-white/[0.08] shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-primary/15 text-primary flex items-center justify-center shrink-0 border border-primary/25 shadow-inner">
+              <span class="material-symbols-outlined text-[22px]">calendar_view_week</span>
             </div>
             <div>
               <span class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Weekly Academic Matrix</span>
               <span class="text-xs text-on-surface-variant block">${batchLabel} • ${currentSheet?.title || 'Academic Semester'}</span>
             </div>
           </div>
-          <span class="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
-            ${weekTotalClasses} Classes Scheduled (Mon – Sat)
-          </span>
+          <div class="flex items-center gap-2">
+            <button type="button" class="btn-matrix-switch-day inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-bright text-xs font-bold text-on-surface border border-white/[0.08] transition-all cursor-pointer">
+              <span class="material-symbols-outlined text-[15px]">view_agenda</span>
+              <span>Back to Day View</span>
+            </button>
+            <span class="inline-flex items-center text-xs font-bold px-3 py-1.5 rounded-full bg-primary/20 text-primary border border-primary/30 shrink-0">
+              ${weekTotalClasses} Classes (Mon – Sat)
+            </span>
+          </div>
         </div>
 
         <!-- Matrix Table Container -->
@@ -1639,7 +1961,7 @@ const TimetableController = {
           <td class="td-sticky-day text-center">
             <div class="font-headline-sm font-bold text-xs sm:text-sm ${isToday ? 'text-primary' : 'text-on-surface'}">${d}</div>
             <div class="text-[10px] text-outline mt-0.5">${dayClasses.length} cls</div>
-            ${isToday ? '<span class="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.2 rounded bg-primary/20 text-primary">TODAY</span>' : ''}
+            ${isToday ? '<span class="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-300 font-mono">TODAY</span>' : ''}
           </td>
       `;
 
@@ -1669,20 +1991,22 @@ const TimetableController = {
           const typeClass = match.type === 'P' ? 'lab' : (match.type === 'T' ? 'tutorial' : 'lecture');
           const typeLabel = match.type === 'P' ? 'Lab' : (match.type === 'T' ? 'Tut' : 'Lec');
           const cleanName = this.getCleanSubjectName(match.code, match.subject);
+          const isFilteredOut = (this.filterType !== 'ALL' && match.type !== this.filterType);
+          const filterStyle = isFilteredOut ? 'opacity: 0.25; filter: grayscale(0.8);' : '';
 
           html += `
             <td class="p-1.5">
-              <div class="week-matrix-cell-card cell-${typeClass}" data-class-data='${JSON.stringify({ ...match, cleanSubject: cleanName }).replace(/'/g, "&apos;")}' title="${cleanName} (${match.code}) - Room ${match.venue || 'TBA'}">
+              <div class="week-matrix-cell-card cell-${typeClass}" style="${filterStyle}" data-class-data='${JSON.stringify({ ...match, cleanSubject: cleanName }).replace(/'/g, "&apos;")}' title="${cleanName} (${match.code}) - Room ${match.venue || 'TBA'}">
                 <div class="flex items-center justify-between gap-1 leading-tight">
                   <span class="font-mono text-[10px] font-bold text-on-surface truncate">${match.code}</span>
-                  <span class="text-[9px] font-bold px-1 py-0.2 rounded bg-black/30 text-white">${typeLabel}</span>
+                  <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-black/40 text-white">${typeLabel}</span>
                 </div>
                 <div class="font-headline-sm text-xs font-bold text-on-surface line-clamp-1 my-1">
                   ${cleanName}
                 </div>
                 <div class="flex items-center justify-between text-[10px] text-on-surface-variant font-mono">
                   <span class="text-primary font-semibold">📍 ${match.venue || 'TBA'}</span>
-                  ${match.faculty ? `<span>Prof. ${match.faculty}</span>` : ''}
+                  ${match.faculty ? `<span class="truncate max-w-[70px]">Prof. ${match.faculty}</span>` : ''}
                 </div>
               </div>
             </td>
@@ -1709,6 +2033,15 @@ const TimetableController = {
     `;
 
     container.innerHTML = html;
+
+    // Bind matrix switch back to day view button
+    container.querySelector('.btn-matrix-switch-day')?.addEventListener('click', () => {
+      this.viewMode = 'day';
+      this.renderViewModeTabs();
+      this.renderDayPills();
+      this.renderTypeFilterChips();
+      this.renderSchedule();
+    });
 
     // Bind click on matrix cells to open inspector modal
     container.querySelectorAll('.week-matrix-cell-card').forEach(cell => {

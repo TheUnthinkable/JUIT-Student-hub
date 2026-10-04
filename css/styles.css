@@ -9898,15 +9898,151 @@ html, body {
 }
 
 /* ==========================================================================
-   EXECUTIVE PROFESSIONAL TIMETABLE & WEEKLY MATRIX STYLING
+   EXECUTIVE PROFESSIONAL TIMETABLE & WEEKLY MATRIX STYLING (REDESIGNED)
    ========================================================================== */
-.pro-timetable-card {
+
+/* Hero Banner & Ambient Elements */
+.timetable-hero-banner {
+  background: linear-gradient(145deg, rgba(28, 32, 41, 0.95) 0%, rgba(20, 24, 33, 0.98) 100%);
+  backdrop-filter: blur(12px);
+}
+
+/* Day Selector Pills Ribbon */
+.day-pill-card {
   position: relative;
   background: var(--bg-card, #131722);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 10px 12px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.day-pill-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.day-pill-card.is-active-day {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(20, 24, 34, 0.95) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.2), inset 0 0 12px rgba(245, 158, 11, 0.08) !important;
+}
+
+/* Visual Day Flow (Mini-Gantt Timeline) */
+.day-flow-timeline-track {
+  position: relative;
+  height: 48px;
+  background: rgba(10, 14, 22, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.day-flow-hour-marks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  opacity: 0.18;
+  padding: 0 4px;
+}
+
+.day-flow-hour-line {
+  border-left: 1px dashed #ffffff;
+  height: 100%;
+}
+
+.day-flow-session-block {
+  position: absolute;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  z-index: 2;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+.day-flow-session-block:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+
+.day-flow-session-block.type-lecture {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.35) 100%);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #ffc174;
+}
+
+.day-flow-session-block.type-lab {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.35) 100%);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #68fcbf;
+}
+
+.day-flow-session-block.type-tutorial {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(3, 105, 161, 0.35) 100%);
+  border-color: rgba(2, 132, 199, 0.5);
+  color: #7dd3fc;
+}
+
+.day-flow-session-block.type-lunch {
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: #fb923c;
+}
+
+.day-flow-now-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ff5252;
+  box-shadow: 0 0 8px #ff5252, 0 0 16px #ff5252;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.day-flow-now-badge {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff5252;
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(255, 82, 82, 0.4);
+}
+
+/* Professional Timetable Class Card */
+.pro-timetable-card {
+  position: relative;
+  background: linear-gradient(145deg, rgba(24, 28, 38, 0.85) 0%, rgba(17, 21, 30, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .pro-timetable-card::before {
@@ -9918,24 +10054,26 @@ html, body {
   width: 4px;
   background: rgba(255, 255, 255, 0.15);
   transition: width 0.2s ease, background 0.2s ease;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
 }
 
 .pro-timetable-card.type-lecture::before {
-  background: #f59e0b;
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
 }
 
 .pro-timetable-card.type-lab::before {
-  background: #10b981;
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
 }
 
 .pro-timetable-card.type-tutorial::before {
-  background: #0284c7;
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
 }
 
 .pro-timetable-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
 }
 
 .pro-timetable-card:hover::before {
@@ -9943,24 +10081,37 @@ html, body {
 }
 
 .pro-timetable-card.is-live-now {
-  border-color: rgba(245, 158, 11, 0.5) !important;
-  box-shadow: 0 0 24px rgba(245, 158, 11, 0.2) !important;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(19, 23, 34, 0.95) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.25), inset 0 0 16px rgba(245, 158, 11, 0.08) !important;
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.12) 0%, rgba(20, 24, 34, 0.98) 100%) !important;
 }
 
+/* Time Pillar */
+.time-pillar-box {
+  background: rgba(10, 14, 22, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.pro-timetable-card:hover .time-pillar-box {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Weekly Matrix Grid Styling */
 .week-matrix-wrapper {
-  background: var(--bg-card, #131722);
+  background: linear-gradient(145deg, rgba(20, 24, 34, 0.95) 0%, rgba(15, 19, 28, 0.98) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
 
 .week-matrix-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 900px;
+  min-width: 960px;
 }
 
 .week-matrix-table th {
@@ -9980,7 +10131,7 @@ html, body {
   position: sticky;
   left: 0;
   z-index: 10;
-  background: #11141e;
+  background: #111520;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -9991,52 +10142,83 @@ html, body {
 }
 
 .week-matrix-cell-card {
-  padding: 8px;
-  border-radius: 10px;
-  transition: all 0.15s ease;
+  padding: 8px 10px;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   height: 100%;
-  min-height: 64px;
+  min-height: 72px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .week-matrix-cell-card:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.15);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .week-matrix-cell-card.cell-lecture {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.08) 100%);
+  border-color: rgba(245, 158, 11, 0.35);
 }
 
 .week-matrix-cell-card.cell-lab {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.35);
 }
 
 .week-matrix-cell-card.cell-tutorial {
-  background: rgba(2, 132, 199, 0.12);
-  border-color: rgba(2, 132, 199, 0.3);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(3, 105, 161, 0.08) 100%);
+  border-color: rgba(2, 132, 199, 0.35);
 }
 
 .week-lunch-cell {
-  background: rgba(249, 115, 22, 0.06);
-  border: 1px dashed rgba(249, 115, 22, 0.2);
-  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.03) 100%);
+  border: 1px dashed rgba(249, 115, 22, 0.25);
+  border-radius: 10px;
   text-align: center;
   padding: 12px 4px;
-  color: #f97316;
-  font-size: 0.72rem;
+  color: #fb923c;
+  font-size: 0.74rem;
   font-weight: 600;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
+  min-height: 72px;
+}
+
+/* Print Styles for Timetable */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #view-timetable, #view-timetable * {
+    visibility: visible;
+  }
+  #view-timetable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+  }
+  #timetable-sem-select, #timetable-batch-select,
+  #quick-batch-container, #timetable-search-input,
+  #btn-export-ical, #btn-print-timetable, #btn-jump-to-now {
+    display: none !important;
+  }
+  .pro-timetable-card {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
 }
 
